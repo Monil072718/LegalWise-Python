@@ -3,7 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from typing import List
 
-from .routers import lawyers, clients, cases, appointments, dashboard, books, articles, payments, analytics
+from routers import lawyers, clients, cases, appointments, dashboard, books, articles, payments, analytics
+import models
+import database
 
 models.Base.metadata.create_all(bind=database.engine)
 

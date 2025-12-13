@@ -18,6 +18,9 @@ class Lawyer(Base):
     verified = Column(Boolean, default=False)
     createdAt = Column(String)
     documents = Column(JSON) # List of Document objects
+    phone = Column(String, nullable=True)
+    address = Column(String, nullable=True)
+    bio = Column(String, nullable=True)
 
 class Client(Base):
     __tablename__ = "clients"
@@ -33,6 +36,10 @@ class Client(Base):
     totalSpent = Column(Float)
     createdAt = Column(String)
     avatar = Column(String, nullable=True)
+    phone = Column(String, nullable=True)
+    address = Column(String, nullable=True)
+    company = Column(String, nullable=True)
+    notes = Column(String, nullable=True)
 
 class Case(Base):
     __tablename__ = "cases"

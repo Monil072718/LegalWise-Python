@@ -44,7 +44,7 @@ export default function CaseManagement() {
     fetchData();
   }, []);
 
-  const filteredCases = cases.filter(caseItem => {
+  const filteredCases = cases.filter((caseItem: Case) => {
     const matchesSearch = caseItem.title.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = selectedStatus === 'all' || caseItem.status === selectedStatus;
     const matchesPriority = selectedPriority === 'all' || caseItem.priority === selectedPriority;
@@ -71,41 +71,45 @@ export default function CaseManagement() {
   };
 
   const getLawyerName = (lawyerId: string) => {
-    const lawyer = lawyers.find(l => l.id === lawyerId);
+    const lawyer = lawyers.find((l: Lawyer) => l.id === lawyerId);
     return lawyer?.name || 'Unknown';
   };
 
   const getClientName = (clientId: string) => {
-    const client = clients.find(c => c.id === clientId);
+    const client = clients.find((c: Client) => c.id === clientId);
     return client?.name || 'Unknown';
   };
 
-  const handleAddCase = () => {
-    // API integration would go here
-    const newCase: Case = {
-      id: (cases.length + 1).toString(),
-      title: formData.title,
-      clientId: formData.clientId,
-      lawyerId: formData.lawyerId,
-      status: 'open',
-      stage: formData.stage,
-      priority: formData.priority as 'low' | 'medium' | 'high',
-      createdAt: new Date().toISOString().split('T')[0],
-      nextHearing: formData.nextHearing || undefined,
-      documents: []
-    };
+  const handleAddCase = async () => {
+    try {
+      const newCaseData = {
+        title: formData.title,
+        clientId: formData.clientId,
+        lawyerId: formData.lawyerId,
+        status: 'open' as const,
+        stage: formData.stage,
+        priority: formData.priority as 'low' | 'medium' | 'high',
+        createdAt: new Date().toISOString().split('T')[0],
+        nextHearing: formData.nextHearing || undefined,
+        documents: []
+      };
 
-    setCases([...cases, newCase]);
-    setFormData({
-      title: '',
-      clientId: '',
-      lawyerId: '',
-      priority: 'medium',
-      stage: 'Initial Review',
-      description: '',
-      nextHearing: ''
-    });
-    setShowAddModal(false);
+      const createdCase = await api.createCase(newCaseData);
+      setCases([...cases, createdCase]);
+      setFormData({
+        title: '',
+        clientId: '',
+        lawyerId: '',
+        priority: 'medium',
+        stage: 'Initial Review',
+        description: '',
+        nextHearing: ''
+      });
+      setShowAddModal(false);
+    } catch (error) {
+      console.error('Failed to create case:', error);
+      alert('Failed to create case.');
+    }
   };
 
   const handleViewCase = (caseItem: Case) => {
@@ -113,14 +117,25 @@ export default function CaseManagement() {
     setShowViewModal(true);
   };
 
-  const handleDeleteCase = (id: string) => {
-    // API integration would go here
-    setCases(cases.filter(c => c.id !== id));
+  const handleDeleteCase = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this case?')) return;
+    try {
+      await api.deleteCase(id);
+      setCases(cases.filter((c: Case) => c.id !== id));
+    } catch (error) {
+      console.error('Failed to delete case:', error);
+      alert('Failed to delete case.');
+    }
   };
 
-  const handleUpdateCaseStatus = (id: string, newStatus: string) => {
-    // API integration would go here
-    setCases(cases.map(c => c.id === id ? { ...c, status: newStatus as any } : c));
+  const handleUpdateCaseStatus = async (id: string, newStatus: string) => {
+    try {
+      const updatedCase = await api.updateCase(id, { status: newStatus as Case['status'] });
+      setCases(cases.map((c: Case) => c.id === id ? updatedCase : c));
+    } catch (error) {
+      console.error('Failed to update case status:', error);
+      alert('Failed to update case status.');
+    }
   };
 
   if (loading) {
@@ -161,7 +176,7 @@ export default function CaseManagement() {
             <div>
               <p className="text-sm font-medium text-gray-600">Active Cases</p>
               <p className="text-2xl font-bold text-blue-600">
-                {cases.filter(c => c.status === 'in-progress').length}
+                {cases.filter((c: Case) => c.status === 'in-progress').length}
               </p>
             </div>
             <FileText className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
@@ -173,7 +188,7 @@ export default function CaseManagement() {
             <div>
               <p className="text-sm font-medium text-gray-600">High Priority</p>
               <p className="text-2xl font-bold text-red-600">
-                {cases.filter(c => c.priority === 'high').length}
+                {cases.filter((c: Case) => c.priority === 'high').length}
               </p>
             </div>
             <AlertTriangle className="w-6 h-6 sm:w-8 sm:h-8 text-red-600" />
@@ -185,7 +200,7 @@ export default function CaseManagement() {
             <div>
               <p className="text-sm font-medium text-gray-600">Upcoming Hearings</p>
               <p className="text-2xl font-bold text-purple-600">
-                {cases.filter(c => c.nextHearing).length}
+                {cases.filter((c: Case) => c.nextHearing).length}
               </p>
             </div>
             <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600" />
@@ -240,7 +255,7 @@ export default function CaseManagement() {
             <h3 className="text-lg font-semibold text-gray-900">Cases ({filteredCases.length})</h3>
           </div>
           <div className="divide-y divide-gray-200">
-            {filteredCases.map((caseItem) => (
+            {filteredCases.map((caseItem: Case) => (
               <div key={caseItem.id} className="p-4 space-y-3">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -331,7 +346,7 @@ export default function CaseManagement() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {filteredCases.map((caseItem) => (
+              {filteredCases.map((caseItem: Case) => (
                 <tr key={caseItem.id} className="hover:bg-gray-50 transition-colors duration-200">
                   <td className="px-6 py-4">
                     <div>
@@ -446,7 +461,7 @@ export default function CaseManagement() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="">Select Client</option>
-                    {clients.map(client => (
+                    {clients.map((client: Client) => (
                       <option key={client.id} value={client.id}>{client.name}</option>
                     ))}
                   </select>
@@ -460,7 +475,7 @@ export default function CaseManagement() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="">Select Lawyer</option>
-                    {lawyers.filter(l => l.status === 'active').map(lawyer => (
+                    {lawyers.filter((l: Lawyer) => l.status === 'active').map((lawyer: Lawyer) => (
                       <option key={lawyer.id} value={lawyer.id}>{lawyer.name}</option>
                     ))}
                   </select>
@@ -613,7 +628,7 @@ export default function CaseManagement() {
                   <h4 className="font-medium text-gray-900 mb-3">Documents ({selectedCase.documents.length})</h4>
                   {selectedCase.documents.length > 0 ? (
                     <div className="space-y-2">
-                      {selectedCase.documents.map((doc) => (
+                      {selectedCase.documents.map((doc: any) => (
                         <div key={doc.id} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
                           <div>
                             <div className="text-sm font-medium text-gray-900">{doc.name}</div>

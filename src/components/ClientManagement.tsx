@@ -35,7 +35,7 @@ export default function ClientManagement() {
     }
   };
 
-  const filteredClients = clients.filter(client => {
+  const filteredClients = clients.filter((client: Client) => {
     const matchesSearch = client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          client.email.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = selectedStatus === 'all' || client.status === selectedStatus;
@@ -51,24 +51,34 @@ export default function ClientManagement() {
     return styles[status as keyof typeof styles] || styles.pending;
   };
 
-  const handleAddClient = () => {
-    // API integration would go here
-    const newClient: Client = {
-      id: (clients.length + 1).toString(),
-      name: formData.name,
-      email: formData.email,
-      role: 'client',
-      status: 'active',
-      consultations: 0,
-      booksDownloaded: 0,
-      articlesRead: 0,
-      totalSpent: 0,
-      createdAt: new Date().toISOString().split('T')[0]
-    };
+  const handleAddClient = async () => {
+    try {
+      const newClientData = {
+        name: formData.name,
+        email: formData.email,
+        role: 'client' as const,
+        status: 'active' as const,
+        consultations: 0,
+        booksDownloaded: 0,
+        articlesRead: 0,
+        totalSpent: 0,
+        createdAt: new Date().toISOString().split('T')[0],
+        // Note: phone, address, company, notes are not in the Client interface yet, 
+        // but passing them might be useful if backend supports them or we extend interface.
+        // For now, we stick to what the interface supports or extend it if needed.
+        // Backend `Client` model doesn't strictly enforce extra fields unless using strict schema in FastAPI,
+        // but `ClientBase` in backend schemas.py only has specific fields.
+        // If we want to save phone/address, we need to update backend models/schemas like we did for Lawyer.
+      };
 
-    setClients([...clients, newClient]);
-    setFormData({ name: '', email: '', phone: '', address: '', company: '', notes: '' });
-    setShowAddModal(false);
+      const createdClient = await api.createClient(newClientData);
+      setClients([...clients, createdClient]);
+      setFormData({ name: '', email: '', phone: '', address: '', company: '', notes: '' });
+      setShowAddModal(false);
+    } catch (error) {
+      console.error('Failed to create client:', error);
+      alert('Failed to create client.');
+    }
   };
 
   const handleViewClient = (client: Client) => {
@@ -76,9 +86,15 @@ export default function ClientManagement() {
     setShowViewModal(true);
   };
 
-  const handleDeleteClient = (id: string) => {
-    // API integration would go here
-    setClients(clients.filter(c => c.id !== id));
+  const handleDeleteClient = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this client?')) return;
+    try {
+      await api.deleteClient(id);
+      setClients(clients.filter((c: Client) => c.id !== id));
+    } catch (error) {
+      console.error('Failed to delete client:', error);
+      alert('Failed to delete client.');
+    }
   };
 
   if (loading && clients.length === 0) {
@@ -119,7 +135,7 @@ export default function ClientManagement() {
             <div>
               <p className="text-sm font-medium text-gray-600">Active Clients</p>
               <p className="text-2xl font-bold text-green-600">
-                {clients.filter(c => c.status === 'active').length}
+                {clients.filter((c: Client) => c.status === 'active').length}
               </p>
             </div>
             <User className="w-6 h-6 sm:w-8 sm:h-8 text-green-600" />
@@ -131,7 +147,7 @@ export default function ClientManagement() {
             <div>
               <p className="text-sm font-medium text-gray-600">Total Consultations</p>
               <p className="text-2xl font-bold text-purple-600">
-                {clients.reduce((sum, c) => sum + c.consultations, 0)}
+                {clients.reduce((sum, c: Client) => sum + c.consultations, 0)}
               </p>
             </div>
             <FileText className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600" />
@@ -143,7 +159,7 @@ export default function ClientManagement() {
             <div>
               <p className="text-sm font-medium text-gray-600">Total Revenue</p>
               <p className="text-2xl font-bold text-orange-600">
-                ${clients.reduce((sum, c) => sum + c.totalSpent, 0).toLocaleString()}
+                ${clients.reduce((sum, c: Client) => sum + c.totalSpent, 0).toLocaleString()}
               </p>
             </div>
             <DollarSign className="w-6 h-6 sm:w-8 sm:h-8 text-orange-600" />
@@ -186,7 +202,7 @@ export default function ClientManagement() {
             <h3 className="text-lg font-semibold text-gray-900">Clients ({filteredClients.length})</h3>
           </div>
           <div className="divide-y divide-gray-200">
-            {filteredClients.map((client) => (
+            {filteredClients.map((client: Client) => (
               <div key={client.id} className="p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
@@ -266,7 +282,7 @@ export default function ClientManagement() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {filteredClients.map((client) => (
+              {filteredClients.map((client: Client) => (
                 <tr key={client.id} className="hover:bg-gray-50 transition-colors duration-200">
                   <td className="px-6 py-4">
                     <div className="flex items-center space-x-3">

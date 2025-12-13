@@ -8,7 +8,47 @@ router = APIRouter(
     tags=["appointments"],
 )
 
+import uuid
+
 @router.get("/", response_model=List[schemas.Appointment])
 def read_appointments(skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db)):
     appointments = db.query(models.Appointment).offset(skip).limit(limit).all()
     return appointments
+
+@router.get("/{appointment_id}", response_model=schemas.Appointment)
+def read_appointment(appointment_id: str, db: Session = Depends(database.get_db)):
+    db_appointment = db.query(models.Appointment).filter(models.Appointment.id == appointment_id).first()
+    if db_appointment is None:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    return db_appointment
+
+@router.post("/", response_model=schemas.Appointment)
+def create_appointment(appointment: schemas.AppointmentBase, db: Session = Depends(database.get_db)):
+    db_appointment = models.Appointment(**appointment.dict(), id=str(uuid.uuid4()))
+    db.add(db_appointment)
+    db.commit()
+    db.refresh(db_appointment)
+    return db_appointment
+
+@router.put("/{appointment_id}", response_model=schemas.Appointment)
+def update_appointment(appointment_id: str, appointment: schemas.AppointmentBase, db: Session = Depends(database.get_db)):
+    db_appointment = db.query(models.Appointment).filter(models.Appointment.id == appointment_id).first()
+    if db_appointment is None:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    
+    for key, value in appointment.dict().items():
+        setattr(db_appointment, key, value)
+    
+    db.commit()
+    db.refresh(db_appointment)
+    return db_appointment
+
+@router.delete("/{appointment_id}")
+def delete_appointment(appointment_id: str, db: Session = Depends(database.get_db)):
+    db_appointment = db.query(models.Appointment).filter(models.Appointment.id == appointment_id).first()
+    if db_appointment is None:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    
+    db.delete(db_appointment)
+    db.commit()
+    return {"ok": True}

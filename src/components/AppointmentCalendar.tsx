@@ -23,7 +23,7 @@ export default function AppointmentCalendar() {
     }
   };
 
-  const filteredAppointments = appointments.filter(appointment => {
+  const filteredAppointments = appointments.filter((appointment: Appointment) => {
     return selectedFilter === 'all' || appointment.status === selectedFilter;
   });
 
@@ -46,14 +46,24 @@ export default function AppointmentCalendar() {
     }
   };
 
-  const handleApprove = (id: string) => {
-    // API integration would go here
-    console.log('Approve appointment:', id);
+  const handleApprove = async (id: string) => {
+    try {
+      const updatedAppointment = await api.updateAppointment(id, { status: 'approved' as const });
+      setAppointments(appointments.map((a: Appointment) => a.id === id ? updatedAppointment : a));
+    } catch (error) {
+      console.error('Failed to approve appointment:', error);
+      alert('Failed to approve appointment.');
+    }
   };
 
-  const handleDecline = (id: string) => {
-    // API integration would go here
-    console.log('Decline appointment:', id);
+  const handleDecline = async (id: string) => {
+    try {
+      const updatedAppointment = await api.updateAppointment(id, { status: 'declined' as const });
+      setAppointments(appointments.map((a: Appointment) => a.id === id ? updatedAppointment : a));
+    } catch (error) {
+      console.error('Failed to decline appointment:', error);
+      alert('Failed to decline appointment.');
+    }
   };
 
   if (loading) {
@@ -90,7 +100,7 @@ export default function AppointmentCalendar() {
             <div>
               <p className="text-sm font-medium text-gray-600">Pending Approval</p>
               <p className="text-2xl font-bold text-yellow-600">
-                {appointments.filter(a => a.status === 'pending').length}
+                {appointments.filter((a: Appointment) => a.status === 'pending').length}
               </p>
             </div>
             <Clock className="w-8 h-8 text-yellow-600" />
@@ -152,7 +162,7 @@ export default function AppointmentCalendar() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {filteredAppointments.map((appointment) => (
+              {filteredAppointments.map((appointment: Appointment) => (
                 <tr key={appointment.id} className="hover:bg-gray-50 transition-colors duration-200">
                   <td className="px-6 py-4">
                     <div>

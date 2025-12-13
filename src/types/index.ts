@@ -17,6 +17,9 @@ export interface Lawyer extends User {
   availability: 'online' | 'offline' | 'busy';
   verified: boolean;
   documents: Document[];
+  phone?: string;
+  address?: string;
+  bio?: string;
 }
 
 export interface Client extends User {

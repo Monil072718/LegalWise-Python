@@ -21,6 +21,9 @@ class LawyerBase(BaseModel):
     verified: bool
     createdAt: str
     documents: List[dict] = [] # Simply dicts for now
+    phone: Optional[str] = None
+    address: Optional[str] = None
+    bio: Optional[str] = None
 
 class Lawyer(LawyerBase):
     id: str
@@ -38,6 +41,10 @@ class ClientBase(BaseModel):
     totalSpent: float
     createdAt: str
     avatar: Optional[str] = None
+    phone: Optional[str] = None
+    address: Optional[str] = None
+    company: Optional[str] = None
+    notes: Optional[str] = None
 
 class Client(ClientBase):
     id: str

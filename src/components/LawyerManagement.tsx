@@ -36,10 +36,10 @@ export default function LawyerManagement() {
     }
   };
 
-  const filteredLawyers = lawyers.filter(lawyer => {
+  const filteredLawyers = lawyers.filter((lawyer: Lawyer) => {
     const matchesSearch = lawyer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          lawyer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         lawyer.specialization.some(spec => spec.toLowerCase().includes(searchTerm.toLowerCase()));
+                         lawyer.specialization.some((spec: string) => spec.toLowerCase().includes(searchTerm.toLowerCase()));
     const matchesStatus = selectedStatus === 'all' || lawyer.status === selectedStatus;
     return matchesSearch && matchesStatus;
   });
@@ -62,28 +62,34 @@ export default function LawyerManagement() {
     return styles[availability as keyof typeof styles] || styles.offline;
   };
 
-  const handleAddLawyer = () => {
-    // API integration for creating lawyer would go here
-    // For now we just close the modal as the endpoint isn't fully implemented in the plan
-    const newLawyer: Lawyer = {
-      id: (lawyers.length + 1).toString(),
-      name: formData.name,
-      email: formData.email,
-      role: 'lawyer',
-      status: 'pending',
-      specialization: formData.specialization.split(',').map(s => s.trim()),
-      experience: parseInt(formData.experience) || 0,
-      rating: 0,
-      casesHandled: 0,
-      availability: 'offline',
-      verified: false,
-      createdAt: new Date().toISOString().split('T')[0],
-      documents: []
-    };
+  const handleAddLawyer = async () => {
+    try {
+      const newLawyerData = {
+        name: formData.name,
+        email: formData.email,
+        role: 'lawyer' as const,
+        status: 'pending' as const,
+        specialization: formData.specialization.split(',').map((s: string) => s.trim()),
+        experience: parseInt(formData.experience) || 0,
+        rating: 0,
+        casesHandled: 0,
+        availability: 'offline' as const,
+        verified: false,
+        createdAt: new Date().toISOString().split('T')[0],
+        documents: [],
+        phone: formData.phone,
+        address: formData.address,
+        bio: formData.bio
+      };
 
-    setLawyers([...lawyers, newLawyer]);
-    setFormData({ name: '', email: '', specialization: '', experience: '', phone: '', address: '', bio: '' });
-    setShowAddModal(false);
+      const createdLawyer = await api.createLawyer(newLawyerData);
+      setLawyers([...lawyers, createdLawyer]);
+      setFormData({ name: '', email: '', specialization: '', experience: '', phone: '', address: '', bio: '' });
+      setShowAddModal(false);
+    } catch (error) {
+      console.error('Failed to create lawyer:', error);
+      alert('Failed to create lawyer. Please try again.');
+    }
   };
 
   const handleViewLawyer = (lawyer: Lawyer) => {
@@ -91,14 +97,25 @@ export default function LawyerManagement() {
     setShowViewModal(true);
   };
 
-  const handleDeleteLawyer = (id: string) => {
-    // API integration would go here
-     setLawyers(lawyers.filter(l => l.id !== id));
+  const handleDeleteLawyer = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this lawyer?')) return;
+    try {
+      await api.deleteLawyer(id);
+      setLawyers(lawyers.filter((l: Lawyer) => l.id !== id));
+    } catch (error) {
+      console.error('Failed to delete lawyer:', error);
+      alert('Failed to delete lawyer.');
+    }
   };
 
-  const handleVerifyLawyer = (id: string) => {
-     // API call would happen here
-    setLawyers(lawyers.map(l => l.id === id ? { ...l, verified: true, status: 'active' } : l));
+  const handleVerifyLawyer = async (id: string) => {
+    try {
+      await api.updateLawyer(id, { verified: true, status: 'active' });
+      setLawyers(lawyers.map((l: Lawyer) => l.id === id ? { ...l, verified: true, status: 'active' } : l));
+    } catch (error) {
+      console.error('Failed to verify lawyer:', error);
+      alert('Failed to verify lawyer.');
+    }
   };
 
   if (loading && lawyers.length === 0) {
@@ -129,7 +146,7 @@ export default function LawyerManagement() {
             <div>
               <p className="text-sm font-medium text-gray-600">Online Lawyers</p>
               <p className="text-2xl sm:text-3xl font-bold text-green-600">
-                {lawyers.filter(l => l.availability === 'online').length}
+                {lawyers.filter((l: Lawyer) => l.availability === 'online').length}
               </p>
               <p className="text-xs sm:text-sm text-gray-500 mt-1">Available for consultation</p>
             </div>

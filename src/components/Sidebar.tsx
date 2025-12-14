@@ -1,3 +1,4 @@
+'use client';
 
 import { 
   LayoutDashboard, 
@@ -12,28 +13,30 @@ import {
   Briefcase,
   Settings
 } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 interface SidebarProps {
-  currentPage: string;
-  onPageChange: (page: string) => void;
   isCollapsed: boolean;
 }
 
 const navigationItems = [
-  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { id: 'lawyers', label: 'Lawyer Management', icon: UserCheck },
-  { id: 'clients', label: 'Client Management', icon: Users },
-  { id: 'cases', label: 'Case Management', icon: Scale },
-  { id: 'appointments', label: 'Appointments', icon: Calendar },
-  { id: 'notifications', label: 'Notifications', icon: Bell },
-  { id: 'billing', label: 'Billing & Payments', icon: CreditCard },
-  { id: 'analytics', label: 'Analytics & Reports', icon: BarChart3 },
-  { id: 'content', label: 'Content Management', icon: BookOpen },
-  { id: 'hiring', label: 'Hire Management', icon: Briefcase },
-  { id: 'settings', label: 'Settings', icon: Settings }
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/' },
+  { id: 'lawyers', label: 'Lawyer Management', icon: UserCheck, href: '/lawyers' },
+  { id: 'clients', label: 'Client Management', icon: Users, href: '/clients' },
+  { id: 'cases', label: 'Case Management', icon: Scale, href: '/cases' },
+  { id: 'appointments', label: 'Appointments', icon: Calendar, href: '/appointments' },
+  { id: 'notifications', label: 'Notifications', icon: Bell, href: '/notifications' },
+  { id: 'billing', label: 'Billing & Payments', icon: CreditCard, href: '/billing' },
+  { id: 'analytics', label: 'Analytics & Reports', icon: BarChart3, href: '/analytics' },
+  { id: 'content', label: 'Content Management', icon: BookOpen, href: '/content' },
+  { id: 'hiring', label: 'Hire Management', icon: Briefcase, href: '/hiring' },
+  { id: 'settings', label: 'Settings', icon: Settings, href: '/settings' }
 ];
 
-export default function Sidebar({ currentPage, onPageChange, isCollapsed }: SidebarProps) {
+export default function Sidebar({ isCollapsed }: SidebarProps) {
+  const pathname = usePathname();
+
   return (
     <div className={`bg-slate-900 text-white transition-all duration-300 ${isCollapsed ? 'w-16' : 'w-64'} min-h-screen flex flex-col fixed lg:relative z-40`}>
       <div className="p-4 sm:p-6 border-b border-slate-700">
@@ -51,12 +54,12 @@ export default function Sidebar({ currentPage, onPageChange, isCollapsed }: Side
         <ul className="space-y-1 sm:space-y-2">
           {navigationItems.map((item) => {
             const Icon = item.icon;
-            const isActive = currentPage === item.id;
+            const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
             
             return (
               <li key={item.id}>
-                <button
-                  onClick={() => onPageChange(item.id)}
+                <Link
+                  href={item.href}
                   className={`w-full flex items-center px-2 sm:px-3 py-2 sm:py-3 rounded-lg transition-all duration-200 ${
                     isActive 
                       ? 'bg-blue-600 text-white shadow-lg' 
@@ -68,7 +71,7 @@ export default function Sidebar({ currentPage, onPageChange, isCollapsed }: Side
                   <span className={`ml-3 transition-opacity duration-300 text-sm sm:text-base ${isCollapsed ? 'opacity-0 hidden' : 'opacity-100'}`}>
                     {item.label}
                   </span>
-                </button>
+                </Link>
               </li>
             );
           })}

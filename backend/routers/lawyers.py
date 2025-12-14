@@ -31,12 +31,12 @@ def create_lawyer(lawyer: schemas.LawyerBase, db: Session = Depends(database.get
     return db_lawyer
 
 @router.put("/{lawyer_id}", response_model=schemas.Lawyer)
-def update_lawyer(lawyer_id: str, lawyer: schemas.LawyerBase, db: Session = Depends(database.get_db)):
+def update_lawyer(lawyer_id: str, lawyer: schemas.LawyerUpdate, db: Session = Depends(database.get_db)):
     db_lawyer = db.query(models.Lawyer).filter(models.Lawyer.id == lawyer_id).first()
     if db_lawyer is None:
         raise HTTPException(status_code=404, detail="Lawyer not found")
     
-    for key, value in lawyer.dict().items():
+    for key, value in lawyer.dict(exclude_unset=True).items():
         setattr(db_lawyer, key, value)
     
     db.commit()

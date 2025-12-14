@@ -25,6 +25,23 @@ class LawyerBase(BaseModel):
     address: Optional[str] = None
     bio: Optional[str] = None
 
+class LawyerUpdate(BaseModel):
+    name: Optional[str] = None
+    email: Optional[str] = None
+    role: Optional[str] = None
+    status: Optional[str] = None
+    specialization: Optional[List[str]] = None
+    experience: Optional[int] = None
+    rating: Optional[float] = None
+    casesHandled: Optional[int] = None
+    availability: Optional[str] = None
+    verified: Optional[bool] = None
+    createdAt: Optional[str] = None
+    documents: Optional[List[dict]] = None
+    phone: Optional[str] = None
+    address: Optional[str] = None
+    bio: Optional[str] = None
+
 class Lawyer(LawyerBase):
     id: str
     class Config:

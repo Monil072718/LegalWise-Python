@@ -2,6 +2,25 @@ from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float, JSON
 from sqlalchemy.orm import relationship
 from database import Base
 
+class Client(Base):
+    __tablename__ = "clients"
+
+    id = Column(String, primary_key=True, index=True)
+    name = Column(String, index=True)
+    email = Column(String, unique=True, index=True)
+    role = Column(String, default="client")
+    status = Column(String)
+    consultations = Column(Integer)
+    booksDownloaded = Column(Integer)
+    articlesRead = Column(Integer)
+    totalSpent = Column(Float)
+    createdAt = Column(String)
+    avatar = Column(String, nullable=True)
+    phone = Column(String, nullable=True)
+    address = Column(String, nullable=True)
+    company = Column(String, nullable=True)
+    notes = Column(String, nullable=True)
+
 class Lawyer(Base):
     __tablename__ = "lawyers"
 
@@ -22,24 +41,7 @@ class Lawyer(Base):
     address = Column(String, nullable=True)
     bio = Column(String, nullable=True)
 
-class Client(Base):
-    __tablename__ = "clients"
 
-    id = Column(String, primary_key=True, index=True)
-    name = Column(String, index=True)
-    email = Column(String, unique=True, index=True)
-    role = Column(String, default="client")
-    status = Column(String)
-    consultations = Column(Integer)
-    booksDownloaded = Column(Integer)
-    articlesRead = Column(Integer)
-    totalSpent = Column(Float)
-    createdAt = Column(String)
-    avatar = Column(String, nullable=True)
-    phone = Column(String, nullable=True)
-    address = Column(String, nullable=True)
-    company = Column(String, nullable=True)
-    notes = Column(String, nullable=True)
 
 class Case(Base):
     __tablename__ = "cases"

@@ -1,48 +1,54 @@
 'use client';
 
-import { useState } from 'react';
-import { Search, Filter, Eye, FileText, Activity } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Search, Filter, Eye, FileText, Activity, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
+import { api } from '@/services/api';
+import { Client } from '@/types';
 
 export default function LawyerClients() {
   const [searchTerm, setSearchTerm] = useState('');
   
   const [statusFilter, setStatusFilter] = useState('All');
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+  const [clients, setClients] = useState<Client[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
-  // Mock data
-  const clients = [
-    { 
-      id: "1", 
-      name: "Alice Johnson", 
-      email: "alice@example.com", 
-      phone: "+1 (555) 123-4567",
-      status: "Active",
-      activeCases: 2,
-      lastActivity: "2 days ago",
-      avatar: null
-    },
-    { 
-      id: "2", 
-      name: "Robert Smith", 
-      email: "robert@example.com", 
-      phone: "+1 (555) 987-6543",
-      status: "Active",
-      activeCases: 1,
-      lastActivity: "1 day ago",
-      avatar: null
-    },
-    { 
-      id: "3", 
-      name: "Sarah Williams", 
-      email: "sarah@example.com", 
-      phone: "+1 (555) 456-7890",
-      status: "Pending",
-      activeCases: 0,
-      lastActivity: "5 hours ago",
-      avatar: null
-    },
-  ];
+  useEffect(() => {
+    fetchClients();
+  }, []);
+
+  const fetchClients = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await api.getClients();
+      setClients(data);
+    } catch (err: any) {
+      console.error("Failed to fetch clients", err);
+      setError(err.message || "Failed to load clients. Please ensure the backend is running.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleStatusUpdate = async (id: string, newStatus: string) => {
+    setUpdatingId(id);
+    try {
+      await api.updateClient(id, { status: newStatus });
+      // Optimistic update
+      setClients(prev => prev.map(client => 
+        client.id === id ? { ...client, status: newStatus } : client
+      ));
+    } catch (error) {
+      console.error("Failed to update status", error);
+      alert("Failed to update status");
+    } finally {
+      setUpdatingId(null);
+    }
+  };
 
   const filteredClients = clients.filter(client => {
     const matchesSearch = client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -50,6 +56,17 @@ export default function LawyerClients() {
     const matchesStatus = statusFilter === 'All' || client.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
+
+  if (loading) return <div className="p-6">Loading clients...</div>;
+  if (error) return (
+    <div className="p-6">
+      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
+        <strong className="font-bold">Error: </strong>
+        <span className="block sm:inline">{error}</span>
+        <button onClick={fetchClients} className="mt-2 text-sm underline hover:text-red-900">Retry</button>
+      </div>
+    </div>
+  );
 
   return (
     <div className="p-6">
@@ -118,7 +135,7 @@ export default function LawyerClients() {
                       </div>
                       <div>
                         <div className="font-medium text-gray-900">{client.name}</div>
-                        <div className="text-xs text-gray-500">ID: #{client.id}</div>
+                        <div className="text-xs text-gray-500">ID: #{client.id.substring(0, 5)}</div>
                       </div>
                     </div>
                   </td>
@@ -127,22 +144,43 @@ export default function LawyerClients() {
                     <div className="text-sm text-gray-500">{client.phone}</div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      client.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {client.status}
-                    </span>
+                    <div className="relative group">
+                        <button disabled={updatingId === client.id} className={`inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded-full cursor-pointer hover:opacity-80 transition-opacity ${
+                        client.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                        }`}>
+                        {client.status}
+                        {updatingId === client.id ? (
+                             <span className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin ml-1"/>
+                        ) : (
+                            <ChevronDown className="w-3 h-3 ml-1" />
+                        )}
+                        </button>
+                        
+                        <div className="hidden group-hover:block absolute top-full left-0 mt-1 w-32 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-20">
+                            {['Active', 'Pending', 'Inactive'].map((s) => (
+                                <button
+                                    key={s}
+                                    onClick={() => handleStatusUpdate(client.id, s)}
+                                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+                                >
+                                    {s}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-1 text-sm text-gray-900">
                       <FileText className="w-4 h-4 text-gray-400" />
-                      {client.activeCases}
+                      {/* {client.activeCases} - Need to join with cases in real app, assuming 0 for now */}
+                      0 
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-1 text-sm text-gray-500">
                       <Activity className="w-4 h-4" />
-                      {client.lastActivity}
+                      {/* Using createdAt as proxy for last activity for now */}
+                      {new Date(client.createdAt).toLocaleDateString()}
                     </div>
                   </td>
                   <td className="px-6 py-4 text-right">
@@ -156,6 +194,13 @@ export default function LawyerClients() {
                   </td>
                 </tr>
               ))}
+              {filteredClients.length === 0 && (
+                  <tr>
+                      <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                          No clients found.
+                      </td>
+                  </tr>
+              )}
             </tbody>
           </table>
         </div>

@@ -66,6 +66,7 @@ class Case(Base):
     priority = Column(String)
     createdAt = Column(String)
     nextHearing = Column(String, nullable=True)
+    description = Column(String, nullable=True)
     documents = Column(JSON)
 
 class Appointment(Base):

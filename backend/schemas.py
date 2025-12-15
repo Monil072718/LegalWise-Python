@@ -96,6 +96,24 @@ class ClientBase(BaseModel):
     company: Optional[str] = None
     notes: Optional[str] = None
 
+    notes: Optional[str] = None
+
+class ClientUpdate(BaseModel):
+    name: Optional[str] = None
+    email: Optional[str] = None
+    role: Optional[str] = None
+    status: Optional[str] = None
+    consultations: Optional[int] = None
+    booksDownloaded: Optional[int] = None
+    articlesRead: Optional[int] = None
+    totalSpent: Optional[float] = None
+    createdAt: Optional[str] = None
+    avatar: Optional[str] = None
+    phone: Optional[str] = None
+    address: Optional[str] = None
+    company: Optional[str] = None
+    notes: Optional[str] = None
+
 class Client(ClientBase):
     id: str
     class Config:
@@ -110,7 +128,20 @@ class CaseBase(BaseModel):
     priority: str
     createdAt: str
     nextHearing: Optional[str] = None
+    description: Optional[str] = None
     documents: List[dict] = []
+
+class CaseUpdate(BaseModel):
+    title: Optional[str] = None
+    clientId: Optional[str] = None
+    lawyerId: Optional[str] = None
+    status: Optional[str] = None
+    stage: Optional[str] = None
+    priority: Optional[str] = None
+    createdAt: Optional[str] = None
+    nextHearing: Optional[str] = None
+    description: Optional[str] = None
+    documents: Optional[List[dict]] = None
 
 class Case(CaseBase):
     id: str

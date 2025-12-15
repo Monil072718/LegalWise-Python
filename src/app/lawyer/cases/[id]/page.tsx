@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   ArrowLeft, 
   Save, 
@@ -11,21 +11,27 @@ import {
   X
 } from 'lucide-react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import { api } from '@/services/api';
 
 export default function CaseDetails() {
   const params = useParams();
+  const router = useRouter();
   const id = params.id as string;
   const isNew = id === 'new';
   
+  const [loading, setLoading] = useState(!isNew);
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
+
   const [formData, setFormData] = useState({
-    title: isNew ? '' : 'Estate Dispute - Johnson Family',
-    client: isNew ? '' : 'Alice Johnson',
-    status: isNew ? 'Open' : 'In Progress',
-    stage: isNew ? 'Initial' : 'Discovery',
-    priority: isNew ? 'Medium' : 'High',
-    nextHearing: isNew ? '' : '2025-01-24',
-    description: isNew ? '' : 'Dispute regarding the inheritance distribution of the late Michael Johnson estate.'
+    title: '',
+    client: '', // Using this as client name for display/edit for now
+    status: 'Open',
+    stage: 'Initial',
+    priority: 'Medium',
+    nextHearing: '',
+    description: ''
   });
 
   const [documents, setDocuments] = useState([
@@ -33,11 +39,70 @@ export default function CaseDetails() {
     { id: 2, name: 'Death_Certificate.pdf', size: '1.1MB', uploaded: '2024-01-12' },
   ]);
 
-  const handleSave = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (!isNew && id) {
+      const fetchCase = async () => {
+        try {
+          const data = await api.getCase(id);
+          setFormData({
+            title: data.title,
+            client: data.clientId, // Note: Expecting backend to possibly join or we deal with ID. 
+                                    // For this fix, we map clientId to 'client' field.
+            status: data.status,
+            stage: data.stage,
+            priority: data.priority,
+            nextHearing: data.nextHearing || '',
+            description: data.description || ''
+          });
+        } catch (err: any) {
+          setError(err.message || 'Failed to load case');
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchCase();
+    }
+  }, [id, isNew]);
+
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    // console.log('Saving case:', formData);
-    // Add API call here
+    setSaving(true);
+    setError('');
+
+    try {
+      if (isNew) {
+        // Create logic (placeholder or implement if needed, but focus is status update)
+        // Ensure required fields are present for creation
+        await api.createCase({
+            ...formData,
+            clientId: formData.client || 'client-1', // Fallback for demo
+            lawyerId: 'lawyer-1', // Fallback for demo
+            createdAt: new Date().toISOString().split('T')[0]
+        });
+        router.push('/lawyer/cases');
+      } else {
+        // Update logic
+        await api.updateCase(id, {
+          title: formData.title,
+          status: formData.status,
+          stage: formData.stage,
+          priority: formData.priority,
+          nextHearing: formData.nextHearing,
+          description: formData.description
+          // Not updating client/lawyer IDs here to avoid breaking links
+        });
+        alert('Case updated successfully!');
+      }
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || 'Failed to save changes');
+    } finally {
+      setSaving(false);
+    }
   };
+
+  if (loading) return <div className="p-6">Loading case details...</div>;
+  if (error) return <div className="p-6 text-red-600">Error: {error}</div>;
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
@@ -47,7 +112,7 @@ export default function CaseDetails() {
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <h1 className="text-2xl font-bold text-gray-900">
-            {isNew ? 'New Case' : `Case ${id}`}
+            {isNew ? 'New Case' : `Case ${formData.title}`}
           </h1>
         </div>
         <div className="flex gap-2">
@@ -59,10 +124,11 @@ export default function CaseDetails() {
           )}
           <button 
             onClick={handleSave}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
+            disabled={saving}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 disabled:opacity-50"
           >
             <Save className="w-4 h-4" />
-            Save Changes
+            {saving ? 'Saving...' : 'Save Changes'}
           </button>
         </div>
       </div>

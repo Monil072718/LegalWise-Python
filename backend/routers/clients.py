@@ -31,12 +31,12 @@ def create_client(client: schemas.ClientBase, db: Session = Depends(database.get
     return db_client
 
 @router.put("/{client_id}", response_model=schemas.Client)
-def update_client(client_id: str, client: schemas.ClientBase, db: Session = Depends(database.get_db)):
+def update_client(client_id: str, client: schemas.ClientUpdate, db: Session = Depends(database.get_db)):
     db_client = db.query(models.Client).filter(models.Client.id == client_id).first()
     if db_client is None:
         raise HTTPException(status_code=404, detail="Client not found")
     
-    for key, value in client.dict().items():
+    for key, value in client.dict(exclude_unset=True).items():
         setattr(db_client, key, value)
     
     db.commit()

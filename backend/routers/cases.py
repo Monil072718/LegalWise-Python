@@ -37,12 +37,12 @@ def create_case(case: schemas.CaseBase, db: Session = Depends(database.get_db)):
     return db_case
 
 @router.put("/{case_id}", response_model=schemas.Case)
-def update_case(case_id: str, case: schemas.CaseBase, db: Session = Depends(database.get_db)):
+def update_case(case_id: str, case: schemas.CaseUpdate, db: Session = Depends(database.get_db)):
     db_case = db.query(models.Case).filter(models.Case.id == case_id).first()
     if db_case is None:
         raise HTTPException(status_code=404, detail="Case not found")
     
-    for key, value in case.dict().items():
+    for key, value in case.dict(exclude_unset=True).items():
         setattr(db_case, key, value)
     
     db.commit()

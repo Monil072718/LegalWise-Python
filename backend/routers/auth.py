@@ -85,28 +85,28 @@ def get_current_lawyer(user = Depends(get_current_user)):
     return user
 
 # Routes
-@router.post("/lawyer/register", response_model=schemas.Lawyer)
-def register_lawyer(lawyer: schemas.LawyerCreate, db: Session = Depends(get_db)):
-    db_lawyer = db.query(models.Lawyer).filter(models.Lawyer.email == lawyer.email).first()
-    if db_lawyer:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    
-    hashed_password = get_password_hash(lawyer.password)
-    
-    # Create new lawyer instance
-    # Note: We exclude 'password' from the dict before creating the model
-    lawyer_data = lawyer.dict(exclude={"password"})
-    new_lawyer = models.Lawyer(
-        **lawyer_data,
-        hashed_password=hashed_password,
-        role="lawyer",
-        createdAt=datetime.now().strftime("%Y-%m-%d")
-    )
-    
-    db.add(new_lawyer)
-    db.commit()
-    db.refresh(new_lawyer)
-    return new_lawyer
+# @router.post("/lawyer/register", response_model=schemas.Lawyer)
+# def register_lawyer(lawyer: schemas.LawyerCreate, db: Session = Depends(get_db)):
+#     db_lawyer = db.query(models.Lawyer).filter(models.Lawyer.email == lawyer.email).first()
+#     if db_lawyer:
+#         raise HTTPException(status_code=400, detail="Email already registered")
+#     
+#     hashed_password = get_password_hash(lawyer.password)
+#     
+#     # Create new lawyer instance
+#     # Note: We exclude 'password' from the dict before creating the model
+#     lawyer_data = lawyer.dict(exclude={"password"})
+#     new_lawyer = models.Lawyer(
+#         **lawyer_data,
+#         hashed_password=hashed_password,
+#         role="lawyer",
+#         createdAt=datetime.now().strftime("%Y-%m-%d")
+#     )
+#     
+#     db.add(new_lawyer)
+#     db.commit()
+#     db.refresh(new_lawyer)
+#     return new_lawyer
 
 @router.post("/lawyer/login", response_model=schemas.Token)
 def login_lawyer(form_data: schemas.LawyerLogin, db: Session = Depends(get_db)):

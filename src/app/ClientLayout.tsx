@@ -24,6 +24,14 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         router.push('/admin/login');
       }
     }
+    
+    // Lawyer Protection 
+    if (isLawyerRoute && !isAuthPage) {
+       const lawyerToken = localStorage.getItem('lawyerToken');
+       if (!lawyerToken) {
+         router.push('/lawyer/login');
+       }
+    }
   }, [pathname, isLawyerRoute, isAuthPage, router]);
 
   if (isAuthPage) {

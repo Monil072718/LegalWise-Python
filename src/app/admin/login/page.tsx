@@ -28,7 +28,9 @@ export default function AdminLogin() {
       router.push('/');
     } catch (err: any) {
       console.error('Login error:', err);
-      setError('Invalid credentials');
+      // Try to get the actual error message from the response if available
+      const errorMessage = err.message || 'An error occurred during login';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

@@ -13,9 +13,12 @@ import {
   X
 } from 'lucide-react';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 
-export default function CaseDetails({ params }: { params: { id: string } }) {
-  const isNew = params.id === 'new';
+export default function CaseDetails() {
+  const params = useParams();
+  const id = params.id as string;
+  const isNew = id === 'new';
   
   const [formData, setFormData] = useState({
     title: isNew ? '' : 'Estate Dispute - Johnson Family',
@@ -46,7 +49,7 @@ export default function CaseDetails({ params }: { params: { id: string } }) {
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <h1 className="text-2xl font-bold text-gray-900">
-            {isNew ? 'New Case' : `Case ${params.id}`}
+            {isNew ? 'New Case' : `Case ${id}`}
           </h1>
         </div>
         <div className="flex gap-2">

@@ -11,12 +11,16 @@ import {
   Download,
   MoreHorizontal
 } from 'lucide-react';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function ClientDetails({ params }: { params: { id: string } }) {
+export default function ClientDetails() {
+  const params = useParams();
+  const id = params.id as string;
+
   // Mock data
   const client = {
-    id: params.id,
+    id: id,
     name: "Alice Johnson",
     email: "alice@example.com",
     phone: "+1 (555) 123-4567",

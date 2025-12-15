@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Users, FileText, Calendar, DollarSign, AlertCircle, Clock } from 'lucide-react';
+import { Users, FileText, Calendar, DollarSign, AlertCircle, Clock, Bell } from 'lucide-react';
+import { useWebSocket } from '../hooks/useWebSocket';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { api } from '../services/api';
 
@@ -39,6 +40,19 @@ export default function Dashboard() {
   const [caseStatusData, setCaseStatusData] = useState<CaseStatusData[]>([]);
   const [recentActivity, setRecentActivity] = useState<ActivityData[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const messages = useWebSocket('ws://localhost:8000/ws/admin');
+  const [notification, setNotification] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (messages.length > 0) {
+      const lastMessage = messages[messages.length - 1];
+      setNotification(`New Update: ${lastMessage}`);
+      // Auto-hide after 5 seconds
+      const timer = setTimeout(() => setNotification(null), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [messages]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -89,6 +103,18 @@ export default function Dashboard() {
           Last updated: {new Date().toLocaleString()}
         </div>
       </div>
+
+      {notification && (
+        <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4 rounded-r shadow-sm flex items-center justify-between">
+          <div className="flex items-center">
+             <Bell className="w-5 h-5 text-blue-600 mr-2" />
+             <span className="text-blue-700 font-medium">{notification}</span>
+          </div>
+          <button onClick={() => setNotification(null)} className="text-blue-500 hover:text-blue-700">
+            ×
+          </button>
+        </div>
+      )}
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 sm:gap-6">

@@ -28,6 +28,12 @@ def create_case(case: schemas.CaseBase, db: Session = Depends(database.get_db)):
     db.add(db_case)
     db.commit()
     db.refresh(db_case)
+    
+    # Broadcast update
+    from websocket_manager import manager
+    import asyncio
+    asyncio.create_task(manager.broadcast(f"New Case Created: {db_case.title}"))
+    
     return db_case
 
 @router.put("/{case_id}", response_model=schemas.Case)

@@ -81,7 +81,8 @@ export const api = {
     return response;
   },
   
-  forgotPassword: (email: string) => api.post<{ message: string; token?: string }>('/auth/forgot-password', { email }),
+  forgotPassword: (email: string) => api.post<{ message: string }>('/auth/forgot-password', { email }),
+  verifyOTP: (data: { email: string; otp: string }) => api.post<{ token: string; message: string }>('/auth/verify-otp', data),
   resetPassword: (data: any) => api.post<{ message: string }>('/auth/reset-password', data),
 
   updateLawyer: async (id: string, data: Partial<Lawyer>) => api.put<Lawyer>(`/lawyers/${id}`, data),

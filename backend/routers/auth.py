@@ -183,6 +183,11 @@ def login_universal(form_data: schemas.LoginRequest, db: Session = Depends(get_d
         headers={"WWW-Authenticate": "Bearer"},
     )
 
+import random
+import string
+from utils.email import send_email
+
+# NOTE: This endpoint now initiates the OTP flow
 @router.post("/forgot-password")
 def forgot_password_universal(request: schemas.PasswordResetRequest, db: Session = Depends(get_db)):
     # Check Admin first
@@ -198,21 +203,69 @@ def forgot_password_universal(request: schemas.PasswordResetRequest, db: Session
             role = "lawyer"
     
     if not role:
-         # Don't reveal if email exists or not for security
-        return {"message": "If email exists, reset instructions sent."}
+         # To prevent leaking email existence, we might return success, but user asked to "first check".
+         # So we will return 404 if not found as permitted by user request context ("first check...").
+         raise HTTPException(status_code=404, detail="Email not registered")
 
-    # Generate reset token (short lived)
+    # Generate 6-digit OTP
+    otp = ''.join(random.choices(string.digits, k=6))
+    expires_at = (datetime.utcnow() + timedelta(minutes=10)).isoformat()
+    
+    # Store OTP
+    # Check if entry exists for email, update it, else create new
+    # Actually, let's just create a new entry for simplicity, or delete old ones
+    db.query(models.PasswordReset).filter(models.PasswordReset.email == request.email).delete()
+    
+    reset_entry = models.PasswordReset(
+        email=request.email,
+        otp=otp,
+        expires_at=expires_at
+    )
+    db.add(reset_entry)
+    db.commit()
+    
+    # Send Email
+    subject = "LegalWise Password Reset OTP"
+    body = f"Your OTP for password reset is: {otp}. It expires in 10 minutes."
+    send_email(request.email, subject, body)
+    
+    print(f"DEV LOG - OTP for {request.email}: {otp}")
+    
+    return {"message": "OTP sent to your email"}
+
+@router.post("/verify-otp")
+def verify_otp_universal(data: schemas.OTPVerify, db: Session = Depends(get_db)):
+    record = db.query(models.PasswordReset).filter(
+        models.PasswordReset.email == data.email, 
+        models.PasswordReset.otp == data.otp
+    ).first()
+    
+    if not record:
+        raise HTTPException(status_code=400, detail="Invalid OTP")
+        
+    if datetime.fromisoformat(record.expires_at) < datetime.utcnow():
+        raise HTTPException(status_code=400, detail="OTP expired")
+        
+    # Check role again to issue token
+    role = "lawyer" # Default fallback
+    admin = db.query(models.Admin).filter(models.Admin.email == data.email).first()
+    if admin:
+        role = "admin"
+    else:
+        role = "lawyer" # We assume it exists because OTP was sent
+        
+    # Generate reset token (short lived, scoped)
     access_token_expires = timedelta(minutes=15)
     reset_token = create_access_token(
-        data={"sub": request.email, "role": role, "type": "reset"}, 
+        data={"sub": data.email, "role": role, "type": "reset_verified"}, 
         expires_delta=access_token_expires
     )
     
-    # In production: Send Email
-    print(f"RESET TOKEN FOR {request.email} ({role}): {reset_token}")
+    # Clean up OTP
+    db.delete(record)
+    db.commit()
     
-    # For Dev: Return the token
-    return {"message": "Reset link sent", "token": reset_token}
+    return {"token": reset_token, "message": "OTP verified"}
 
 @router.post("/reset-password")
 def reset_password_universal(data: schemas.PasswordResetConfirm, db: Session = Depends(get_db)):
@@ -222,8 +275,9 @@ def reset_password_universal(data: schemas.PasswordResetConfirm, db: Session = D
         role: str = payload.get("role")
         token_type: str = payload.get("type")
         
-        if email is None or token_type != "reset":
-            raise HTTPException(status_code=400, detail="Invalid token")
+        # Ensure it's a verified reset token
+        if email is None or token_type != "reset_verified":
+            raise HTTPException(status_code=400, detail="Invalid token type")
             
     except JWTError:
         raise HTTPException(status_code=400, detail="Invalid token")

@@ -115,3 +115,11 @@ class Article(Base):
     likes = Column(Integer)
     publishedAt = Column(String)
     status = Column(String)
+
+class PasswordReset(Base):
+    __tablename__ = "password_resets"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, index=True)
+    otp = Column(String)
+    expires_at = Column(String) # ISO format datetime

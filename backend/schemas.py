@@ -65,6 +65,10 @@ class LoginRequest(BaseModel):
 class PasswordResetRequest(BaseModel):
     email: str
 
+class OTPVerify(BaseModel):
+    email: str
+    otp: str
+
 class PasswordResetConfirm(BaseModel):
     token: str
     new_password: str

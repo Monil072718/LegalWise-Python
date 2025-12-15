@@ -7,7 +7,7 @@ import os
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
 SMTP_USERNAME = "nakranimonil18@gmail.com" # REPLACE WITH REAL EMAIL
-SMTP_PASSWORD = "your-app-password"    # REPLACE WITH REAL APP PASSWORD
+SMTP_PASSWORD = "uaec sbrh xond ehoy"    # REPLACE WITH REAL APP PASSWORD
 
 def send_email(to_email: str, subject: str, body: str):
     """

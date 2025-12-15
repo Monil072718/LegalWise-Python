@@ -77,7 +77,7 @@ export default function LawyerSidebar({ isCollapsed }: SidebarProps) {
         <div className="mt-auto pt-4 border-t border-slate-800">
            <button
               onClick={() => {
-                localStorage.removeItem('lawyerToken');
+                sessionStorage.removeItem('lawyerToken');
                 window.location.href = '/login';
               }}
               className={`w-full flex items-center px-2 sm:px-3 py-2 sm:py-3 rounded-lg text-red-400 hover:bg-slate-800 hover:text-red-300 transition-all duration-200`}

@@ -16,8 +16,8 @@ export default function UniversalLogin() {
 
   useEffect(() => {
     // Auto-redirect if already logged in
-    const adminToken = localStorage.getItem('adminToken');
-    const lawyerToken = localStorage.getItem('lawyerToken');
+    const adminToken = sessionStorage.getItem('adminToken');
+    const lawyerToken = sessionStorage.getItem('lawyerToken');
 
     if (adminToken) {
       router.push('/');
@@ -43,13 +43,13 @@ export default function UniversalLogin() {
       sessionStorage.setItem('showWelcome', 'true');
 
       if (role === 'admin') {
-        localStorage.setItem('adminToken', token);
+        sessionStorage.setItem('adminToken', token);
         router.push('/');
       } else if (role === 'lawyer') {
-        localStorage.setItem('lawyerToken', token);
+        sessionStorage.setItem('lawyerToken', token);
         router.push('/lawyer/dashboard');
       } else if (role === 'client') {
-        localStorage.setItem('clientToken', token); // Future proof
+        sessionStorage.setItem('clientToken', token); // Future proof
         router.push('/client/dashboard');
       } else {
         setError('Unknown user role');

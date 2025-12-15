@@ -34,7 +34,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     const checkAuth = async () => {
       // Admin Protection
       if (!isLawyerRoute && !isAuthPage) {
-        const adminToken = localStorage.getItem('adminToken');
+        const adminToken = sessionStorage.getItem('adminToken');
         console.log('Checking Admin Token:', adminToken);
         if (!adminToken) {
           console.log('No admin token, redirecting to /login');
@@ -55,7 +55,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       
       // Lawyer Protection 
       if (isLawyerRoute && !isAuthPage) {
-         const lawyerToken = localStorage.getItem('lawyerToken');
+         const lawyerToken = sessionStorage.getItem('lawyerToken');
          if (!lawyerToken) {
            router.push('/login');
            return;

@@ -11,9 +11,27 @@ const handleResponse = async (response: Response) => {
 };
 
 export const api = {
+  // Helper to get auth headers
+  getHeaders: () => {
+    const adminToken = typeof window !== 'undefined' ? (sessionStorage.getItem('adminToken') || localStorage.getItem('adminToken')) : null;
+    const lawyerToken = typeof window !== 'undefined' ? (sessionStorage.getItem('lawyerToken') || localStorage.getItem('lawyerToken')) : null;
+    // Simple heuristic: if we are in admin section (or have admin token and no lawyer token?), use admin.
+    // Ideally, the caller should specify, but for now let's pick one. 
+    // Usually only one should be active per 'view' but since we moved to sessionStorage, we can be more specific.
+    // However, keeping it simple: use the one that exists.
+    const token = adminToken || lawyerToken;
+    
+    return {
+      'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+    };
+  },
+
   // General keys
   get: async <T>(endpoint: string): Promise<T> => {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`);
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      headers: api.getHeaders()
+    });
     return handleResponse(response);
   },
 
@@ -22,7 +40,7 @@ export const api = {
     try {
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: api.getHeaders(),
         body: JSON.stringify(data),
       });
       console.log(`API POST Response Status: ${response.status}`);
@@ -36,7 +54,7 @@ export const api = {
   put: async <T>(endpoint: string, data: any): Promise<T> => {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: api.getHeaders(),
       body: JSON.stringify(data),
     });
     return handleResponse(response);
@@ -45,6 +63,7 @@ export const api = {
   delete: async <T>(endpoint: string): Promise<T> => {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'DELETE',
+      headers: api.getHeaders(),
     });
     return handleResponse(response);
   },

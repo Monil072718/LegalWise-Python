@@ -57,7 +57,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       if (isLawyerRoute && !isAuthPage) {
          const lawyerToken = localStorage.getItem('lawyerToken');
          if (!lawyerToken) {
-           router.push('/lawyer/login');
+           router.push('/login');
            return;
          }
          try {

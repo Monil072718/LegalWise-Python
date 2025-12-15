@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from 'react';
 import { Users, FileText, Calendar, DollarSign, AlertCircle, Clock } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
@@ -22,6 +24,7 @@ interface CaseStatusData {
   name: string;
   value: number;
   color: string;
+  [key: string]: string | number;
 }
 
 interface ActivityData {

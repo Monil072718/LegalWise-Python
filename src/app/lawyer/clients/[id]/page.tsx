@@ -7,7 +7,6 @@ import {
   Phone, 
   MapPin, 
   FileText, 
-  Clock, 
   Download,
   MoreHorizontal
 } from 'lucide-react';

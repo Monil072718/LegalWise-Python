@@ -7,9 +7,7 @@ import {
   Trash2, 
   Upload, 
   File, 
-  MoreVertical,
   Calendar,
-  CheckCircle,
   X
 } from 'lucide-react';
 import Link from 'next/link';
@@ -37,7 +35,7 @@ export default function CaseDetails() {
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Saving case:', formData);
+    // console.log('Saving case:', formData);
     // Add API call here
   };
 

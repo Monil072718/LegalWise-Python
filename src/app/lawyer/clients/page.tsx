@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, Filter, MoreVertical, Eye, FileText, Activity } from 'lucide-react';
+import { Search, Filter, Eye, FileText, Activity } from 'lucide-react';
 import Link from 'next/link';
 
 export default function LawyerClients() {

@@ -6,9 +6,7 @@ import {
   Clock, 
   CheckCircle, 
   XCircle, 
-  User, 
-  MapPin, 
-  Video 
+  User 
 } from 'lucide-react';
 
 export default function LawyerAppointments() {

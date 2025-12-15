@@ -6,7 +6,6 @@ import {
   Filter, 
   Plus, 
   FileText, 
-  MoreVertical, 
   Clock, 
   AlertCircle,
   Users 

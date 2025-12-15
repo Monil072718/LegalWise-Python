@@ -27,6 +27,19 @@ export default function LawyerAppointments() {
     { id: 103, title: "Document Review", time: "03:00 PM", type: "work", color: "bg-gray-100 border-gray-200 text-gray-800" },
   ];
 
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterType, setFilterType] = useState('All');
+
+  const filteredRequests = requests.filter(req => {
+      const matchesSearch = req.client.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesType = filterType === 'All' || req.type.includes(filterType); // Rough match
+      return matchesSearch && matchesType;
+  });
+
+  const filteredEvents = events.filter(evt => {
+       return evt.title.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+
   return (
     <div className="p-6 h-[calc(100vh-64px)] flex flex-col">
       <div className="flex justify-between items-center mb-6">
@@ -50,6 +63,31 @@ export default function LawyerAppointments() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0">
         {/* Main View */}
         <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col overflow-hidden">
+            
+          {/* Internal Search/Filter Bar */}
+          <div className="flex justify-between items-center mb-4 gap-4">
+               <div className="relative flex-1">
+                 <input 
+                     type="text" 
+                     placeholder={activeTab === 'calendar' ? "Search events..." : "Search requests..."}
+                     value={searchTerm}
+                     onChange={(e) => setSearchTerm(e.target.value)}
+                     className="w-full pl-4 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
+                 />
+               </div>
+               {activeTab === 'requests' && (
+                   <select 
+                        value={filterType}
+                        onChange={(e) => setFilterType(e.target.value)}
+                        className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+                    >
+                       <option value="All">All Types</option>
+                       <option value="Consultation">Consultation</option>
+                       <option value="Review">Review</option>
+                   </select>
+               )}
+          </div>
+
           {activeTab === 'calendar' ? (
             <div className="flex-1 flex flex-col">
               <div className="flex justify-between items-center mb-6">
@@ -67,8 +105,8 @@ export default function LawyerAppointments() {
                    const hour = i + 9; // 9 AM start
                    const timeLabel = hour > 12 ? `${hour - 12} PM` : `${hour} AM`;
                    
-                   // Find events for this hour
-                   const hourEvents = events.filter(e => {
+                   // Find events for this hour (Filtered)
+                   const hourEvents = filteredEvents.filter(e => {
                      const eventHour = parseInt(e.time.split(':')[0]);
                      return eventHour === hour || (eventHour === hour - 12 && e.time.includes('PM')); // Very rough parsing
                    });
@@ -99,7 +137,7 @@ export default function LawyerAppointments() {
           ) : (
             <div className="space-y-4">
               <h2 className="text-lg font-bold text-gray-900 mb-4">Pending Requests</h2>
-              {requests.map((req) => (
+              {filteredRequests.map((req) => (
                 <div key={req.id} className="border border-gray-200 rounded-lg p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                   <div className="flex items-start gap-4">
                     <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
@@ -124,7 +162,7 @@ export default function LawyerAppointments() {
                   </div>
                 </div>
               ))}
-              {requests.length === 0 && (
+              {filteredRequests.length === 0 && (
                 <div className="text-center text-gray-500 py-12">No pending requests</div>
               )}
             </div>

@@ -95,7 +95,7 @@ export default function LawyerCases() {
           />
         </div>
         <div className="flex gap-2">
-          {['All', 'In Progress', 'Start', 'Closed'].map((status) => (
+          {['All', 'In Progress', 'Start', 'Closed', 'Won', 'Lost', 'Review'].map((status) => (
             <button
               key={status}
               onClick={() => setStatusFilter(status)}
@@ -112,7 +112,12 @@ export default function LawyerCases() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {cases.map((caseItem) => (
+        {cases.filter(caseItem => {
+             const matchesSearch = caseItem.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                                   caseItem.client.toLowerCase().includes(searchTerm.toLowerCase());
+             const matchesStatus = statusFilter === 'All' || caseItem.status === statusFilter;
+             return matchesSearch && matchesStatus;
+        }).map((caseItem) => (
           <Link key={caseItem.id} href={`/lawyer/cases/${caseItem.id}`} className="block group">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all duration-200">
               <div className="flex justify-between items-start mb-4">

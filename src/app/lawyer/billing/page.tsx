@@ -104,6 +104,18 @@ export default function LawyerBilling() {
       setNewInvoice({ client: '', amount: '', description: 'Legal Services' });
   };
 
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('All');
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+
+  const filteredInvoices = invoices.filter(inv => {
+      const matchesSearch = inv.client.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                            inv.id.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = statusFilter === 'All' || inv.status === statusFilter;
+      return matchesSearch && matchesStatus;
+  });
+
   return (
     <div className="p-6 relative">
       <div className="flex justify-between items-center mb-6">
@@ -117,6 +129,7 @@ export default function LawyerBilling() {
         </button>
       </div>
 
+      {/* Stats Cards ... (Keep existing code) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
            <p className="text-sm font-medium text-gray-600">Total Revenue (Month)</p>
@@ -136,8 +149,43 @@ export default function LawyerBilling() {
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="p-6 border-b border-gray-200">
+        <div className="p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
           <h2 className="text-lg font-bold text-gray-900">Recent Invoices</h2>
+          <div className="flex gap-2 w-full sm:w-auto">
+             <div className="relative flex-1 sm:w-64">
+                 <input 
+                     type="text" 
+                     placeholder="Search invoices..." 
+                     value={searchTerm}
+                     onChange={(e) => setSearchTerm(e.target.value)}
+                     className="w-full pl-4 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                 />
+             </div>
+             <div className="relative">
+                <button 
+                    onClick={() => setShowFilterDropdown(!showFilterDropdown)}
+                    className={`px-4 py-2 border rounded-lg flex items-center gap-2 text-sm font-medium hover:bg-gray-50 transition-colors ${statusFilter !== 'All' ? 'border-blue-500 text-blue-600 bg-blue-50' : 'border-gray-300 text-gray-700'}`}
+                >
+                    {statusFilter === 'All' ? 'Filter' : statusFilter}
+                </button>
+                {showFilterDropdown && (
+                    <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-10 animate-fade-in-up">
+                        {['All', 'Paid', 'Pending'].map((status) => (
+                            <button
+                                key={status}
+                                onClick={() => {
+                                    setStatusFilter(status);
+                                    setShowFilterDropdown(false);
+                                }}
+                                className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 ${statusFilter === status ? 'text-blue-600 font-medium bg-blue-50' : 'text-gray-700'}`}
+                            >
+                                {status}
+                            </button>
+                        ))}
+                    </div>
+                )}
+             </div>
+          </div>
         </div>
         <table className="w-full">
           <thead>
@@ -151,7 +199,7 @@ export default function LawyerBilling() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {invoices.map((inv) => (
+            {filteredInvoices.map((inv) => (
               <tr key={inv.id}>
                 <td className="px-6 py-4 font-medium text-gray-900">{inv.id}</td>
                 <td className="px-6 py-4">{inv.client}</td>

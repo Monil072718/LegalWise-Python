@@ -7,6 +7,9 @@ import Link from 'next/link';
 export default function LawyerClients() {
   const [searchTerm, setSearchTerm] = useState('');
   
+  const [statusFilter, setStatusFilter] = useState('All');
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+
   // Mock data
   const clients = [
     { 
@@ -41,10 +44,12 @@ export default function LawyerClients() {
     },
   ];
 
-  const filteredClients = clients.filter(client => 
-    client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    client.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredClients = clients.filter(client => {
+    const matchesSearch = client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          client.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'All' || client.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
 
   return (
     <div className="p-6">
@@ -61,10 +66,32 @@ export default function LawyerClients() {
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
-          <button className="px-4 py-2 border border-gray-300 rounded-lg flex items-center gap-2 hover:bg-gray-50 text-gray-700">
-            <Filter className="w-4 h-4" />
-            <span className="hidden sm:inline">Filter</span>
-          </button>
+          <div className="relative">
+            <button 
+                onClick={() => setShowFilterDropdown(!showFilterDropdown)}
+                className={`px-4 py-2 border rounded-lg flex items-center gap-2 hover:bg-gray-50 transition-colors ${statusFilter !== 'All' ? 'border-blue-500 text-blue-600 bg-blue-50' : 'border-gray-300 text-gray-700'}`}
+            >
+                <Filter className="w-4 h-4" />
+                <span className="hidden sm:inline">{statusFilter === 'All' ? 'Filter' : statusFilter}</span>
+            </button>
+            
+            {showFilterDropdown && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-10 animate-fade-in-up">
+                    {['All', 'Active', 'Pending'].map((status) => (
+                        <button
+                            key={status}
+                            onClick={() => {
+                                setStatusFilter(status);
+                                setShowFilterDropdown(false);
+                            }}
+                            className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 ${statusFilter === status ? 'text-blue-600 font-medium bg-blue-50' : 'text-gray-700'}`}
+                        >
+                            {status}
+                        </button>
+                    ))}
+                </div>
+            )}
+          </div>
         </div>
       </div>
 

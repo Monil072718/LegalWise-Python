@@ -22,6 +22,10 @@ export interface Lawyer extends User {
   bio?: string;
 }
 
+export interface LawyerCreate extends Omit<Lawyer, 'id' | 'rating' | 'casesHandled' | 'documents' | 'createdAt'> {
+  password: string;
+}
+
 export interface Client extends User {
   role: 'client';
   consultations: number;

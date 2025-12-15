@@ -21,7 +21,8 @@ export default function LawyerManagement() {
     phone: '',
     address: '',
     bio: '',
-    password: ''
+    password: '',
+    confirmPassword: ''
   });
 
   useEffect(() => {
@@ -67,18 +68,24 @@ export default function LawyerManagement() {
 
   const handleAddLawyer = async () => {
     try {
+      // Get values from DOM elements for fields not in simple state
+      // (Optimally this should be in state, but for this quick fix we use IDs)
+      const statusEl = document.getElementById('lawyer-status') as HTMLSelectElement;
+      const availabilityEl = document.getElementById('lawyer-availability') as HTMLSelectElement;
+      const verifiedEl = document.getElementById('lawyer-verified') as HTMLInputElement;
+
       const newLawyerData = {
         name: formData.name,
         email: formData.email,
-        password: formData.password || 'TemporaryPassword123!', // Default fallback if needed, but should be required
+        password: formData.password,
         role: 'lawyer' as const,
-        status: 'pending' as const,
-        specialization: formData.specialization.split(',').map((s: string) => s.trim()),
+        status: (statusEl?.value || 'active') as 'active' | 'pending' | 'inactive',
+        specialization: formData.specialization.split(',').map((s: string) => s.trim()).filter(s => s),
         experience: parseInt(formData.experience) || 0,
         rating: 0,
         casesHandled: 0,
-        availability: 'offline' as const,
-        verified: false,
+        availability: (availabilityEl?.value || 'offline') as 'online' | 'offline' | 'busy',
+        verified: verifiedEl?.checked || false,
         createdAt: new Date().toISOString().split('T')[0],
         documents: [],
         phone: formData.phone,
@@ -86,9 +93,20 @@ export default function LawyerManagement() {
         bio: formData.bio
       };
 
-      const createdLawyer = await api.createLawyer(newLawyerData);
-      setLawyers([...lawyers, createdLawyer]);
-      setFormData({ name: '', email: '', password: '', specialization: '', experience: '', phone: '', address: '', bio: '' });
+      if (!newLawyerData.name || !newLawyerData.email || !newLawyerData.password || !newLawyerData.specialization.length) {
+        alert('Please fill in all required fields');
+        return;
+      }
+
+      if (formData.password !== formData.confirmPassword) {
+        alert('Passwords do not match');
+        return;
+      }
+
+      await api.createLawyer(newLawyerData);
+      // Refresh list
+      fetchLawyers();
+      setFormData({ name: '', email: '', password: '', confirmPassword: '', specialization: '', experience: '', phone: '', address: '', bio: '' });
       setShowAddModal(false);
     } catch (error) {
       console.error('Failed to create lawyer:', error);
@@ -413,6 +431,7 @@ export default function LawyerManagement() {
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Enter full name"
+                    required
                   />
                 </div>
                 
@@ -424,6 +443,7 @@ export default function LawyerManagement() {
                     onChange={(e) => setFormData({...formData, email: e.target.value})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="lawyer@email.com"
+                    required
                   />
                 </div>
               </div>
@@ -436,6 +456,21 @@ export default function LawyerManagement() {
                   onChange={(e) => setFormData({...formData, password: e.target.value})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Set initial password"
+                  required
+                  minLength={8}
+                />
+                <p className="text-xs text-gray-500 mt-1">Must be at least 8 characters long</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Confirm Password *</label>
+                <input
+                  type="password"
+                  value={formData.confirmPassword}
+                  onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Re-enter password"
+                  required
                 />
               </div>
               
@@ -460,10 +495,49 @@ export default function LawyerManagement() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="5"
                     min="0"
+                    required
                   />
                 </div>
               </div>
               
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                 <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Account Status</label>
+                  <select
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    defaultValue="active"
+                    // No state for this yet in formData, will perform update in handleAddLawyer
+                    id="lawyer-status"
+                  >
+                    <option value="active">Active</option>
+                    <option value="pending">Pending</option>
+                    <option value="inactive">Inactive</option>
+                  </select>
+                </div>
+                 <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Initial Availability</label>
+                  <select
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    defaultValue="offline"
+                    id="lawyer-availability"
+                  >
+                    <option value="online">Online</option>
+                    <option value="offline">Offline</option>
+                    <option value="busy">Busy</option>
+                  </select>
+                </div>
+                <div className="flex items-center pt-8">
+                   <input 
+                      type="checkbox" 
+                      id="lawyer-verified"
+                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                   />
+                   <label htmlFor="lawyer-verified" className="ml-2 block text-sm text-gray-900">
+                     Mark as Verified
+                   </label>
+                </div>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Specialization *</label>
                 <input
@@ -471,7 +545,8 @@ export default function LawyerManagement() {
                   value={formData.specialization}
                   onChange={(e) => setFormData({...formData, specialization: e.target.value})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Criminal Law, Family Law (comma separated)"
+                  placeholder="Criminal Law, Family Law"
+                  required
                 />
                 <p className="text-xs text-gray-500 mt-1">Separate multiple specializations with commas</p>
               </div>
@@ -498,14 +573,6 @@ export default function LawyerManagement() {
                 />
               </div>
               
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Documents</label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors duration-200">
-                  <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                  <p className="text-sm text-gray-600">Upload bar certificate and other documents</p>
-                  <p className="text-xs text-gray-500 mt-1">PDF, DOC, DOCX up to 10MB</p>
-                </div>
-              </div>
             </div>
             <div className="p-6 border-t border-gray-200 flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3">
               <button
@@ -518,7 +585,7 @@ export default function LawyerManagement() {
                 onClick={handleAddLawyer}
                 className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
               >
-                Add Lawyer
+                Create Lawyer
               </button>
             </div>
           </div>

@@ -45,7 +45,7 @@ export const api = {
   // Lawyers
   getLawyers: () => api.get<Lawyer[]>('/lawyers/'),
   getLawyer: (id: string) => api.get<Lawyer>(`/lawyers/${id}`),
-  createLawyer: async (data: Omit<Lawyer, 'id' | 'rating' | 'casesHandled' | 'verified' | 'documents'>) => {
+  createLawyer: async (data: any) => {
     const response = await api.post<Lawyer>('/lawyers/', data);
     return response;
   },

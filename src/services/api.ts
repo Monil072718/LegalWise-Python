@@ -18,12 +18,19 @@ export const api = {
   },
 
   post: async <T>(endpoint: string, data: any): Promise<T> => {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
-    return handleResponse(response);
+    console.log(`API POST Request: ${endpoint}`, data);
+    try {
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      console.log(`API POST Response Status: ${response.status}`);
+      return handleResponse(response);
+    } catch (error) {
+      console.error(`API POST Error:`, error);
+      throw error;
+    }
   },
 
   put: async <T>(endpoint: string, data: any): Promise<T> => {

@@ -147,15 +147,21 @@ def login_admin(form_data: schemas.AdminLogin, db: Session = Depends(get_db)):
 
 @router.post("/login", response_model=schemas.Token)
 def login_universal(form_data: schemas.LoginRequest, db: Session = Depends(get_db)):
+    print(f"Login attempt for: {form_data.email}")
     # Check Admin first
     admin = db.query(models.Admin).filter(models.Admin.email == form_data.email).first()
-    if admin and verify_password(form_data.password, admin.hashed_password):
-        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-        access_token = create_access_token(
-            data={"sub": admin.email, "role": "admin", "id": admin.id}, 
-            expires_delta=access_token_expires
-        )
-        return {"access_token": access_token, "token_type": "bearer"}
+    print(f"Admin found: {admin}")
+    if admin:
+         print(f"Verifying password for admin...")
+         is_valid = verify_password(form_data.password, admin.hashed_password)
+         print(f"Password valid: {is_valid}")
+         if is_valid:
+            access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+            access_token = create_access_token(
+                data={"sub": admin.email, "role": "admin", "id": admin.id}, 
+                expires_delta=access_token_expires
+            )
+            return {"access_token": access_token, "token_type": "bearer"}
     
     # Check Lawyer
     lawyer = db.query(models.Lawyer).filter(models.Lawyer.email == form_data.email).first()

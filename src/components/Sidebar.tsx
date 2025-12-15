@@ -82,7 +82,7 @@ export default function Sidebar({ isCollapsed }: SidebarProps) {
            <button
               onClick={() => {
                 localStorage.removeItem('adminToken');
-                window.location.href = '/admin/login';
+                window.location.href = '/login';
               }}
               className={`w-full flex items-center px-2 sm:px-3 py-2 sm:py-3 rounded-lg text-red-400 hover:bg-slate-800 hover:text-red-300 transition-all duration-200`}
               title={isCollapsed ? "Logout" : undefined}

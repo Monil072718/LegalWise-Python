@@ -78,7 +78,7 @@ export default function LawyerSidebar({ isCollapsed }: SidebarProps) {
            <button
               onClick={() => {
                 localStorage.removeItem('lawyerToken');
-                window.location.href = '/lawyer/login';
+                window.location.href = '/login';
               }}
               className={`w-full flex items-center px-2 sm:px-3 py-2 sm:py-3 rounded-lg text-red-400 hover:bg-slate-800 hover:text-red-300 transition-all duration-200`}
               title={isCollapsed ? "Logout" : undefined}

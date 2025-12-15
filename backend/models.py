@@ -27,6 +27,7 @@ class Lawyer(Base):
     id = Column(String, primary_key=True, index=True)
     name = Column(String, index=True)
     email = Column(String, unique=True, index=True)
+    hashed_password = Column(String)
     role = Column(String, default="lawyer")
     status = Column(String)
     specialization = Column(JSON) # List of strings

@@ -47,6 +47,20 @@ class Lawyer(LawyerBase):
     class Config:
         orm_mode = True
 
+class LawyerCreate(LawyerBase):
+    password: str
+
+class LawyerLogin(BaseModel):
+    email: str
+    password: str
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    email: Optional[str] = None
+
 class ClientBase(BaseModel):
     name: str
     email: str

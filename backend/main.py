@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from typing import List
 
-from routers import lawyers, clients, cases, appointments, dashboard, books, articles, payments, analytics
+from routers import lawyers, clients, cases, appointments, dashboard, books, articles, payments, analytics, auth
 import models
 import database
 
@@ -20,6 +20,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth.router)
 app.include_router(lawyers.router)
 app.include_router(clients.router)
 app.include_router(cases.router)

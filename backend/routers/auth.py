@@ -145,6 +145,38 @@ def login_admin(form_data: schemas.AdminLogin, db: Session = Depends(get_db)):
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
+@router.post("/login", response_model=schemas.Token)
+def login_universal(form_data: schemas.LoginRequest, db: Session = Depends(get_db)):
+    # Check Admin first
+    admin = db.query(models.Admin).filter(models.Admin.email == form_data.email).first()
+    if admin and verify_password(form_data.password, admin.hashed_password):
+        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token = create_access_token(
+            data={"sub": admin.email, "role": "admin", "id": admin.id}, 
+            expires_delta=access_token_expires
+        )
+        return {"access_token": access_token, "token_type": "bearer"}
+    
+    # Check Lawyer
+    lawyer = db.query(models.Lawyer).filter(models.Lawyer.email == form_data.email).first()
+    if lawyer and verify_password(form_data.password, lawyer.hashed_password):
+        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token = create_access_token(
+            data={"sub": lawyer.email, "role": "lawyer", "id": lawyer.id}, 
+            expires_delta=access_token_expires
+        )
+        return {"access_token": access_token, "token_type": "bearer"}
+        
+    # Check Client (Future)
+    # client = db.query(models.Client).filter(models.Client.email == form_data.email).first()
+    # ...
+
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Incorrect email or password",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
 # Dependency update for admin?
 # We can use get_current_user generally, but need to make sure models.Admin is queried if role is admin
 

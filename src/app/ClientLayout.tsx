@@ -25,7 +25,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   // Route Groups
   // FIX: Use '/lawyer/' with trailing slash to avoid matching '/lawyers' (Admin route)
   const isLawyerRoute = pathname === '/lawyer' || pathname?.startsWith('/lawyer/');
-  const isAuthPage = pathname === '/lawyer/login' || pathname === '/lawyer/register' || pathname === '/admin/login';
+  const isAuthPage = pathname === '/login' || pathname === '/lawyer/login' || pathname === '/lawyer/register' || pathname === '/admin/login';
   
   // Auth Protection & User Fetching
   useEffect(() => {
@@ -35,9 +35,11 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       // Admin Protection
       if (!isLawyerRoute && !isAuthPage) {
         const adminToken = localStorage.getItem('adminToken');
+        console.log('Checking Admin Token:', adminToken);
         if (!adminToken) {
-          router.push('/admin/login');
-          return;
+          console.log('No admin token, redirecting to /login');
+          router.push('/login');
+          return; // Stop further execution
         }
         try {
             const decoded: any = jwtDecode(adminToken);

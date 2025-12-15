@@ -10,6 +10,32 @@ import database
 
 models.Base.metadata.create_all(bind=database.engine)
 
+# Seed default admin
+def create_default_admin():
+    db = database.SessionLocal()
+    from routers.auth import get_password_hash
+    import uuid
+    from datetime import datetime
+    
+    admin_email = "admin@legalwise.com"
+    existing_admin = db.query(models.Admin).filter(models.Admin.email == admin_email).first()
+    
+    if not existing_admin:
+        default_admin = models.Admin(
+            id=str(uuid.uuid4()),
+            email=admin_email,
+            hashed_password=get_password_hash("admin123"),
+            name="Super Admin",
+            role="admin",
+            createdAt=datetime.now().strftime("%Y-%m-%d")
+        )
+        db.add(default_admin)
+        db.commit()
+        print(f"Default admin created: {admin_email}")
+    db.close()
+
+create_default_admin()
+
 app = FastAPI()
 
 # Configure CORS

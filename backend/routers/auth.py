@@ -10,6 +10,7 @@ import os
 import database
 import models
 import schemas
+import uuid # Imported uuid
 
 router = APIRouter(
     prefix="/auth",
@@ -69,6 +70,8 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         user = db.query(models.Lawyer).filter(models.Lawyer.email == token_data.email).first()
     elif role == "client":
         user = db.query(models.Client).filter(models.Client.email == token_data.email).first()
+    elif role == "admin":
+        user = db.query(models.Admin).filter(models.Admin.email == token_data.email).first()
     else:
         user = None
         
@@ -124,3 +127,25 @@ def login_lawyer(form_data: schemas.LawyerLogin, db: Session = Depends(get_db)):
         expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
+
+@router.post("/admin/login", response_model=schemas.Token)
+def login_admin(form_data: schemas.AdminLogin, db: Session = Depends(get_db)):
+    admin = db.query(models.Admin).filter(models.Admin.email == form_data.email).first()
+    if not admin or not verify_password(form_data.password, admin.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": admin.email, "role": "admin", "id": admin.id}, 
+        expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+# Dependency update for admin?
+# We can use get_current_user generally, but need to make sure models.Admin is queried if role is admin
+
+

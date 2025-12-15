@@ -21,6 +21,16 @@ class Client(Base):
     company = Column(String, nullable=True)
     notes = Column(String, nullable=True)
 
+class Admin(Base):
+    __tablename__ = "admins"
+
+    id = Column(String, primary_key=True, index=True)
+    email = Column(String, unique=True, index=True)
+    hashed_password = Column(String)
+    role = Column(String, default="admin")
+    name = Column(String)
+    createdAt = Column(String)
+
 class Lawyer(Base):
     __tablename__ = "lawyers"
 

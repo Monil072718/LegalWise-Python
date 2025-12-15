@@ -45,8 +45,17 @@ export const api = {
   // Lawyers
   getLawyers: () => api.get<Lawyer[]>('/lawyers/'),
   getLawyer: (id: string) => api.get<Lawyer>(`/lawyers/${id}`),
-  createLawyer: (data: Partial<Lawyer>) => api.post<Lawyer>('/lawyers/', data),
-  updateLawyer: (id: string, data: Partial<Lawyer>) => api.put<Lawyer>(`/lawyers/${id}`, data),
+  createLawyer: async (data: Omit<Lawyer, 'id' | 'rating' | 'casesHandled' | 'verified' | 'documents'>) => {
+    const response = await api.post<Lawyer>('/lawyers/', data);
+    return response;
+  },
+  
+  loginAdmin: async (data: any) => {
+    const response = await api.post<any>('/auth/admin/login', data);
+    return response;
+  },
+  
+  updateLawyer: async (id: string, data: Partial<Lawyer>) => api.put<Lawyer>(`/lawyers/${id}`, data),
   deleteLawyer: (id: string) => api.delete<void>(`/lawyers/${id}`),
 
   // Clients

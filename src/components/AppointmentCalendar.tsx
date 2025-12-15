@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from 'react';
 import { Calendar, Clock, CheckCircle, XCircle, Eye, Filter, User } from 'lucide-react';
 import { Appointment } from '../types';

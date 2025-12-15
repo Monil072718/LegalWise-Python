@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from 'react';
 import { Search, Plus, Eye, TrendingUp, Users, Briefcase, Star, Clock, X, Edit, Trash2 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';

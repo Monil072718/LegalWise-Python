@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from 'react';
 import { DollarSign, TrendingUp, CreditCard, RefreshCw, Download, Filter, Eye, CheckCircle, XCircle, AlertTriangle, Plus } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';

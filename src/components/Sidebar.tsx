@@ -11,7 +11,8 @@ import {
   BarChart3, 
   BookOpen, 
   Briefcase,
-  Settings
+  Settings,
+  LogOut
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -50,8 +51,8 @@ export default function Sidebar({ isCollapsed }: SidebarProps) {
         )}
       </div>
       
-      <nav className="flex-1 p-2 sm:p-4">
-        <ul className="space-y-1 sm:space-y-2">
+      <nav className="flex-1 flex flex-col p-2 sm:p-4">
+        <ul className="space-y-1 sm:space-y-2 flex-1">
           {navigationItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
@@ -76,6 +77,22 @@ export default function Sidebar({ isCollapsed }: SidebarProps) {
             );
           })}
         </ul>
+
+        <div className="mt-auto pt-4 border-t border-slate-800">
+           <button
+              onClick={() => {
+                localStorage.removeItem('adminToken');
+                window.location.href = '/admin/login';
+              }}
+              className={`w-full flex items-center px-2 sm:px-3 py-2 sm:py-3 rounded-lg text-red-400 hover:bg-slate-800 hover:text-red-300 transition-all duration-200`}
+              title={isCollapsed ? "Logout" : undefined}
+            >
+              <LogOut className="w-5 h-5 flex-shrink-0" />
+              <span className={`ml-3 transition-opacity duration-300 text-sm sm:text-base ${isCollapsed ? 'opacity-0 hidden' : 'opacity-100'}`}>
+                Logout
+              </span>
+            </button>
+        </div>
       </nav>
     </div>
   );

@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from 'react';
 import { Search, Plus, Eye, Edit, Trash2, AlertTriangle, Calendar, FileText, User, X, Upload } from 'lucide-react';
 import { Case, Lawyer, Client } from '../types';

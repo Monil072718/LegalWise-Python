@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from 'react';
 import { Bell, Send, AlertTriangle, Calendar, FileText, DollarSign, Plus, Clock, CheckCircle, XCircle } from 'lucide-react';
 

@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from 'react';
 import { Search, Plus, Eye, Edit, Trash2, BookOpen, FileText, Download, Star } from 'lucide-react';
 import { Book, Article } from '../types';

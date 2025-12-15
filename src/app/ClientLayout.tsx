@@ -25,7 +25,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   // Route Groups
   // FIX: Use '/lawyer/' with trailing slash to avoid matching '/lawyers' (Admin route)
   const isLawyerRoute = pathname === '/lawyer' || pathname?.startsWith('/lawyer/');
-  const isAuthPage = pathname === '/login' || pathname === '/lawyer/login' || pathname === '/lawyer/register' || pathname === '/admin/login';
+  const isAuthPage = pathname === '/login' || pathname === '/lawyer/login' || pathname === '/lawyer/register' || pathname === '/admin/login' || pathname === '/forgot-password' || pathname === '/reset-password';
   
   // Auth Protection & User Fetching
   useEffect(() => {

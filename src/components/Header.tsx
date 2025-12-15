@@ -3,9 +3,14 @@ import { Menu, Search, Bell, User } from 'lucide-react';
 
 interface HeaderProps {
   onToggleSidebar: () => void;
+  user?: {
+    name: string;
+    email: string;
+    role: string;
+  } | null;
 }
 
-export default function Header({ onToggleSidebar }: HeaderProps) {
+export default function Header({ onToggleSidebar, user }: HeaderProps) {
   return (
     <header className="bg-white border-b border-gray-200 px-3 sm:px-6 py-3 sm:py-4 relative z-30">
       <div className="flex items-center justify-between">
@@ -40,12 +45,12 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
           </button>
           
           <div className="flex items-center space-x-2 sm:space-x-3">
-            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${user?.role === 'lawyer' ? 'bg-blue-600' : 'bg-gray-800'}`}>
               <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </div>
             <div className="text-sm hidden sm:block">
-              <div className="font-medium">Admin User</div>
-              <div className="text-gray-500 text-xs">admin@legal.com</div>
+              <div className="font-medium">{user?.name || 'Loading...'}</div>
+              <div className="text-gray-500 text-xs">{user?.email || '...'}</div>
             </div>
           </div>
         </div>

@@ -22,6 +22,7 @@ export default function LawyerLogin() {
     try {
       const response = await authApi.login(formData);
       localStorage.setItem('lawyerToken', response.access_token);
+      sessionStorage.setItem('showWelcome', 'true');
       router.push('/lawyer/dashboard');
     } catch (err: any) {
       console.error('Login error:', err);

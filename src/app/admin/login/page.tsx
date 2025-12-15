@@ -25,6 +25,7 @@ export default function AdminLogin() {
       // I'll add it to services/api.ts in next step.
       const response = await api.loginAdmin(formData);
       localStorage.setItem('adminToken', response.access_token);
+      sessionStorage.setItem('showWelcome', 'true');
       router.push('/');
     } catch (err: any) {
       console.error('Login error:', err);

@@ -183,6 +183,66 @@ def login_universal(form_data: schemas.LoginRequest, db: Session = Depends(get_d
         headers={"WWW-Authenticate": "Bearer"},
     )
 
+@router.post("/forgot-password")
+def forgot_password_universal(request: schemas.PasswordResetRequest, db: Session = Depends(get_db)):
+    # Check Admin first
+    admin = db.query(models.Admin).filter(models.Admin.email == request.email).first()
+    role = None
+    
+    if admin:
+        role = "admin"
+    else:
+        # Check Lawyer
+        lawyer = db.query(models.Lawyer).filter(models.Lawyer.email == request.email).first()
+        if lawyer:
+            role = "lawyer"
+    
+    if not role:
+         # Don't reveal if email exists or not for security
+        return {"message": "If email exists, reset instructions sent."}
+
+    # Generate reset token (short lived)
+    access_token_expires = timedelta(minutes=15)
+    reset_token = create_access_token(
+        data={"sub": request.email, "role": role, "type": "reset"}, 
+        expires_delta=access_token_expires
+    )
+    
+    # In production: Send Email
+    print(f"RESET TOKEN FOR {request.email} ({role}): {reset_token}")
+    
+    # For Dev: Return the token
+    return {"message": "Reset link sent", "token": reset_token}
+
+@router.post("/reset-password")
+def reset_password_universal(data: schemas.PasswordResetConfirm, db: Session = Depends(get_db)):
+    try:
+        payload = jwt.decode(data.token, SECRET_KEY, algorithms=[ALGORITHM])
+        email: str = payload.get("sub")
+        role: str = payload.get("role")
+        token_type: str = payload.get("type")
+        
+        if email is None or token_type != "reset":
+            raise HTTPException(status_code=400, detail="Invalid token")
+            
+    except JWTError:
+        raise HTTPException(status_code=400, detail="Invalid token")
+    
+    if role == "admin":
+        user = db.query(models.Admin).filter(models.Admin.email == email).first()
+    elif role == "lawyer":
+        user = db.query(models.Lawyer).filter(models.Lawyer.email == email).first()
+    else:
+        raise HTTPException(status_code=400, detail="Invalid role in token")
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+        
+    user.hashed_password = get_password_hash(data.new_password)
+    db.commit()
+    
+    return {"message": "Password updated successfully"}
+
 # Dependency update for admin?
 # We can use get_current_user generally, but need to make sure models.Admin is queried if role is admin
 

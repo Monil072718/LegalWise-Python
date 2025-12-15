@@ -62,6 +62,9 @@ export const api = {
     return response;
   },
   
+  forgotPassword: (email: string) => api.post<{ message: string; token?: string }>('/auth/forgot-password', { email }),
+  resetPassword: (data: any) => api.post<{ message: string }>('/auth/reset-password', data),
+
   updateLawyer: async (id: string, data: Partial<Lawyer>) => api.put<Lawyer>(`/lawyers/${id}`, data),
   deleteLawyer: (id: string) => api.delete<void>(`/lawyers/${id}`),
 

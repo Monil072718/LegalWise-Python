@@ -9,6 +9,7 @@ import {
   User,
   Filter
 } from 'lucide-react';
+import CustomSelect from '@/components/CustomSelect';
 import { api } from '@/services/api';
 import { useToast } from '@/context/ToastContext';
 import { Appointment } from '@/types';
@@ -111,8 +112,8 @@ export default function LawyerAppointments() {
              if (payload.id) {
                  setCurrentLawyerId(payload.id);
                  const lawyer = await api.getLawyer(payload.id);
-                 // Assuming 'Available' string or boolean field. Model has 'availability': str
-                 setIsAvailable(lawyer.availability === 'Available');
+                 // Assuming 'online' means Available.
+                 setIsAvailable(lawyer.availability === 'online');
              }
          }
       } catch (e) {
@@ -124,7 +125,9 @@ export default function LawyerAppointments() {
       if (!currentLawyerId) return;
       
       const newStatus = !isAvailable;
-      const statusString = newStatus ? 'Available' : 'Unavailable';
+
+      // Map to correct types: 'online' vs 'offline'
+      const statusString: 'online' | 'offline' = newStatus ? 'online' : 'offline';
       
       try {
           await api.updateLawyer(currentLawyerId, { availability: statusString });
@@ -174,16 +177,19 @@ export default function LawyerAppointments() {
                  />
                </div>
                {activeTab === 'requests' && (
-                   <select 
-                        value={filterType}
-                        onChange={(e) => setFilterType(e.target.value)}
-                        className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none"
-                    >
-                       <option value="All">All Types</option>
-                       <option value="Consultation">Consultation</option>
-                       <option value="Review">Review</option>
-                       <option value="Hearing">Hearing</option>
-                   </select>
+                   <div className="w-48">
+                    <CustomSelect
+                         value={filterType}
+                         onChange={setFilterType}
+                         options={[
+                           { label: 'All Types', value: 'All' },
+                           { label: 'Consultation', value: 'Consultation' },
+                           { label: 'Review', value: 'Review' },
+                           { label: 'Hearing', value: 'Hearing' }
+                         ]}
+                         variant="default"
+                     />
+                   </div>
                )}
           </div>
 

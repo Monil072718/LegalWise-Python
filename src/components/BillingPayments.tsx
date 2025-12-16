@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { DollarSign, TrendingUp, CreditCard, RefreshCw, Download, Filter, Eye, CheckCircle, XCircle, AlertTriangle, Plus } from 'lucide-react';
+import CustomSelect from './CustomSelect';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import { Payment } from '../types';
 import { api } from '../services/api';
@@ -218,30 +219,32 @@ export default function BillingPayments() {
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex items-center space-x-2">
             <Filter className="w-5 h-5 text-gray-400" />
-            <select
+            <CustomSelect
               value={selectedFilter}
-              onChange={(e) => setSelectedFilter(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="all">All Status</option>
-              <option value="completed">Completed</option>
-              <option value="pending">Pending</option>
-              <option value="failed">Failed</option>
-              <option value="refunded">Refunded</option>
-            </select>
+              onChange={setSelectedFilter}
+              options={[
+                { label: 'All Status', value: 'all' },
+                { label: 'Completed', value: 'completed' },
+                { label: 'Pending', value: 'pending' },
+                { label: 'Failed', value: 'failed' },
+                { label: 'Refunded', value: 'refunded' }
+              ]}
+              variant="default"
+            />
           </div>
           
-          <select
+          <CustomSelect
             value={selectedType}
-            onChange={(e) => setSelectedType(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option value="all">All Types</option>
-            <option value="consultation">Consultation</option>
-            <option value="case">Case</option>
-            <option value="book">Book</option>
-            <option value="commission">Commission</option>
-          </select>
+            onChange={setSelectedType}
+            options={[
+              { label: 'All Types', value: 'all' },
+              { label: 'Consultation', value: 'consultation' },
+              { label: 'Case', value: 'case' },
+              { label: 'Book', value: 'book' },
+              { label: 'Commission', value: 'commission' }
+            ]}
+            variant="default"
+          />
         </div>
       </div>
 
@@ -413,20 +416,24 @@ export default function BillingPayments() {
             <div className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Client</label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                  <option>John Smith</option>
-                  <option>Lisa Wang</option>
-                  <option>David Brown</option>
-                </select>
+                <CustomSelect
+                  value="John Smith" // Placeholder
+                  onChange={() => {}} 
+                  options={['John Smith', 'Lisa Wang', 'David Brown']}
+                  variant="default"
+                  placeholder="Select Client"
+                />
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Service Type</label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                  <option>Consultation</option>
-                  <option>Case Handling</option>
-                  <option>Document Review</option>
-                </select>
+                <CustomSelect
+                  value="Consultation" // Placeholder
+                  onChange={() => {}}
+                  options={['Consultation', 'Case Handling', 'Document Review']}
+                  variant="default"
+                  placeholder="Select Type"
+                />
               </div>
               
               <div>
@@ -494,12 +501,12 @@ export default function BillingPayments() {
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Reason</label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                  <option>Client Request</option>
-                  <option>Service Issue</option>
-                  <option>Billing Error</option>
-                  <option>Other</option>
-                </select>
+                <CustomSelect
+                   value="Client Request"
+                   onChange={() => {}}
+                   options={['Client Request', 'Service Issue', 'Billing Error', 'Other']}
+                   variant="default"
+                />
               </div>
               
               <div>

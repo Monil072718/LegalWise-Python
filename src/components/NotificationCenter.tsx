@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Bell, Send, AlertTriangle, Calendar, FileText, DollarSign, Plus, Clock, CheckCircle, XCircle } from 'lucide-react';
+import CustomSelect from './CustomSelect';
 
 interface Notification {
   id: string;
@@ -237,29 +238,31 @@ export default function NotificationCenter() {
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex items-center space-x-2">
             <Bell className="w-5 h-5 text-gray-400" />
-            <select
+            <CustomSelect
               value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="all">All Types</option>
-              <option value="reminder">Reminders</option>
-              <option value="alert">Alerts</option>
-              <option value="document">Documents</option>
-              <option value="payment">Payments</option>
-            </select>
+              onChange={setSelectedType}
+              options={[
+                { label: 'All Types', value: 'all' },
+                { label: 'Reminder', value: 'reminder' },
+                { label: 'Alert', value: 'alert' },
+                { label: 'Document', value: 'document' },
+                { label: 'Payment', value: 'payment' }
+              ]}
+              variant="default"
+            />
           </div>
           
-          <select
+          <CustomSelect
             value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option value="all">All Status</option>
-            <option value="sent">Sent</option>
-            <option value="pending">Pending</option>
-            <option value="failed">Failed</option>
-          </select>
+            onChange={setSelectedStatus}
+            options={[
+              { label: 'All Status', value: 'all' },
+              { label: 'Sent', value: 'sent' },
+              { label: 'Pending', value: 'pending' },
+              { label: 'Failed', value: 'failed' }
+            ]}
+            variant="default"
+          />
         </div>
       </div>
 
@@ -352,12 +355,17 @@ export default function NotificationCenter() {
             <div className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Type</label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                  <option value="reminder">Reminder</option>
-                  <option value="alert">Alert</option>
-                  <option value="document">Document</option>
-                  <option value="payment">Payment</option>
-                </select>
+                <CustomSelect
+                  value="reminder" // Static for now as state not fully wired in original code
+                  onChange={() => {}}
+                  options={[
+                      { label: 'Reminder', value: 'reminder' },
+                      { label: 'Alert', value: 'alert' },
+                      { label: 'Document', value: 'document' },
+                      { label: 'Payment', value: 'payment' }
+                  ]}
+                  variant="default"
+                />
               </div>
               
               <div>
@@ -389,11 +397,16 @@ export default function NotificationCenter() {
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Priority</label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
-                </select>
+                <CustomSelect
+                   value="medium"
+                   onChange={() => {}}
+                   options={[
+                     { label: 'Low', value: 'low' },
+                     { label: 'Medium', value: 'medium' },
+                     { label: 'High', value: 'high' }
+                   ]}
+                   variant="default"
+                />
               </div>
             </div>
             <div className="p-6 border-t border-gray-200 flex justify-end space-x-3">

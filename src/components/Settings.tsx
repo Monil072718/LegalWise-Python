@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Save, Bell, Shield, Globe, CreditCard, Users, Database, Eye, Edit } from 'lucide-react';
+import CustomSelect from './CustomSelect';
 
 interface SettingSection {
   id: string;
@@ -189,11 +190,12 @@ export default function Settings() {
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Payment Processing</label>
-              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                <option>Stripe</option>
-                <option>PayPal</option>
-                <option>Square</option>
-              </select>
+              <CustomSelect
+                value="Stripe"
+                onChange={() => {}} // Placeholder logic
+                options={['Stripe', 'PayPal', 'Square']}
+                variant="default"
+              />
             </div>
           </div>
         );

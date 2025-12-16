@@ -10,6 +10,7 @@ import {
   Calendar,
   X
 } from 'lucide-react';
+import CustomSelect from '@/components/CustomSelect';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { api } from '@/services/api';
@@ -243,46 +244,49 @@ export default function CaseDetails() {
 
                 <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                <select
+                <CustomSelect
                     value={formData.status}
-                    onChange={(e) => setFormData({...formData, status: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                    <option>Open</option>
-                    <option>In Progress</option>
-                    <option>Review</option>
-                    <option>Won</option>
-                    <option>Lost</option>
-                    <option>Closed</option>
-                </select>
+                    onChange={(val) => setFormData({...formData, status: val})}
+                    options={[
+                      { label: 'Open', value: 'Open' },
+                      { label: 'In Progress', value: 'In Progress' },
+                      { label: 'Review', value: 'Review' },
+                      { label: 'Won', value: 'Won' },
+                      { label: 'Lost', value: 'Lost' },
+                      { label: 'Closed', value: 'Closed' }
+                    ]}
+                    variant="default"
+                />
                 </div>
 
                 <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Current Stage</label>
-                <select
+                <CustomSelect
                     value={formData.stage}
-                    onChange={(e) => setFormData({...formData, stage: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                    <option>Initial</option>
-                    <option>Discovery</option>
-                    <option>Pre-Trial</option>
-                    <option>Trial</option>
-                    <option>Settlement</option>
-                </select>
+                    onChange={(val) => setFormData({...formData, stage: val})}
+                    options={[
+                      { label: 'Initial', value: 'Initial' },
+                      { label: 'Discovery', value: 'Discovery' },
+                      { label: 'Pre-Trial', value: 'Pre-Trial' },
+                      { label: 'Trial', value: 'Trial' },
+                      { label: 'Settlement', value: 'Settlement' }
+                    ]}
+                    variant="default"
+                />
                 </div>
 
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
-                <select
+                <CustomSelect
                     value={formData.priority}
-                    onChange={(e) => setFormData({...formData, priority: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                    <option>High</option>
-                    <option>Medium</option>
-                    <option>Low</option>
-                </select>
+                    onChange={(val) => setFormData({...formData, priority: val})}
+                    options={[
+                      { label: 'High', value: 'High' },
+                      { label: 'Medium', value: 'Medium' },
+                      { label: 'Low', value: 'Low' }
+                    ]}
+                    variant="default"
+                />
                 </div>
                 
                 <div className="md:col-span-2">

@@ -6,6 +6,7 @@ import { Lawyer } from '../types';
 import { api } from '../services/api';
 import { useToast } from '../context/ToastContext';
 import ConfirmationModal from './ConfirmationModal';
+import CustomSelect from './CustomSelect';
 
 export default function LawyerManagement() {
   const [lawyers, setLawyers] = useState<Lawyer[]>([]);
@@ -290,16 +291,19 @@ export default function LawyerManagement() {
             />
           </div>
           
-          <select
-            value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-auto"
-          >
-            <option value="all">All Status</option>
-            <option value="active">Active</option>
-            <option value="pending">Pending</option>
-            <option value="inactive">Inactive</option>
-          </select>
+          <div className="w-full sm:w-48">
+            <CustomSelect
+              value={selectedStatus}
+              onChange={setSelectedStatus}
+              options={[
+                { label: 'All Status', value: 'all' },
+                { label: 'Active', value: 'active' },
+                { label: 'Pending', value: 'pending' },
+                { label: 'Inactive', value: 'inactive' }
+              ]}
+              variant="default"
+            />
+          </div>
         </div>
       </div>
 
@@ -580,27 +584,29 @@ export default function LawyerManagement() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                  <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Account Status</label>
-                  <select
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  <CustomSelect
                     value={formData.status}
-                    onChange={(e) => setFormData({...formData, status: e.target.value})}
-                  >
-                    <option value="active">Active</option>
-                    <option value="pending">Pending</option>
-                    <option value="inactive">Inactive</option>
-                  </select>
+                    onChange={(val) => setFormData({...formData, status: val})}
+                    options={[
+                      { label: 'Active', value: 'active' },
+                      { label: 'Pending', value: 'pending' },
+                      { label: 'Inactive', value: 'inactive' }
+                    ]}
+                    variant="default"
+                  />
                 </div>
                  <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Availability</label>
-                  <select
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  <CustomSelect
                     value={formData.availability}
-                    onChange={(e) => setFormData({...formData, availability: e.target.value})}
-                  >
-                    <option value="online">Online</option>
-                    <option value="offline">Offline</option>
-                    <option value="busy">Busy</option>
-                  </select>
+                    onChange={(val) => setFormData({...formData, availability: val})}
+                    options={[
+                      { label: 'Online', value: 'online' },
+                      { label: 'Offline', value: 'offline' },
+                      { label: 'Busy', value: 'busy' }
+                    ]}
+                    variant="default"
+                  />
                 </div>
                 <div className="flex items-center pt-8">
                    <input 

@@ -6,6 +6,7 @@ import { Case, Lawyer, Client } from '../types';
 import { api } from '../services/api';
 import { useToast } from '../context/ToastContext';
 import ConfirmationModal from './ConfirmationModal';
+import CustomSelect from './CustomSelect';
 
 export default function CaseManagement() {
   const [cases, setCases] = useState<Case[]>([]);
@@ -161,6 +162,17 @@ export default function CaseManagement() {
     }
   };
 
+  const handleUpdateCasePriority = async (id: string, newPriority: string) => {
+    try {
+      const updatedCase = await api.updateCase(id, { priority: newPriority as 'high' | 'medium' | 'low' });
+      setCases(cases.map((c: Case) => c.id === id ? updatedCase : c));
+      showToast(`Case priority updated to ${newPriority}`, 'success');
+    } catch (error) {
+      console.error('Failed to update case priority:', error);
+      showToast('Failed to update case priority.', 'error');
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -245,28 +257,34 @@ export default function CaseManagement() {
             />
           </div>
           
-          <select
-            value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-auto"
-          >
-            <option value="all">All Status</option>
-            <option value="open">Open</option>
-            <option value="in-progress">In Progress</option>
-            <option value="closed">Closed</option>
-            <option value="pending">Pending</option>
-          </select>
+          <div className="w-full sm:w-48">
+            <CustomSelect
+              value={selectedStatus}
+              onChange={setSelectedStatus}
+              options={[
+                { label: 'All Status', value: 'all' },
+                { label: 'Open', value: 'open' },
+                { label: 'In Progress', value: 'in-progress' },
+                { label: 'Closed', value: 'closed' },
+                { label: 'Pending', value: 'pending' }
+              ]}
+              variant="default"
+            />
+          </div>
           
-          <select
-            value={selectedPriority}
-            onChange={(e) => setSelectedPriority(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-auto"
-          >
-            <option value="all">All Priority</option>
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-          </select>
+          <div className="w-full sm:w-48">
+            <CustomSelect
+              value={selectedPriority}
+              onChange={setSelectedPriority}
+              options={[
+                { label: 'All Priority', value: 'all' },
+                { label: 'Low', value: 'low' },
+                { label: 'Medium', value: 'medium' },
+                { label: 'High', value: 'high' }
+              ]}
+              variant="default"
+            />
+          </div>
         </div>
       </div>
 
@@ -330,23 +348,31 @@ export default function CaseManagement() {
                 
                 <div className="flex justify-between items-center">
                   <div className="flex space-x-2">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPriorityBadge(caseItem.priority)}`}>
-                      {caseItem.priority}
-                    </span>
+                    <CustomSelect
+                      value={caseItem.priority}
+                      onChange={(val) => handleUpdateCasePriority(caseItem.id, val)}
+                      options={[
+                        { label: 'High', value: 'high' },
+                        { label: 'Medium', value: 'medium' },
+                        { label: 'Low', value: 'low' }
+                      ]}
+                      variant="status"
+                    />
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadge(caseItem.status)}`}>
                       {caseItem.status}
                     </span>
                   </div>
-                  <select
+                  <CustomSelect
                     value={caseItem.status}
-                    onChange={(e) => handleUpdateCaseStatus(caseItem.id, e.target.value)}
-                    className="text-xs border border-gray-300 rounded px-2 py-1 focus:ring-1 focus:ring-blue-500"
-                  >
-                    <option value="open">Open</option>
-                    <option value="in-progress">In Progress</option>
-                    <option value="closed">Closed</option>
-                    <option value="pending">Pending</option>
-                  </select>
+                    onChange={(val) => handleUpdateCaseStatus(caseItem.id, val)}
+                    options={[
+                      { label: 'Open', value: 'open' },
+                      { label: 'In Progress', value: 'in-progress' },
+                      { label: 'Closed', value: 'closed' },
+                      { label: 'Pending', value: 'pending' }
+                    ]}
+                    variant="status"
+                  />
                 </div>
               </div>
             ))}
@@ -396,21 +422,29 @@ export default function CaseManagement() {
                     <span className="text-sm text-gray-900">{caseItem.stage}</span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPriorityBadge(caseItem.priority)}`}>
-                      {caseItem.priority}
-                    </span>
+                    <CustomSelect
+                      value={caseItem.priority}
+                      onChange={(val) => handleUpdateCasePriority(caseItem.id, val)}
+                      options={[
+                        { label: 'High', value: 'high' },
+                        { label: 'Medium', value: 'medium' },
+                        { label: 'Low', value: 'low' }
+                      ]}
+                      variant="status"
+                    />
                   </td>
                   <td className="px-6 py-4">
-                    <select
+                    <CustomSelect
                       value={caseItem.status}
-                      onChange={(e) => handleUpdateCaseStatus(caseItem.id, e.target.value)}
-                      className={`text-xs border-0 rounded-full px-2.5 py-0.5 font-medium focus:ring-2 focus:ring-blue-500 ${getStatusBadge(caseItem.status)}`}
-                    >
-                      <option value="open">Open</option>
-                      <option value="in-progress">In Progress</option>
-                      <option value="closed">Closed</option>
-                      <option value="pending">Pending</option>
-                    </select>
+                      onChange={(val) => handleUpdateCaseStatus(caseItem.id, val)}
+                      options={[
+                        { label: 'Open', value: 'open' },
+                        { label: 'In Progress', value: 'in-progress' },
+                        { label: 'Closed', value: 'closed' },
+                        { label: 'Pending', value: 'pending' }
+                      ]}
+                      variant="status"
+                    />
                   </td>
                   <td className="px-6 py-4">
                     {caseItem.nextHearing ? (
@@ -478,61 +512,57 @@ export default function CaseManagement() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Client *</label>
-                  <select
+                  <CustomSelect
                     value={formData.clientId}
-                    onChange={(e) => setFormData({...formData, clientId: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value="">Select Client</option>
-                    {clients.map((client: Client) => (
-                      <option key={client.id} value={client.id}>{client.name}</option>
-                    ))}
-                  </select>
+                    onChange={(val) => setFormData({...formData, clientId: val})}
+                    options={clients.map(c => ({ label: c.name, value: c.id }))}
+                    placeholder="Select Client"
+                    variant="default"
+                  />
                 </div>
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Assigned Lawyer *</label>
-                  <select
+                  <CustomSelect
                     value={formData.lawyerId}
-                    onChange={(e) => setFormData({...formData, lawyerId: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value="">Select Lawyer</option>
-                    {lawyers.filter((l: Lawyer) => l.status === 'active').map((lawyer: Lawyer) => (
-                      <option key={lawyer.id} value={lawyer.id}>{lawyer.name}</option>
-                    ))}
-                  </select>
+                    onChange={(val) => setFormData({...formData, lawyerId: val})}
+                    options={lawyers.filter(l => l.status === 'active').map(l => ({ label: l.name, value: l.id }))}
+                    placeholder="Select Lawyer"
+                    variant="default"
+                  />
                 </div>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Priority</label>
-                  <select
+                  <CustomSelect
                     value={formData.priority}
-                    onChange={(e) => setFormData({...formData, priority: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                  </select>
+                    onChange={(val) => setFormData({...formData, priority: val})}
+                    options={[
+                      { label: 'Low', value: 'low' },
+                      { label: 'Medium', value: 'medium' },
+                      { label: 'High', value: 'high' }
+                    ]}
+                    variant="default"
+                  />
                 </div>
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Stage</label>
-                  <select
+                  <CustomSelect
                     value={formData.stage}
-                    onChange={(e) => setFormData({...formData, stage: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value="Initial Review">Initial Review</option>
-                    <option value="Discovery">Discovery</option>
-                    <option value="Negotiation">Negotiation</option>
-                    <option value="Trial Preparation">Trial Preparation</option>
-                    <option value="Trial">Trial</option>
-                    <option value="Settlement">Settlement</option>
-                  </select>
+                    onChange={(val) => setFormData({...formData, stage: val})}
+                    options={[
+                      { label: 'Initial Review', value: 'Initial Review' },
+                      { label: 'Discovery', value: 'Discovery' },
+                      { label: 'Negotiation', value: 'Negotiation' },
+                      { label: 'Trial Preparation', value: 'Trial Preparation' },
+                      { label: 'Trial', value: 'Trial' },
+                      { label: 'Settlement', value: 'Settlement' }
+                    ]}
+                    variant="default"
+                  />
                 </div>
                 
                 <div>

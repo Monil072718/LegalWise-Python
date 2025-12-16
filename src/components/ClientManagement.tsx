@@ -6,7 +6,7 @@ import { Client } from '../types';
 import { api } from '../services/api';
 import { useToast } from '../context/ToastContext';
 import ConfirmationModal from './ConfirmationModal';
-import StatusSelect from './StatusSelect';
+import CustomSelect from './CustomSelect';
 
 export default function ClientManagement() {
   const [clients, setClients] = useState<Client[]>([]);
@@ -342,10 +342,11 @@ export default function ClientManagement() {
                 </div>
                 
                 <div className="flex justify-between items-center">
-                  <StatusSelect
-                    currentStatus={client.status}
+                  <CustomSelect
+                    value={client.status}
                     options={['active', 'inactive', 'pending']}
-                    onUpdate={(newStatus) => handleStatusUpdate(client.id, newStatus)}
+                    onChange={(newStatus) => handleStatusUpdate(client.id, newStatus)}
+                    variant="status"
                   />
                   <span className="text-xs text-gray-500">
                     Joined: {client.createdAt ? new Date(client.createdAt).toLocaleDateString() : 'N/A'}
@@ -405,10 +406,11 @@ export default function ClientManagement() {
                     ${(client.totalSpent || 0).toLocaleString()}
                   </td>
                   <td className="px-6 py-4">
-                    <StatusSelect
-                      currentStatus={client.status}
+                    <CustomSelect
+                      value={client.status}
                       options={['active', 'inactive', 'pending']}
-                      onUpdate={(newStatus) => handleStatusUpdate(client.id, newStatus)}
+                      onChange={(newStatus) => handleStatusUpdate(client.id, newStatus)}
+                      variant="status"
                     />
                   </td>
                   <td className="px-6 py-4">

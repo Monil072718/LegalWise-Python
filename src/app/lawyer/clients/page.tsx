@@ -40,7 +40,7 @@ export default function LawyerClients() {
       await api.updateClient(id, { status: newStatus });
       // Optimistic update
       setClients(prev => prev.map(client => 
-        client.id === id ? { ...client, status: newStatus } : client
+        client.id === id ? { ...client, status: newStatus as 'active' | 'pending' | 'inactive' } : client
       ));
     } catch (error) {
       console.error("Failed to update status", error);
@@ -53,7 +53,7 @@ export default function LawyerClients() {
   const filteredClients = clients.filter(client => {
     const matchesSearch = client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           client.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'All' || client.status === statusFilter;
+    const matchesStatus = statusFilter === 'All' || client.status.toLowerCase() === statusFilter.toLowerCase();
     return matchesSearch && matchesStatus;
   });
 
@@ -62,8 +62,8 @@ export default function LawyerClients() {
     <div className="p-6">
       <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
         <strong className="font-bold">Error: </strong>
-        <span className="block sm:inline">{error}</span>
-        <button onClick={fetchClients} className="mt-2 text-sm underline hover:text-red-900">Retry</button>
+        <span className="block sm:inline mr-2">{error}</span>
+        <button onClick={fetchClients} className="mt-2 text-sm underline hover:text-red-900 font-bold">Retry</button>
       </div>
     </div>
   );

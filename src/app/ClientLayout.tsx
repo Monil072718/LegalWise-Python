@@ -72,14 +72,12 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                          role: 'lawyer'
                      });
                  } catch (err) {
-                     console.error("Failed to fetch lawyer profile", err);
-                     // Fallback to token data
-                     setUser({
-                         name: 'Lawyer',
-                         email: decoded.sub,
-                         role: 'lawyer'
-                     });
-                 }
+                    console.error("Failed to fetch lawyer profile", err);
+                    // Token validity check failed (e.g. user deleted from DB). 
+                    // Force logout to prevent broken state.
+                    sessionStorage.removeItem('lawyerToken');
+                    router.push('/login');
+                }
              }
          } catch(e) {
              console.error(e);

@@ -85,10 +85,10 @@ class ClientBase(BaseModel):
     email: str
     role: str = "client"
     status: str
-    consultations: int
-    booksDownloaded: int
-    articlesRead: int
-    totalSpent: float
+    consultations: Optional[int] = 0
+    booksDownloaded: Optional[int] = 0
+    articlesRead: Optional[int] = 0
+    totalSpent: Optional[float] = 0.0
     createdAt: str
     avatar: Optional[str] = None
     phone: Optional[str] = None

@@ -29,7 +29,9 @@ export const api = {
 
   // General keys
   get: async <T>(endpoint: string): Promise<T> => {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const url = `${API_BASE_URL}${endpoint}`;
+    console.log(`API GET Request: ${url}`);
+    const response = await fetch(url, {
       headers: api.getHeaders()
     });
     return handleResponse(response);

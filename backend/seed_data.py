@@ -17,7 +17,11 @@ def seed_data():
                 "phone": "+1 (555) 123-4567",
                 "status": "Active",
                 "createdAt": "2024-01-15",
-                "role": "client"
+                "role": "client",
+                "consultations": 0,
+                "booksDownloaded": 0,
+                "articlesRead": 0,
+                "totalSpent": 0.0
             },
              {
                 "name": "Robert Smith",
@@ -25,7 +29,11 @@ def seed_data():
                 "phone": "+1 (555) 987-6543",
                 "status": "Active",
                 "createdAt": "2024-01-20",
-                "role": "client"
+                "role": "client",
+                "consultations": 2,
+                "booksDownloaded": 1,
+                "articlesRead": 5,
+                "totalSpent": 150.0
             },
              {
                 "name": "Sarah Williams",
@@ -33,7 +41,11 @@ def seed_data():
                 "phone": "+1 (555) 456-7890",
                 "status": "Pending",
                 "createdAt": "2024-02-01",
-                "role": "client"
+                "role": "client",
+                "consultations": 0,
+                "booksDownloaded": 0,
+                "articlesRead": 0,
+                "totalSpent": 0.0
             }
         ]
         

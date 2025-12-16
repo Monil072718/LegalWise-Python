@@ -153,6 +153,7 @@ export const api = {
 
   // Financials
   getPayments: () => api.get<Payment[]>('/payments/'),
+  createPayment: (data: Partial<Payment>) => api.post<Payment>('/payments/', data),
   
   // Dashboard
   getDashboardStats: () => api.get<any>('/dashboard/stats'), 

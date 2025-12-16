@@ -19,18 +19,28 @@ export default function BillingPayments() {
   const [selectedType, setSelectedType] = useState('all');
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [showRefundModal, setShowRefundModal] = useState(false);
+  
+  const [clients, setClients] = useState<any[]>([]);
+  const [invoiceData, setInvoiceData] = useState({
+      clientName: '',
+      type: 'Consultation',
+      amount: '',
+      description: ''
+  });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [paymentsData, revenueRes, methodsRes] = await Promise.all([
+        const [paymentsData, revenueRes, methodsRes, clientsRes] = await Promise.all([
           api.get<Payment[]>('/payments'),
           api.get<any[]>('/analytics/revenue-breakdown'),
-          api.get<any[]>('/analytics/payment-methods')
+          api.get<any[]>('/analytics/payment-methods'),
+          api.getClients()
         ]);
         setPayments(paymentsData);
         setRevenueData(revenueRes);
         setPaymentMethodData(methodsRes);
+        setClients(clientsRes);
       } catch (error) {
         console.error('Failed to fetch billing data:', error);
       } finally {
@@ -85,9 +95,38 @@ export default function BillingPayments() {
     setShowRefundModal(false);
   };
 
-  const handleGenerateInvoice = (paymentId: string) => {
-    console.log('Generating invoice for payment:', paymentId);
-    setShowInvoiceModal(false);
+  const handleGenerateInvoice = async () => {
+    try {
+        const amount = parseFloat(invoiceData.amount);
+        if(!amount || !invoiceData.clientName) {
+            alert("Please fill all fields");
+            return;
+        }
+
+        const newPayment: Partial<Payment> = {
+            clientName: invoiceData.clientName,
+            amount: amount,
+            type: invoiceData.type,
+            status: 'pending',
+            date: new Date().toISOString(),
+            platformFee: amount * 0.1 // 10% fee
+        };
+
+        const created = await api.createPayment(newPayment);
+        setPayments([created, ...payments]);
+        setShowInvoiceModal(false);
+        setInvoiceData({
+            clientName: '',
+            type: 'Consultation',
+            amount: '',
+            description: ''
+        });
+        alert('Invoice generated successfully');
+
+    } catch (error) {
+        console.error("Failed to generate invoice", error);
+        alert("Failed to generate invoice");
+    }
   };
 
   return (
@@ -417,9 +456,9 @@ export default function BillingPayments() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Client</label>
                 <CustomSelect
-                  value="John Smith" // Placeholder
-                  onChange={() => {}} 
-                  options={['John Smith', 'Lisa Wang', 'David Brown']}
+                  value={invoiceData.clientName}
+                  onChange={(val) => setInvoiceData({...invoiceData, clientName: val})}
+                  options={clients.map(c => c.name)}
                   variant="default"
                   placeholder="Select Client"
                 />
@@ -428,8 +467,8 @@ export default function BillingPayments() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Service Type</label>
                 <CustomSelect
-                  value="Consultation" // Placeholder
-                  onChange={() => {}}
+                  value={invoiceData.type}
+                  onChange={(val) => setInvoiceData({...invoiceData, type: val})}
                   options={['Consultation', 'Case Handling', 'Document Review']}
                   variant="default"
                   placeholder="Select Type"
@@ -441,6 +480,8 @@ export default function BillingPayments() {
                 <input
                   type="number"
                   placeholder="0.00"
+                  value={invoiceData.amount}
+                  onChange={(e) => setInvoiceData({...invoiceData, amount: e.target.value})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
@@ -450,6 +491,8 @@ export default function BillingPayments() {
                 <textarea
                   rows={3}
                   placeholder="Invoice description"
+                  value={invoiceData.description}
+                  onChange={(e) => setInvoiceData({...invoiceData, description: e.target.value})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
@@ -462,7 +505,7 @@ export default function BillingPayments() {
                 Cancel
               </button>
               <button
-                onClick={() => handleGenerateInvoice('new')}
+                onClick={handleGenerateInvoice}
                 className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 flex items-center space-x-2"
               >
                 <Plus className="w-4 h-4" />

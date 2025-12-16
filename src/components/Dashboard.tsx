@@ -40,6 +40,7 @@ export default function Dashboard() {
   const [caseStatusData, setCaseStatusData] = useState<CaseStatusData[]>([]);
   const [recentActivity, setRecentActivity] = useState<ActivityData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const messages = useWebSocket('ws://localhost:8000/ws/admin');
   const [notification, setNotification] = useState<string | null>(null);
@@ -54,37 +55,57 @@ export default function Dashboard() {
     }
   }, [messages]);
 
+  const fetchData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [statsRes, revenueRes, statusRes, activityRes] = await Promise.all([
+        api.get<DashboardStats>('/dashboard/stats'),
+        api.get<RevenueData[]>('/dashboard/revenue'),
+        api.get<CaseStatusData[]>('/dashboard/case-status'),
+        api.get<ActivityData[]>('/dashboard/recent-activity')
+      ]);
+
+      setStats(statsRes);
+      setRevenueData(revenueRes);
+      setCaseStatusData(statusRes);
+      setRecentActivity(activityRes);
+    } catch (err: any) {
+      console.error('Failed to fetch dashboard data:', err);
+      setError(err.message || 'Failed to connect to the server.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [statsRes, revenueRes, statusRes, activityRes] = await Promise.all([
-          api.get<DashboardStats>('/dashboard/stats'),
-          api.get<RevenueData[]>('/dashboard/revenue'),
-          api.get<CaseStatusData[]>('/dashboard/case-status'),
-          api.get<ActivityData[]>('/dashboard/recent-activity')
-        ]);
-
-        setStats(statsRes);
-        setRevenueData(revenueRes);
-        setCaseStatusData(statusRes);
-        setRecentActivity(activityRes);
-      } catch (error) {
-        console.error('Failed to fetch dashboard data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchData();
   }, []);
 
-  if (loading || !stats) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
   }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full space-y-4">
+        <div className="text-red-600 font-medium">Unable to load dashboard data</div>
+        <p className="text-gray-500 text-sm">{error}</p>
+        <button 
+          onClick={fetchData}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Retry Connection
+        </button>
+      </div>
+    );
+  }
+
+  if (!stats) return null;
 
   const statsData = [
     { label: 'Active Cases', value: stats.active_cases.toString(), change: '+12%', icon: FileText, color: 'bg-blue-500' },

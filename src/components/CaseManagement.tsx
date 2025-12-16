@@ -23,6 +23,10 @@ export default function CaseManagement() {
   // Modal state for deletion
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [caseToDelete, setCaseToDelete] = useState<string | null>(null);
+  
+  // Edit state
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const { showToast } = useToast();
 
@@ -92,22 +96,64 @@ export default function CaseManagement() {
     return client?.name || 'Unknown';
   };
 
-  const handleAddCase = async () => {
+  const handleSaveCase = async () => {
     try {
-      const newCaseData = {
+      const caseData = {
         title: formData.title,
         clientId: formData.clientId,
         lawyerId: formData.lawyerId,
-        status: 'open' as const,
+        status: isEditing ? undefined : 'open' as const, // proper status handling for edits? 
+        // actually for edits we probably want to keep existing status unless changed elsewhere
+        // But the form doesn't show status for creation. customSelect for status is in list.
+        // Let's assume status isn't edited here for now, or use existing.
         stage: formData.stage,
         priority: formData.priority as 'low' | 'medium' | 'high',
-        createdAt: new Date().toISOString().split('T')[0],
         nextHearing: formData.nextHearing || undefined,
-        documents: []
+        description: formData.description,
       };
 
-      const createdCase = await api.createCase(newCaseData);
-      setCases([...cases, createdCase]);
+      if (isEditing && editingId) {
+          const updatedCase = await api.updateCase(editingId, caseData);
+          setCases(cases.map(c => c.id === editingId ? updatedCase : c));
+          showToast('Case updated successfully', 'success');
+      } else {
+           const newCaseData = {
+              ...caseData,
+              status: 'open' as const,
+              createdAt: new Date().toISOString().split('T')[0],
+              documents: []
+           };
+          const createdCase = await api.createCase(newCaseData);
+          setCases([...cases, createdCase]);
+          showToast('Case created successfully', 'success');
+      }
+
+      closeModal();
+    } catch (error) {
+      console.error('Failed to save case:', error);
+      showToast('Failed to save case.', 'error');
+    }
+  };
+
+  const handleEditCase = (caseItem: Case) => {
+      setFormData({
+          title: caseItem.title,
+          clientId: caseItem.clientId,
+          lawyerId: caseItem.lawyerId,
+          priority: caseItem.priority,
+          stage: caseItem.stage,
+          description: caseItem.description || '',
+          nextHearing: caseItem.nextHearing ? caseItem.nextHearing.split('T')[0] : ''
+      });
+      setIsEditing(true);
+      setEditingId(caseItem.id);
+      setShowAddModal(true);
+  };
+
+  const closeModal = () => {
+      setShowAddModal(false);
+      setIsEditing(false);
+      setEditingId(null);
       setFormData({
         title: '',
         clientId: '',
@@ -117,12 +163,6 @@ export default function CaseManagement() {
         description: '',
         nextHearing: ''
       });
-      setShowAddModal(false);
-      showToast('Case created successfully', 'success');
-    } catch (error) {
-      console.error('Failed to create case:', error);
-      showToast('Failed to create case.', 'error');
-    }
   };
 
   const handleViewCase = (caseItem: Case) => {
@@ -313,7 +353,10 @@ export default function CaseManagement() {
                     >
                       <Eye className="w-4 h-4" />
                     </button>
-                    <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                    <button 
+                        onClick={() => handleEditCase(caseItem)}
+                        className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+                    >
                       <Edit className="w-4 h-4" />
                     </button>
                     <button 
@@ -466,7 +509,10 @@ export default function CaseManagement() {
                       >
                         <Eye className="w-4 h-4" />
                       </button>
-                      <button className="p-1 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                      <button 
+                        onClick={() => handleEditCase(caseItem)}
+                        className="p-1 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+                      >
                         <Edit className="w-4 h-4" />
                       </button>
                       <button 
@@ -489,9 +535,9 @@ export default function CaseManagement() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">Create New Case</h3>
+              <h3 className="text-lg font-semibold text-gray-900">{isEditing ? 'Edit Case' : 'Create New Case'}</h3>
               <button
-                onClick={() => setShowAddModal(false)}
+                onClick={closeModal}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
               >
                 <X className="w-5 h-5" />
@@ -598,16 +644,16 @@ export default function CaseManagement() {
             </div>
             <div className="p-6 border-t border-gray-200 flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3">
               <button
-                onClick={() => setShowAddModal(false)}
+                onClick={closeModal}
                 className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200"
               >
                 Cancel
               </button>
               <button
-                onClick={handleAddCase}
+                onClick={handleSaveCase}
                 className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
               >
-                Create Case
+                {isEditing ? 'Update Case' : 'Create Case'}
               </button>
             </div>
           </div>

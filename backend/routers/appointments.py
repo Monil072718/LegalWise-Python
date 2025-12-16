@@ -10,9 +10,24 @@ router = APIRouter(
 
 import uuid
 
+from routers.auth import get_current_user
+
 @router.get("/", response_model=List[schemas.Appointment])
-def read_appointments(skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db)):
-    appointments = db.query(models.Appointment).offset(skip).limit(limit).all()
+def read_appointments(skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db), current_user = Depends(get_current_user)):
+    # Admin sees all, Lawyer sees own (where lawyerId or lawyerName matches? Schema has lawyerName, need to check model)
+    # Model has lawyerName, but ideally should be linked by ID. 
+    # Let's check model again. Model has lawyerName only? That's weak.
+    # checking models.Appointment: clientName, lawyerName.
+    # This is a schema design flaw (no lawyerId foreign key). 
+    # For now, we will filter by lawyerName matching current_user.name OR if we change model.
+    # It's better to verify if we can match by name. 
+    # Actually, current_user (Lawyer) has 'name'. 
+    
+    if hasattr(current_user, "role") and current_user.role == "lawyer":
+         # Filter by lawyerName matching user name. 
+         appointments = db.query(models.Appointment).filter(models.Appointment.lawyerName == current_user.name).offset(skip).limit(limit).all()
+    else:
+         appointments = db.query(models.Appointment).offset(skip).limit(limit).all()
     return appointments
 
 @router.get("/{appointment_id}", response_model=schemas.Appointment)

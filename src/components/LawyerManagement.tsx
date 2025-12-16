@@ -5,6 +5,7 @@ import { Search, Plus, Eye, Edit, Trash2, CheckCircle, XCircle, Star, Clock, X, 
 import { Lawyer } from '../types';
 import { api } from '../services/api';
 import { useToast } from '../context/ToastContext';
+import ConfirmationModal from './ConfirmationModal';
 
 export default function LawyerManagement() {
   const [lawyers, setLawyers] = useState<Lawyer[]>([]);
@@ -14,6 +15,11 @@ export default function LawyerManagement() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
+  
+  // Modal state for deletion
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [lawyerToDelete, setLawyerToDelete] = useState<string | null>(null);
+
   const { showToast } = useToast();
   const [selectedLawyer, setSelectedLawyer] = useState<Lawyer | null>(null);
   const [formData, setFormData] = useState({
@@ -174,14 +180,23 @@ export default function LawyerManagement() {
     setShowViewModal(true);
   };
 
-  const handleDeleteLawyer = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this lawyer?')) return;
+  const initiateDeleteLawyer = (id: string) => {
+      setLawyerToDelete(id);
+      setShowDeleteModal(true);
+  };
+
+  const confirmDeleteLawyer = async () => {
+    if (!lawyerToDelete) return;
     try {
-      await api.deleteLawyer(id);
-      setLawyers(lawyers.filter((l: Lawyer) => l.id !== id));
+      await api.deleteLawyer(lawyerToDelete);
+      setLawyers(lawyers.filter((l: Lawyer) => l.id !== lawyerToDelete));
+      showToast('Lawyer deleted successfully', 'success');
     } catch (error) {
       console.error('Failed to delete lawyer:', error);
       showToast('Failed to delete lawyer.', 'error');
+    } finally {
+        setShowDeleteModal(false);
+        setLawyerToDelete(null);
     }
   };
 
@@ -323,7 +338,7 @@ export default function LawyerManagement() {
                       <Edit className="w-4 h-4" />
                     </button>
                     <button 
-                      onClick={() => handleDeleteLawyer(lawyer.id)}
+                        onClick={() => initiateDeleteLawyer(lawyer.id)}
                       className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors duration-200"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -456,7 +471,7 @@ export default function LawyerManagement() {
                         <Edit className="w-4 h-4" />
                       </button>
                       <button 
-                        onClick={() => handleDeleteLawyer(lawyer.id)}
+                          onClick={() => initiateDeleteLawyer(lawyer.id)}
                         className="p-1 text-red-600 hover:bg-red-100 rounded-lg transition-colors duration-200"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -777,6 +792,20 @@ export default function LawyerManagement() {
           </div>
         </div>
       )}
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={() => {
+            setShowDeleteModal(false);
+            setLawyerToDelete(null);
+        }}
+        onConfirm={confirmDeleteLawyer}
+        title="Delete Lawyer"
+        message="Are you sure you want to delete this lawyer? This action cannot be undone."
+        confirmText="Delete Lawyer"
+        isDestructive={true}
+      />
     </div>
   );
 }

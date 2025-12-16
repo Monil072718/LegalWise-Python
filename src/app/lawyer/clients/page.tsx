@@ -5,10 +5,12 @@ import { Search, Filter, Eye, FileText, Activity, ChevronDown } from 'lucide-rea
 import Link from 'next/link';
 import { api } from '@/services/api';
 import { Client } from '@/types';
+import { useToast } from '@/context/ToastContext';
 
 export default function LawyerClients() {
   const [searchTerm, setSearchTerm] = useState('');
   
+  const { showToast } = useToast();
   const [statusFilter, setStatusFilter] = useState('All');
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [clients, setClients] = useState<Client[]>([]);
@@ -42,9 +44,10 @@ export default function LawyerClients() {
       setClients(prev => prev.map(client => 
         client.id === id ? { ...client, status: newStatus as 'active' | 'pending' | 'inactive' } : client
       ));
+      showToast("Status updated successfully", "success");
     } catch (error) {
       console.error("Failed to update status", error);
-      alert("Failed to update status");
+      showToast("Failed to update status", "error");
     } finally {
       setUpdatingId(null);
     }

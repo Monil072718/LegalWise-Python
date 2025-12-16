@@ -4,11 +4,13 @@ import { useState, useEffect } from 'react';
 import { Calendar, Clock, CheckCircle, XCircle, Eye, Filter, User } from 'lucide-react';
 import { Appointment } from '../types';
 import { api } from '../services/api';
+import { useToast } from '../context/ToastContext';
 
 export default function AppointmentCalendar() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedFilter, setSelectedFilter] = useState('all');
+  const { showToast } = useToast();
 
   useEffect(() => {
     fetchAppointments();
@@ -52,9 +54,10 @@ export default function AppointmentCalendar() {
     try {
       const updatedAppointment = await api.updateAppointment(id, { status: 'approved' as const });
       setAppointments(appointments.map((a: Appointment) => a.id === id ? updatedAppointment : a));
+      showToast('Appointment approved successfully', 'success');
     } catch (error) {
       console.error('Failed to approve appointment:', error);
-      alert('Failed to approve appointment.');
+      showToast('Failed to approve appointment.', 'error');
     }
   };
 
@@ -62,9 +65,10 @@ export default function AppointmentCalendar() {
     try {
       const updatedAppointment = await api.updateAppointment(id, { status: 'declined' as const });
       setAppointments(appointments.map((a: Appointment) => a.id === id ? updatedAppointment : a));
+      showToast('Appointment declined', 'success');
     } catch (error) {
       console.error('Failed to decline appointment:', error);
-      alert('Failed to decline appointment.');
+      showToast('Failed to decline appointment.', 'error');
     }
   };
 

@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { Search, Plus, Eye, Edit, Trash2, AlertTriangle, Calendar, FileText, User, X, Upload } from 'lucide-react';
 import { Case, Lawyer, Client } from '../types';
 import { api } from '../services/api';
+import { useToast } from '../context/ToastContext';
+import ConfirmationModal from './ConfirmationModal';
 
 export default function CaseManagement() {
   const [cases, setCases] = useState<Case[]>([]);
@@ -16,6 +18,13 @@ export default function CaseManagement() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [selectedCase, setSelectedCase] = useState<Case | null>(null);
+  
+  // Modal state for deletion
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [caseToDelete, setCaseToDelete] = useState<string | null>(null);
+
+  const { showToast } = useToast();
+
   const [formData, setFormData] = useState({
     title: '',
     clientId: '',
@@ -108,9 +117,10 @@ export default function CaseManagement() {
         nextHearing: ''
       });
       setShowAddModal(false);
+      showToast('Case created successfully', 'success');
     } catch (error) {
       console.error('Failed to create case:', error);
-      alert('Failed to create case.');
+      showToast('Failed to create case.', 'error');
     }
   };
 
@@ -119,14 +129,24 @@ export default function CaseManagement() {
     setShowViewModal(true);
   };
 
-  const handleDeleteCase = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this case?')) return;
+  const initiateDeleteCase = (id: string) => {
+      setCaseToDelete(id);
+      setShowDeleteModal(true);
+  };
+
+  const confirmDeleteCase = async () => {
+    if (!caseToDelete) return;
+
     try {
-      await api.deleteCase(id);
-      setCases(cases.filter((c: Case) => c.id !== id));
+      await api.deleteCase(caseToDelete);
+      setCases(cases.filter((c: Case) => c.id !== caseToDelete));
+      showToast('Case deleted successfully', 'success');
     } catch (error) {
       console.error('Failed to delete case:', error);
-      alert('Failed to delete case.');
+      showToast('Failed to delete case.', 'error');
+    } finally {
+        setShowDeleteModal(false);
+        setCaseToDelete(null);
     }
   };
 
@@ -134,9 +154,10 @@ export default function CaseManagement() {
     try {
       const updatedCase = await api.updateCase(id, { status: newStatus as Case['status'] });
       setCases(cases.map((c: Case) => c.id === id ? updatedCase : c));
+      showToast(`Case status updated to ${newStatus}`, 'success');
     } catch (error) {
       console.error('Failed to update case status:', error);
-      alert('Failed to update case status.');
+      showToast('Failed to update case status.', 'error');
     }
   };
 
@@ -278,7 +299,7 @@ export default function CaseManagement() {
                       <Edit className="w-4 h-4" />
                     </button>
                     <button 
-                      onClick={() => handleDeleteCase(caseItem.id)}
+                        onClick={() => initiateDeleteCase(caseItem.id)}
                       className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors duration-200"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -415,7 +436,7 @@ export default function CaseManagement() {
                         <Edit className="w-4 h-4" />
                       </button>
                       <button 
-                        onClick={() => handleDeleteCase(caseItem.id)}
+                          onClick={() => initiateDeleteCase(caseItem.id)}
                         className="p-1 text-red-600 hover:bg-red-100 rounded-lg transition-colors duration-200"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -657,6 +678,20 @@ export default function CaseManagement() {
           </div>
         </div>
       )}
+      
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={() => {
+            setShowDeleteModal(false);
+            setCaseToDelete(null);
+        }}
+        onConfirm={confirmDeleteCase}
+        title="Delete Case"
+        message="Are you sure you want to delete this case? This action cannot be undone."
+        confirmText="Delete Case"
+        isDestructive={true}
+      />
     </div>
   );
 }

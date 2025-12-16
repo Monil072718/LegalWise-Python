@@ -32,6 +32,10 @@ export interface Client extends User {
   booksDownloaded: number;
   articlesRead: number;
   totalSpent: number;
+  phone?: string;
+  address?: string;
+  company?: string;
+  notes?: string;
 }
 
 export interface Case {

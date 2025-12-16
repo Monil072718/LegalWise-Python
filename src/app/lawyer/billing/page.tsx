@@ -4,8 +4,10 @@ import { useState } from 'react';
 import { Download, Clock, X, Plus } from 'lucide-react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { useToast } from '@/context/ToastContext';
 
 export default function LawyerBilling() {
+  const { showToast } = useToast();
   const [showModal, setShowModal] = useState(false);
   const [newInvoice, setNewInvoice] = useState({
     client: '',
@@ -70,7 +72,7 @@ export default function LawyerBilling() {
 
   const handleDownloadExisting = (invoice: typeof invoices[0]) => {
     if (invoice.status !== 'Paid') {
-      alert('Invoice can only be generated for "Paid" transactions.');
+      showToast('Invoice can only be generated for "Paid" transactions.', 'error');
       return;
     }
     generatePDF({

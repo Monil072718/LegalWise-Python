@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { Search, Plus, Eye, Edit, Trash2, User, BookOpen, FileText, DollarSign, X, Phone, MapPin } from 'lucide-react';
 import { Client } from '../types';
 import { api } from '../services/api';
+import { useToast } from '../context/ToastContext';
+import ConfirmationModal from './ConfirmationModal';
 
 export default function ClientManagement() {
   const [clients, setClients] = useState<Client[]>([]);
@@ -13,6 +15,13 @@ export default function ClientManagement() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  
+  // Modal state for deletion
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [clientToDelete, setClientToDelete] = useState<string | null>(null);
+
+  const { showToast } = useToast();
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -77,9 +86,10 @@ export default function ClientManagement() {
       setClients([...clients, createdClient]);
       setFormData({ name: '', email: '', phone: '', address: '', company: '', notes: '' });
       setShowAddModal(false);
+      showToast('Client added successfully', 'success');
     } catch (error) {
       console.error('Failed to create client:', error);
-      alert('Failed to create client.');
+      showToast('Failed to create client.', 'error');
     }
   };
 
@@ -88,14 +98,24 @@ export default function ClientManagement() {
     setShowViewModal(true);
   };
 
-  const handleDeleteClient = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this client?')) return;
+  const initiateDeleteClient = (id: string) => {
+      setClientToDelete(id);
+      setShowDeleteModal(true);
+  };
+
+  const confirmDeleteClient = async () => {
+    if (!clientToDelete) return;
+    
     try {
-      await api.deleteClient(id);
-      setClients(clients.filter((c: Client) => c.id !== id));
+      await api.deleteClient(clientToDelete);
+      setClients(clients.filter((c: Client) => c.id !== clientToDelete));
+      showToast('Client deleted successfully', 'success');
     } catch (error) {
       console.error('Failed to delete client:', error);
-      alert('Failed to delete client.');
+      showToast('Failed to delete client.', 'error');
+    } finally {
+        setShowDeleteModal(false);
+        setClientToDelete(null);
     }
   };
 
@@ -156,12 +176,12 @@ export default function ClientManagement() {
           </div>
         </div>
         
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Total Revenue</p>
               <p className="text-2xl font-bold text-orange-600">
-                ${clients.reduce((sum, c: Client) => sum + c.totalSpent, 0).toLocaleString()}
+                ${clients.reduce((sum, c: Client) => sum + (c.totalSpent || 0), 0).toLocaleString()}
               </p>
             </div>
             <DollarSign className="w-6 h-6 sm:w-8 sm:h-8 text-orange-600" />
@@ -229,7 +249,7 @@ export default function ClientManagement() {
                       <Edit className="w-4 h-4" />
                     </button>
                     <button 
-                      onClick={() => handleDeleteClient(client.id)}
+                      onClick={() => initiateDeleteClient(client.id)}
                       className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors duration-200"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -261,7 +281,7 @@ export default function ClientManagement() {
                     {client.status}
                   </span>
                   <span className="text-xs text-gray-500">
-                    Joined: {new Date(client.createdAt).toLocaleDateString()}
+                    Joined: {client.createdAt ? new Date(client.createdAt).toLocaleDateString() : 'N/A'}
                   </span>
                 </div>
               </div>
@@ -315,7 +335,7 @@ export default function ClientManagement() {
                     {client.articlesRead}
                   </td>
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                    ${client.totalSpent.toLocaleString()}
+                    ${(client.totalSpent || 0).toLocaleString()}
                   </td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadge(client.status)}`}>
@@ -334,7 +354,7 @@ export default function ClientManagement() {
                         <Edit className="w-4 h-4" />
                       </button>
                       <button 
-                        onClick={() => handleDeleteClient(client.id)}
+                        onClick={() => initiateDeleteClient(client.id)}
                         className="p-1 text-red-600 hover:bg-red-100 rounded-lg transition-colors duration-200"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -478,7 +498,7 @@ export default function ClientManagement() {
                       {selectedClient.status}
                     </span>
                     <span className="text-sm text-gray-500">
-                      Joined: {new Date(selectedClient.createdAt).toLocaleDateString()}
+                      Joined: {selectedClient.createdAt ? new Date(selectedClient.createdAt).toLocaleDateString() : 'N/A'}
                     </span>
                   </div>
                 </div>
@@ -499,7 +519,7 @@ export default function ClientManagement() {
                 </div>
                 <div className="bg-gray-50 rounded-lg p-4">
                   <h4 className="font-medium text-gray-900 mb-2">Total Spent</h4>
-                  <p className="text-2xl font-bold text-orange-600">${selectedClient.totalSpent}</p>
+                  <p className="text-2xl font-bold text-orange-600">${(selectedClient.totalSpent || 0).toLocaleString()}</p>
                 </div>
               </div>
               
@@ -570,6 +590,20 @@ export default function ClientManagement() {
           </div>
         </div>
       )}
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={() => {
+            setShowDeleteModal(false);
+            setClientToDelete(null);
+        }}
+        onConfirm={confirmDeleteClient}
+        title="Delete Client"
+        message="Are you sure you want to delete this client? This action cannot be undone."
+        confirmText="Delete Client"
+        isDestructive={true}
+      />
     </div>
   );
 }

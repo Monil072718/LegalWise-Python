@@ -6,6 +6,7 @@ import { Client } from '../types';
 import { api } from '../services/api';
 import { useToast } from '../context/ToastContext';
 import ConfirmationModal from './ConfirmationModal';
+import StatusSelect from './StatusSelect';
 
 export default function ClientManagement() {
   const [clients, setClients] = useState<Client[]>([]);
@@ -94,6 +95,19 @@ export default function ClientManagement() {
     setEditingId(client.id);
     setIsEditing(true);
     setShowAddModal(true);
+  };
+
+  const handleStatusUpdate = async (id: string, newStatus: string) => {
+    try {
+      if (id) {
+          await api.updateClient(id, { status: newStatus as 'active' | 'inactive' | 'pending' });
+          setClients(clients.map(c => c.id === id ? { ...c, status: newStatus as 'active' | 'inactive' | 'pending' } : c));
+          showToast('Status updated successfully', 'success');
+      }
+    } catch (error) {
+      console.error('Failed to update status:', error);
+      showToast('Failed to update status', 'error');
+    }
   };
 
   const handleSubmitClient = async () => {
@@ -328,9 +342,11 @@ export default function ClientManagement() {
                 </div>
                 
                 <div className="flex justify-between items-center">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadge(client.status)}`}>
-                    {client.status}
-                  </span>
+                  <StatusSelect
+                    currentStatus={client.status}
+                    options={['active', 'inactive', 'pending']}
+                    onUpdate={(newStatus) => handleStatusUpdate(client.id, newStatus)}
+                  />
                   <span className="text-xs text-gray-500">
                     Joined: {client.createdAt ? new Date(client.createdAt).toLocaleDateString() : 'N/A'}
                   </span>
@@ -389,9 +405,11 @@ export default function ClientManagement() {
                     ${(client.totalSpent || 0).toLocaleString()}
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadge(client.status)}`}>
-                      {client.status}
-                    </span>
+                    <StatusSelect
+                      currentStatus={client.status}
+                      options={['active', 'inactive', 'pending']}
+                      onUpdate={(newStatus) => handleStatusUpdate(client.id, newStatus)}
+                    />
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex space-x-2">

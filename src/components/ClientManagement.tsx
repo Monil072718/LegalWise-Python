@@ -20,6 +20,10 @@ export default function ClientManagement() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [clientToDelete, setClientToDelete] = useState<string | null>(null);
 
+  // Edit state
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+
   const { showToast } = useToast();
 
   const [formData, setFormData] = useState({
@@ -62,34 +66,78 @@ export default function ClientManagement() {
     return styles[status as keyof typeof styles] || styles.pending;
   };
 
-  const handleAddClient = async () => {
-    try {
-      const newClientData = {
-        name: formData.name,
-        email: formData.email,
-        role: 'client' as const,
-        status: 'active' as const,
-        consultations: 0,
-        booksDownloaded: 0,
-        articlesRead: 0,
-        totalSpent: 0,
-        createdAt: new Date().toISOString().split('T')[0],
-        // Note: phone, address, company, notes are not in the Client interface yet, 
-        // but passing them might be useful if backend supports them or we extend interface.
-        // For now, we stick to what the interface supports or extend it if needed.
-        // Backend `Client` model doesn't strictly enforce extra fields unless using strict schema in FastAPI,
-        // but `ClientBase` in backend schemas.py only has specific fields.
-        // If we want to save phone/address, we need to update backend models/schemas like we did for Lawyer.
-      };
+  const resetForm = () => {
+    setFormData({ name: '', email: '', phone: '', address: '', company: '', notes: '' });
+    setIsEditing(false);
+    setEditingId(null);
+  };
 
-      const createdClient = await api.createClient(newClientData);
-      setClients([...clients, createdClient]);
-      setFormData({ name: '', email: '', phone: '', address: '', company: '', notes: '' });
+  const openAddModal = () => {
+      resetForm();
+      setShowAddModal(true);
+  };
+
+  const closeAddModal = () => {
       setShowAddModal(false);
-      showToast('Client added successfully', 'success');
+      resetForm();
+  };
+
+  const handleEditClient = (client: Client) => {
+    setFormData({
+        name: client.name,
+        email: client.email,
+        phone: client.phone || '',
+        address: client.address || '',
+        company: client.company || '',
+        notes: client.notes || ''
+    });
+    setEditingId(client.id);
+    setIsEditing(true);
+    setShowAddModal(true);
+  };
+
+  const handleSubmitClient = async () => {
+    try {
+      if (isEditing && editingId) {
+          // Update existing client
+          const updateData = {
+              name: formData.name,
+              email: formData.email,
+              phone: formData.phone,
+              address: formData.address,
+              company: formData.company,
+              notes: formData.notes
+          };
+
+          const updatedClient = await api.updateClient(editingId, updateData);
+          setClients(clients.map(c => c.id === editingId ? { ...c, ...updatedClient } : c));
+          showToast('Client updated successfully', 'success');
+      } else {
+          // Create new client
+          const newClientData = {
+            name: formData.name,
+            email: formData.email,
+            role: 'client' as const,
+            status: 'active' as const,
+            consultations: 0,
+            booksDownloaded: 0,
+            articlesRead: 0,
+            totalSpent: 0,
+            createdAt: new Date().toISOString().split('T')[0],
+            phone: formData.phone,
+            address: formData.address,
+            company: formData.company,
+            notes: formData.notes
+          };
+    
+          const createdClient = await api.createClient(newClientData);
+          setClients([...clients, createdClient]);
+          showToast('Client added successfully', 'success');
+      }
+      closeAddModal();
     } catch (error) {
-      console.error('Failed to create client:', error);
-      showToast('Failed to create client.', 'error');
+      console.error(isEditing ? 'Failed to update client:' : 'Failed to create client:', error);
+      showToast(isEditing ? 'Failed to update client.' : 'Failed to create client.', 'error');
     }
   };
 
@@ -132,7 +180,7 @@ export default function ClientManagement() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Client Management</h1>
         <button 
-          onClick={() => setShowAddModal(true)}
+          onClick={openAddModal}
           className="w-full sm:w-auto bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center space-x-2"
         >
           <Plus className="w-4 h-4" />
@@ -245,7 +293,10 @@ export default function ClientManagement() {
                     >
                       <Eye className="w-4 h-4" />
                     </button>
-                    <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                      <button 
+                        onClick={() => handleEditClient(client)}
+                        className="p-1 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+                      >
                       <Edit className="w-4 h-4" />
                     </button>
                     <button 
@@ -350,7 +401,10 @@ export default function ClientManagement() {
                       >
                         <Eye className="w-4 h-4" />
                       </button>
-                      <button className="p-1 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                      <button 
+                        onClick={() => handleEditClient(client)}
+                        className="p-1 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+                      >
                         <Edit className="w-4 h-4" />
                       </button>
                       <button 
@@ -373,9 +427,9 @@ export default function ClientManagement() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">Add New Client</h3>
+              <h3 className="text-lg font-semibold text-gray-900">{isEditing ? 'Edit Client' : 'Add New Client'}</h3>
               <button
-                onClick={() => setShowAddModal(false)}
+                onClick={closeAddModal}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
               >
                 <X className="w-5 h-5" />
@@ -454,16 +508,16 @@ export default function ClientManagement() {
             </div>
             <div className="p-6 border-t border-gray-200 flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3">
               <button
-                onClick={() => setShowAddModal(false)}
+                onClick={closeAddModal}
                 className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200"
               >
                 Cancel
               </button>
               <button
-                onClick={handleAddClient}
+                onClick={handleSubmitClient}
                 className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
               >
-                Add Client
+                {isEditing ? 'Update Client' : 'Add Client'}
               </button>
             </div>
           </div>

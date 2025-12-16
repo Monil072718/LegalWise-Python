@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Search, Plus, Eye, Edit, Trash2, CheckCircle, XCircle, Star, Clock, X, Upload } from 'lucide-react';
 import { Lawyer } from '../types';
 import { api } from '../services/api';
+import { useToast } from '../context/ToastContext';
 
 export default function LawyerManagement() {
   const [lawyers, setLawyers] = useState<Lawyer[]>([]);
@@ -11,7 +12,9 @@ export default function LawyerManagement() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
+  const { showToast } = useToast();
   const [selectedLawyer, setSelectedLawyer] = useState<Lawyer | null>(null);
   const [formData, setFormData] = useState({
     name: '',
@@ -22,7 +25,10 @@ export default function LawyerManagement() {
     address: '',
     bio: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    status: 'active',
+    availability: 'offline',
+    verified: false
   });
 
   useEffect(() => {
@@ -66,52 +72,101 @@ export default function LawyerManagement() {
     return styles[availability as keyof typeof styles] || styles.offline;
   };
 
-  const handleAddLawyer = async () => {
+  const handleSaveLawyer = async () => {
     try {
-      // Get values from DOM elements for fields not in simple state
-      // (Optimally this should be in state, but for this quick fix we use IDs)
-      const statusEl = document.getElementById('lawyer-status') as HTMLSelectElement;
-      const availabilityEl = document.getElementById('lawyer-availability') as HTMLSelectElement;
-      const verifiedEl = document.getElementById('lawyer-verified') as HTMLInputElement;
-
-      const newLawyerData = {
+      const lawyerData = {
         name: formData.name,
         email: formData.email,
-        password: formData.password,
         role: 'lawyer' as const,
-        status: (statusEl?.value || 'active') as 'active' | 'pending' | 'inactive',
+        status: formData.status as 'active' | 'pending' | 'inactive',
         specialization: formData.specialization.split(',').map((s: string) => s.trim()).filter(s => s),
         experience: parseInt(formData.experience) || 0,
-        rating: 0,
-        casesHandled: 0,
-        availability: (availabilityEl?.value || 'offline') as 'online' | 'offline' | 'busy',
-        verified: verifiedEl?.checked || false,
-        createdAt: new Date().toISOString().split('T')[0],
-        documents: [],
+        availability: formData.availability as 'online' | 'offline' | 'busy',
+        verified: formData.verified,
         phone: formData.phone,
         address: formData.address,
         bio: formData.bio
       };
 
-      if (!newLawyerData.name || !newLawyerData.email || !newLawyerData.password || !newLawyerData.specialization.length) {
-        alert('Please fill in all required fields');
+      if (!lawyerData.name || !lawyerData.email || !lawyerData.specialization.length) {
+        showToast('Please fill in all required fields', 'error');
         return;
       }
 
-      if (formData.password !== formData.confirmPassword) {
-        alert('Passwords do not match');
-        return;
+      if (!isEditing) {
+        // Validation for new lawyer
+        if (!formData.password) {
+            showToast('Password is required for new lawyers', 'error');
+            return;
+        }
+        if (formData.password !== formData.confirmPassword) {
+            showToast('Passwords do not match', 'error');
+            return;
+        }
+        await api.createLawyer({
+            ...lawyerData,
+            password: formData.password,
+            rating: 0,
+            casesHandled: 0,
+            createdAt: new Date().toISOString().split('T')[0],
+            documents: []
+        });
+        showToast('Lawyer created successfully', 'success');
+      } else {
+         // Update existing lawyer
+         if (selectedLawyer) {
+             const updateData: any = { ...lawyerData };
+             // Only include password if provided
+             if (formData.password) {
+                 if (formData.password !== formData.confirmPassword) {
+                     showToast('Passwords do not match', 'error');
+                     return;
+                 }
+                 updateData.password = formData.password;
+             }
+             await api.updateLawyer(selectedLawyer.id, updateData);
+             showToast('Lawyer updated successfully', 'success');
+         }
       }
 
-      await api.createLawyer(newLawyerData);
       // Refresh list
       fetchLawyers();
-      setFormData({ name: '', email: '', password: '', confirmPassword: '', specialization: '', experience: '', phone: '', address: '', bio: '' });
+      resetForm();
       setShowAddModal(false);
     } catch (error) {
-      console.error('Failed to create lawyer:', error);
-      alert('Failed to create lawyer. Please try again.');
+      console.error('Failed to save lawyer:', error);
+      showToast('Failed to save lawyer. Please try again.', 'error');
     }
+  };
+
+  const resetForm = () => {
+      setFormData({ 
+          name: '', email: '', password: '', confirmPassword: '', 
+          specialization: '', experience: '', phone: '', address: '', bio: '',
+          status: 'active', availability: 'offline', verified: false
+      });
+      setIsEditing(false);
+      setSelectedLawyer(null);
+  };
+
+  const handleEditLawyer = (lawyer: Lawyer) => {
+      setSelectedLawyer(lawyer);
+      setFormData({
+          name: lawyer.name,
+          email: lawyer.email,
+          password: '',
+          confirmPassword: '',
+          specialization: lawyer.specialization.join(', '),
+          experience: lawyer.experience.toString(),
+          phone: lawyer.phone || '',
+          address: lawyer.address || '',
+          bio: lawyer.bio || '',
+          status: lawyer.status,
+          availability: lawyer.availability,
+          verified: lawyer.verified
+      });
+      setIsEditing(true);
+      setShowAddModal(true);
   };
 
   const handleViewLawyer = (lawyer: Lawyer) => {
@@ -126,7 +181,7 @@ export default function LawyerManagement() {
       setLawyers(lawyers.filter((l: Lawyer) => l.id !== id));
     } catch (error) {
       console.error('Failed to delete lawyer:', error);
-      alert('Failed to delete lawyer.');
+      showToast('Failed to delete lawyer.', 'error');
     }
   };
 
@@ -136,7 +191,7 @@ export default function LawyerManagement() {
       setLawyers(lawyers.map((l: Lawyer) => l.id === id ? { ...l, verified: true, status: 'active' } : l));
     } catch (error) {
       console.error('Failed to verify lawyer:', error);
-      alert('Failed to verify lawyer.');
+      showToast('Failed to verify lawyer.', 'error');
     }
   };
 
@@ -153,7 +208,10 @@ export default function LawyerManagement() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Lawyer Management</h1>
         <button 
-          onClick={() => setShowAddModal(true)}
+          onClick={() => {
+              resetForm();
+              setShowAddModal(true);
+          }}
           className="w-full sm:w-auto bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center space-x-2"
         >
           <Plus className="w-4 h-4" />
@@ -259,7 +317,9 @@ export default function LawyerManagement() {
                     >
                       <Eye className="w-4 h-4" />
                     </button>
-                    <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                    <button 
+                         onClick={() => handleEditLawyer(lawyer)}
+                         className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors duration-200">
                       <Edit className="w-4 h-4" />
                     </button>
                     <button 
@@ -390,7 +450,9 @@ export default function LawyerManagement() {
                       >
                         <Eye className="w-4 h-4" />
                       </button>
-                      <button className="p-1 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                      <button 
+                         onClick={() => handleEditLawyer(lawyer)}
+                         className="p-1 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors duration-200">
                         <Edit className="w-4 h-4" />
                       </button>
                       <button 
@@ -413,7 +475,7 @@ export default function LawyerManagement() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">Add New Lawyer</h3>
+              <h3 className="text-lg font-semibold text-gray-900">{isEditing ? 'Edit Lawyer' : 'Add New Lawyer'}</h3>
               <button
                 onClick={() => setShowAddModal(false)}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
@@ -449,28 +511,28 @@ export default function LawyerManagement() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Password *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Password {isEditing && '(Leave blank to keep current)'}</label>
                 <input
                   type="password"
                   value={formData.password}
                   onChange={(e) => setFormData({...formData, password: e.target.value})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Set initial password"
-                  required
+                  placeholder={isEditing ? "Enter new password to change" : "Set initial password"}
+                  required={!isEditing}
                   minLength={8}
                 />
                 <p className="text-xs text-gray-500 mt-1">Must be at least 8 characters long</p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Confirm Password *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
                 <input
                   type="password"
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Re-enter password"
-                  required
+                  required={!isEditing && !!formData.password}
                 />
               </div>
               
@@ -505,9 +567,8 @@ export default function LawyerManagement() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Account Status</label>
                   <select
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    defaultValue="active"
-                    // No state for this yet in formData, will perform update in handleAddLawyer
-                    id="lawyer-status"
+                    value={formData.status}
+                    onChange={(e) => setFormData({...formData, status: e.target.value})}
                   >
                     <option value="active">Active</option>
                     <option value="pending">Pending</option>
@@ -515,11 +576,11 @@ export default function LawyerManagement() {
                   </select>
                 </div>
                  <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Initial Availability</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Availability</label>
                   <select
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    defaultValue="offline"
-                    id="lawyer-availability"
+                    value={formData.availability}
+                    onChange={(e) => setFormData({...formData, availability: e.target.value})}
                   >
                     <option value="online">Online</option>
                     <option value="offline">Offline</option>
@@ -530,6 +591,8 @@ export default function LawyerManagement() {
                    <input 
                       type="checkbox" 
                       id="lawyer-verified"
+                      checked={formData.verified}
+                      onChange={(e) => setFormData({...formData, verified: e.target.checked})}
                       className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                    />
                    <label htmlFor="lawyer-verified" className="ml-2 block text-sm text-gray-900">
@@ -582,10 +645,10 @@ export default function LawyerManagement() {
                 Cancel
               </button>
               <button
-                onClick={handleAddLawyer}
+                onClick={handleSaveLawyer}
                 className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
               >
-                Create Lawyer
+                {isEditing ? 'Update Lawyer' : 'Create Lawyer'}
               </button>
             </div>
           </div>

@@ -12,6 +12,8 @@ export const metadata: Metadata = {
   description: 'LegalWise Administration Dashboard',
 };
 
+import { ToastProvider } from '../context/ToastContext';
+
 export default function RootLayout({
   children,
 }: {
@@ -20,7 +22,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ClientLayout>{children}</ClientLayout>
+        <ToastProvider>
+          <ClientLayout>{children}</ClientLayout>
+        </ToastProvider>
       </body>
     </html>
   );

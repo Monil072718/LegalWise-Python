@@ -76,7 +76,7 @@ export interface Payment {
   clientName: string;
   lawyerName?: string;
   amount: number;
-  type: 'consultation' | 'case' | 'book' | 'commission';
+  type: 'consultation' | 'case' | 'book' | 'commission' | 'document';
   status: 'completed' | 'pending' | 'failed' | 'refunded';
   date: string;
   platformFee: number;

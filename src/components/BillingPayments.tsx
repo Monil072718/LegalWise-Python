@@ -20,10 +20,17 @@ export default function BillingPayments() {
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [showRefundModal, setShowRefundModal] = useState(false);
   
+  interface InvoiceFormState {
+    clientName: string;
+    type: Payment['type'];
+    amount: string;
+    description: string;
+  }
+
   const [clients, setClients] = useState<any[]>([]);
-  const [invoiceData, setInvoiceData] = useState({
+  const [invoiceData, setInvoiceData] = useState<InvoiceFormState>({
       clientName: '',
-      type: 'Consultation',
+      type: 'consultation',
       amount: '',
       description: ''
   });
@@ -117,7 +124,7 @@ export default function BillingPayments() {
         setShowInvoiceModal(false);
         setInvoiceData({
             clientName: '',
-            type: 'Consultation',
+            type: 'consultation',
             amount: '',
             description: ''
         });
@@ -468,8 +475,12 @@ export default function BillingPayments() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Service Type</label>
                 <CustomSelect
                   value={invoiceData.type}
-                  onChange={(val) => setInvoiceData({...invoiceData, type: val})}
-                  options={['Consultation', 'Case Handling', 'Document Review']}
+                  onChange={(val) => setInvoiceData({...invoiceData, type: val as Payment['type']})}
+                  options={[
+                    { label: 'Consultation', value: 'consultation' },
+                    { label: 'Case Handling', value: 'case' },
+                    { label: 'Document Review', value: 'document' }
+                  ]}
                   variant="default"
                   placeholder="Select Type"
                 />

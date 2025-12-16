@@ -102,7 +102,20 @@ export const api = {
   getCase: (id: string) => api.get<Case>(`/cases/${id}`),
   createCase: (data: Partial<Case>) => api.post<Case>('/cases/', data),
   updateCase: (id: string, data: Partial<Case>) => api.put<Case>(`/cases/${id}`, data),
-  deleteCase: (id: string) => api.delete<void>(`/cases/${id}`),
+  deleteCase: (id: string, ) => api.delete<void>(`/cases/${id}`),
+  uploadCaseDocument: (id: string, file: File) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      // Special handling for FormData (no Content-Type header in getHeaders, let browser set it with boundary)
+      const token = typeof window !== 'undefined' ? (sessionStorage.getItem('adminToken') || sessionStorage.getItem('lawyerToken')) : null;
+      return fetch(`${API_BASE_URL}/cases/${id}/documents`, {
+          method: 'POST',
+          headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+          body: formData
+      }).then(handleResponse);
+  },
+  deleteCaseDocument: (caseId: string, docId: string) => api.delete<void>(`/cases/${caseId}/documents/${docId}`),
+  getCaseDocumentUrl: (caseId: string, filename: string) => `${API_BASE_URL}/cases/${caseId}/documents/${filename}`,
 
   // Appointments
   getAppointments: () => api.get<Appointment[]>('/appointments/'),

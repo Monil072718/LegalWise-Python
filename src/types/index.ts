@@ -44,6 +44,7 @@ export interface Case {
   priority: 'low' | 'medium' | 'high';
   createdAt: string;
   nextHearing?: string;
+  description?: string;
   documents: Document[];
 }
 

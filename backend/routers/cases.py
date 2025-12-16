@@ -11,9 +11,15 @@ router = APIRouter(
 import uuid
 from datetime import datetime
 
+from routers.auth import get_current_user # Import here or top level if no circular dep
+
 @router.get("/", response_model=List[schemas.Case])
-def read_cases(skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db)):
-    cases = db.query(models.Case).offset(skip).limit(limit).all()
+def read_cases(skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db), current_user = Depends(get_current_user)):
+    # Admin sees all, Lawyer sees own
+    if hasattr(current_user, "role") and current_user.role == "lawyer":
+         cases = db.query(models.Case).filter(models.Case.lawyerId == current_user.id).offset(skip).limit(limit).all()
+    else:
+         cases = db.query(models.Case).offset(skip).limit(limit).all()
     return cases
 
 @router.get("/{case_id}", response_model=schemas.Case)
@@ -24,12 +30,16 @@ def read_case(case_id: str, db: Session = Depends(database.get_db)):
     return db_case
 
 @router.post("/", response_model=schemas.Case)
-def create_case(case: schemas.CaseBase, db: Session = Depends(database.get_db)):
+def create_case(case: schemas.CaseBase, db: Session = Depends(database.get_db), current_user = Depends(get_current_user)):
     try:
         data = case.dict()
-        # Ensure documents is initialized if not present (though schema default handles this)
+        # Ensure documents is initialized
         if "documents" not in data:
             data["documents"] = []
+            
+        # Security: Force lawyerId to match the authenticated user if they are a lawyer
+        if hasattr(current_user, "role") and current_user.role == "lawyer":
+            data["lawyerId"] = current_user.id
             
         db_case = models.Case(**data, id=str(uuid.uuid4()))
         db.add(db_case)

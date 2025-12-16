@@ -12,46 +12,33 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
+import { api } from '@/services/api';
+import { Case } from '@/types';
+import { useEffect } from 'react';
+
 export default function LawyerCases() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
+  const [cases, setCases] = useState<Case[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock data
-  const cases = [
-    { 
-      id: "C-101", 
-      title: "Estate Dispute - Johnson Family", 
-      client: "Alice Johnson", 
-      status: "In Progress", 
-      stage: "Discovery",
-      priority: "High",
-      nextHearing: "Jan 24, 2025",
-      updated: "2 days ago"
-    },
-    { 
-      id: "C-102", 
-      title: "Contract Review - TechCorp merger", 
-      client: "Robert Smith", 
-      status: "Review", 
-      stage: "Drafting",
-      priority: "Medium",
-      nextHearing: "None",
-      updated: "5 hours ago"
-    },
-    { 
-      id: "C-103", 
-      title: "Traffic Violation Defense", 
-      client: "Sarah Williams", 
-      status: "Won", 
-      stage: "Closed",
-      priority: "Low",
-      nextHearing: "None",
-      updated: "1 week ago"
-    }
-  ];
+  useEffect(() => {
+      loadCases();
+  }, []);
+
+  const loadCases = async () => {
+      try {
+          const data = await api.getCases();
+          setCases(data);
+      } catch (error) {
+          console.error("Failed to load cases", error);
+      } finally {
+          setLoading(false);
+      }
+  };
 
   const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
+    switch (status?.toLowerCase()) {
       case 'in progress': return 'bg-blue-100 text-blue-800';
       case 'won': return 'bg-green-100 text-green-800';
       case 'lost': return 'bg-red-100 text-red-800';
@@ -61,13 +48,15 @@ export default function LawyerCases() {
   };
 
   const getPriorityColor = (priority: string) => {
-    switch (priority.toLowerCase()) {
+    switch (priority?.toLowerCase()) {
       case 'high': return 'text-red-600 bg-red-50';
       case 'medium': return 'text-yellow-600 bg-yellow-50';
       case 'low': return 'text-green-600 bg-green-50';
       default: return 'text-gray-600 bg-gray-50';
     }
   };
+
+  if (loading) return <div className="p-6">Loading cases...</div>;
 
   return (
     <div className="p-6">

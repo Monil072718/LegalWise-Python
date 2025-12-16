@@ -127,17 +127,28 @@ export default function CaseDetails() {
 
     try {
       if (isNew) {
-        // Create logic
-        const newCase = await api.createCase({
+         // Auto-create case if new
+         const token = sessionStorage.getItem('lawyerToken') || localStorage.getItem('lawyerToken');
+         let currentLawyerId = 'lawyer-1'; // Fallback
+         if (token) {
+             try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                if (payload.id) currentLawyerId = payload.id;
+             } catch (e) {
+                 console.error("Error parsing token", e);
+             }
+         }
+
+         const newCase = await api.createCase({
             ...formData,
             clientId: formData.client || 'client-1',
-            lawyerId: 'lawyer-1',
+            lawyerId: currentLawyerId,
             status: formData.status as any,
             priority: formData.priority as any,
             createdAt: new Date().toISOString().split('T')[0]
-        });
-        showToast('New case created successfully', 'success');
-        router.push(`/lawyer/cases/${newCase.id}`);
+         });
+         showToast('New case created successfully', 'success');
+         router.push(`/lawyer/cases/${newCase.id}`);
       } else {
         // Update logic
         await api.updateCase(id, {

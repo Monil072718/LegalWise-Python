@@ -15,11 +15,21 @@ export const api = {
   getHeaders: () => {
     const adminToken = typeof window !== 'undefined' ? (sessionStorage.getItem('adminToken') || localStorage.getItem('adminToken')) : null;
     const lawyerToken = typeof window !== 'undefined' ? (sessionStorage.getItem('lawyerToken') || localStorage.getItem('lawyerToken')) : null;
-    // Simple heuristic: if we are in admin section (or have admin token and no lawyer token?), use admin.
-    // Ideally, the caller should specify, but for now let's pick one. 
-    // Usually only one should be active per 'view' but since we moved to sessionStorage, we can be more specific.
-    // However, keeping it simple: use the one that exists.
-    const token = adminToken || lawyerToken;
+    
+    let token = null;
+    if (typeof window !== 'undefined') {
+        const path = window.location.pathname;
+        if (path.startsWith('/lawyer')) {
+            token = lawyerToken;
+        } else if (path.startsWith('/admin')) {
+            token = adminToken;
+        } else {
+             // Fallback or explicit public routes
+             token = adminToken || lawyerToken;
+        }
+    } else {
+        token = adminToken || lawyerToken;
+    }
     
     return {
       'Content-Type': 'application/json',
@@ -106,8 +116,22 @@ export const api = {
   uploadCaseDocument: (id: string, file: File) => {
       const formData = new FormData();
       formData.append('file', file);
-      // Special handling for FormData (no Content-Type header in getHeaders, let browser set it with boundary)
-      const token = typeof window !== 'undefined' ? (sessionStorage.getItem('adminToken') || sessionStorage.getItem('lawyerToken')) : null;
+      
+      let token = null;
+        if (typeof window !== 'undefined') {
+            const path = window.location.pathname;
+            const adminToken = sessionStorage.getItem('adminToken') || localStorage.getItem('adminToken');
+            const lawyerToken = sessionStorage.getItem('lawyerToken') || localStorage.getItem('lawyerToken');
+            
+            if (path.startsWith('/lawyer')) {
+                token = lawyerToken;
+            } else if (path.startsWith('/admin')) {
+                token = adminToken;
+            } else {
+                token = adminToken || lawyerToken;
+            }
+        }
+
       return fetch(`${API_BASE_URL}/cases/${id}/documents`, {
           method: 'POST',
           headers: token ? { 'Authorization': `Bearer ${token}` } : {},

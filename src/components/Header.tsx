@@ -1,5 +1,7 @@
 
+import { useState, useRef, useEffect } from 'react';
 import { Menu, Search, Bell, User } from 'lucide-react';
+import NotificationDropdown from './NotificationDropdown';
 
 interface HeaderProps {
   onToggleSidebar: () => void;
@@ -11,6 +13,21 @@ interface HeaderProps {
 }
 
 export default function Header({ onToggleSidebar, user }: HeaderProps) {
+  const [showNotifications, setShowNotifications] = useState(false);
+  const notificationRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
+        setShowNotifications(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <header className="bg-white border-b border-gray-200 px-3 sm:px-6 py-3 sm:py-4 relative z-30">
       <div className="flex items-center justify-between">
@@ -37,12 +54,22 @@ export default function Header({ onToggleSidebar, user }: HeaderProps) {
             <Search className="w-5 h-5" />
           </button>
           
-          <button className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200">
-            <Bell className="w-5 h-5" />
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center">
-              3
-            </span>
-          </button>
+          <div className="relative" ref={notificationRef}>
+            <button 
+              onClick={() => setShowNotifications(!showNotifications)}
+              className={`relative p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 ${showNotifications ? 'bg-gray-100' : ''}`}
+            >
+              <Bell className="w-5 h-5" />
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center">
+                3
+              </span>
+            </button>
+            
+            <NotificationDropdown 
+              isOpen={showNotifications} 
+              onClose={() => setShowNotifications(false)} 
+            />
+          </div>
           
           <div className="flex items-center space-x-2 sm:space-x-3">
             <div className={`w-8 h-8 rounded-full flex items-center justify-center ${user?.role === 'lawyer' ? 'bg-blue-600' : 'bg-gray-800'}`}>

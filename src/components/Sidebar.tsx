@@ -21,13 +21,14 @@ interface SidebarProps {
   isCollapsed: boolean;
 }
 
+// Main navigation configuration
 const navigationItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/' },
   { id: 'lawyers', label: 'Lawyer Management', icon: UserCheck, href: '/lawyers' },
   { id: 'clients', label: 'Client Management', icon: Users, href: '/clients' },
   { id: 'cases', label: 'Case Management', icon: Scale, href: '/cases' },
   { id: 'appointments', label: 'Appointments', icon: Calendar, href: '/appointments' },
-  { id: 'notifications', label: 'Notifications', icon: Bell, href: '/notifications' },
+  // { id: 'notifications', label: 'Notifications', icon: Bell, href: '/notifications' }, // Moved to Header
   { id: 'billing', label: 'Billing & Payments', icon: CreditCard, href: '/billing' },
   { id: 'analytics', label: 'Analytics & Reports', icon: BarChart3, href: '/analytics' },
   { id: 'content', label: 'Content Management', icon: BookOpen, href: '/content' },

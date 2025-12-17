@@ -24,9 +24,8 @@ def read_lawyer(lawyer_id: str, db: Session = Depends(database.get_db)):
 
 @router.post("/", response_model=schemas.Lawyer)
 def create_lawyer(lawyer: schemas.LawyerCreate, db: Session = Depends(database.get_db)):
-    from passlib.context import CryptContext
-    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-    hashed_password = pwd_context.hash(lawyer.password)
+    from routers.auth import get_password_hash
+    hashed_password = get_password_hash(lawyer.password)
     
     lawyer_data = lawyer.dict(exclude={"password"})
     db_lawyer = models.Lawyer(

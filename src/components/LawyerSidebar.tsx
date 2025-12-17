@@ -6,7 +6,6 @@ import {
   Scale, 
   Calendar, 
   MessageSquare, 
-  Bell, 
   CreditCard, 
   BarChart3, 
   Settings,
@@ -25,7 +24,6 @@ const navigationItems = [
   { id: 'cases', label: 'Case Management', icon: Scale, href: '/lawyer/cases' },
   { id: 'appointments', label: 'Appointments', icon: Calendar, href: '/lawyer/appointments' },
   { id: 'messages', label: 'Messages', icon: MessageSquare, href: '/lawyer/messages' },
-  { id: 'notifications', label: 'Notifications', icon: Bell, href: '/lawyer/notifications' },
   { id: 'billing', label: 'Billing & Payments', icon: CreditCard, href: '/lawyer/billing' },
   { id: 'analytics', label: 'Analytics', icon: BarChart3, href: '/lawyer/analytics' },
   { id: 'settings', label: 'Settings', icon: Settings, href: '/lawyer/settings' }

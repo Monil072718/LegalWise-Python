@@ -25,18 +25,23 @@ def read_lawyer(lawyer_id: str, db: Session = Depends(database.get_db)):
 @router.post("/", response_model=schemas.Lawyer)
 def create_lawyer(lawyer: schemas.LawyerCreate, db: Session = Depends(database.get_db)):
     from routers.auth import get_password_hash
-    hashed_password = get_password_hash(lawyer.password)
-    
-    lawyer_data = lawyer.dict(exclude={"password"})
-    db_lawyer = models.Lawyer(
-        **lawyer_data,
-        hashed_password=hashed_password,
-        id=str(uuid.uuid4())
-    )
-    db.add(db_lawyer)
-    db.commit()
-    db.refresh(db_lawyer)
-    return db_lawyer
+    try:
+        hashed_password = get_password_hash(lawyer.password)
+        
+        lawyer_data = lawyer.dict(exclude={"password"})
+        db_lawyer = models.Lawyer(
+            **lawyer_data,
+            hashed_password=hashed_password,
+            id=str(uuid.uuid4())
+        )
+        db.add(db_lawyer)
+        db.commit()
+        db.refresh(db_lawyer)
+        return db_lawyer
+    except Exception as e:
+        db.rollback()
+        print(f"Error creating lawyer: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to create lawyer: {str(e)}")
 
 @router.put("/{lawyer_id}", response_model=schemas.Lawyer)
 def update_lawyer(lawyer_id: str, lawyer: schemas.LawyerUpdate, db: Session = Depends(database.get_db)):

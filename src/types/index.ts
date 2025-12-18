@@ -20,6 +20,7 @@ export interface Lawyer extends User {
   phone?: string;
   address?: string;
   bio?: string;
+  image?: string;
 }
 
 export interface LawyerCreate extends Omit<Lawyer, 'id' | 'rating' | 'casesHandled' | 'documents' | 'createdAt'> {

@@ -24,6 +24,7 @@ class LawyerBase(BaseModel):
     phone: Optional[str] = None
     address: Optional[str] = None
     bio: Optional[str] = None
+    image: Optional[str] = None
 
 class LawyerUpdate(BaseModel):
     name: Optional[str] = None

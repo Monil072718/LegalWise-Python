@@ -35,7 +35,8 @@ export default function LawyerManagement() {
     confirmPassword: '',
     status: 'active',
     availability: 'offline',
-    verified: false
+    verified: false,
+    image: ''
   });
 
   useEffect(() => {
@@ -97,7 +98,8 @@ export default function LawyerManagement() {
         verified: formData.verified,
         phone: formData.phone,
         address: formData.address,
-        bio: formData.bio
+        bio: formData.bio,
+        image: formData.image
       };
 
       if (!lawyerData.name || !lawyerData.email || !lawyerData.specialization.length) {
@@ -156,7 +158,7 @@ export default function LawyerManagement() {
       setFormData({ 
           name: '', email: '', password: '', confirmPassword: '', 
           specialization: '', experience: '', phone: '', address: '', bio: '',
-          status: 'active', availability: 'offline', verified: false
+          status: 'active', availability: 'offline', verified: false, image: ''
       });
       setIsEditing(false);
       setSelectedLawyer(null);
@@ -176,7 +178,8 @@ export default function LawyerManagement() {
           bio: lawyer.bio || '',
           status: lawyer.status,
           availability: lawyer.availability,
-          verified: lawyer.verified
+          verified: lawyer.verified,
+          image: lawyer.image || ''
       });
       setIsEditing(true);
       setShowAddModal(true);
@@ -325,10 +328,14 @@ export default function LawyerManagement() {
               <div key={lawyer.id} className="p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-                      <span className="text-white font-medium text-sm">
-                        {lawyer.name.split(' ').map(n => n[0]).join('')}
-                      </span>
+                    <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center overflow-hidden">
+                      {lawyer.image ? (
+                        <img src={lawyer.image} alt={lawyer.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-white font-medium text-sm">
+                          {lawyer.name.split(' ').map(n => n[0]).join('')}
+                        </span>
+                      )}
                     </div>
                     <div>
                       <div className="font-medium text-gray-900">{lawyer.name}</div>
@@ -413,10 +420,14 @@ export default function LawyerManagement() {
                 <tr key={lawyer.id} className="hover:bg-gray-50 transition-colors duration-200">
                   <td className="px-6 py-4">
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-                        <span className="text-white font-medium">
-                          {lawyer.name.split(' ').map(n => n[0]).join('')}
-                        </span>
+                      <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center overflow-hidden">
+                        {lawyer.image ? (
+                            <img src={lawyer.image} alt={lawyer.name} className="w-full h-full object-cover" />
+                        ) : (
+                            <span className="text-white font-medium">
+                            {lawyer.name.split(' ').map(n => n[0]).join('')}
+                            </span>
+                        )}
                       </div>
                       <div>
                         <div className="font-medium text-gray-900">{lawyer.name}</div>
@@ -532,7 +543,18 @@ export default function LawyerManagement() {
                     placeholder="lawyer@email.com"
                     required
                   />
-                </div>
+                  </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Profile Image URL</label>
+                <input
+                    type="text"
+                    value={formData.image}
+                    onChange={(e) => setFormData({...formData, image: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="https://example.com/profile.jpg"
+                />
               </div>
 
               <div>
@@ -697,10 +719,14 @@ export default function LawyerManagement() {
             </div>
             <div className="p-6 space-y-6">
               <div className="flex flex-col md:flex-row items-start space-y-4 md:space-y-0 md:space-x-6">
-                <div className="w-24 h-24 bg-blue-600 rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold text-2xl">
-                    {selectedLawyer.name.split(' ').map(n => n[0]).join('')}
-                  </span>
+                <div className="w-24 h-24 bg-blue-600 rounded-full flex items-center justify-center overflow-hidden">
+                  {selectedLawyer.image ? (
+                    <img src={selectedLawyer.image} alt={selectedLawyer.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-white font-bold text-2xl">
+                        {selectedLawyer.name.split(' ').map(n => n[0]).join('')}
+                    </span>
+                  )}
                 </div>
                 <div className="flex-1">
                   <h2 className="text-2xl font-bold text-gray-900">{selectedLawyer.name}</h2>

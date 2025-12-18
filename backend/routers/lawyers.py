@@ -39,6 +39,12 @@ def create_lawyer(lawyer: schemas.LawyerCreate, db: Session = Depends(database.g
             hashed_password=hashed_password,
             id=str(uuid.uuid4())
         )
+        
+        # Debug: Check current database
+        from sqlalchemy import text
+        current_db = db.execute(text("select current_database()")).scalar()
+        print("✅ current_database():", current_db)
+
         db.add(db_lawyer)
         db.commit()
         db.refresh(db_lawyer)

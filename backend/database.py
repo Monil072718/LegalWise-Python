@@ -19,6 +19,8 @@ if "sqlite" in SQLALCHEMY_DATABASE_URL:
         SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
     )
 
+print("✅ Connected DB:", engine.url)
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 

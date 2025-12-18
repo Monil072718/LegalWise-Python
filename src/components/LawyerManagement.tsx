@@ -61,6 +61,11 @@ export default function LawyerManagement() {
     return matchesSearch && matchesStatus;
   });
 
+  console.log('DEBUG: Total lawyers:', lawyers.length);
+  console.log('DEBUG: Filtered lawyers:', filteredLawyers.length);
+  console.log('DEBUG: Search term:', searchTerm);
+  console.log('DEBUG: Selected status:', selectedStatus);
+
   const getStatusBadge = (status: string) => {
     const styles = {
       active: 'bg-green-100 text-green-800',

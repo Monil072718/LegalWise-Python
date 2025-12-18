@@ -1,0 +1,21 @@
+DATABASE STATUS REPORT
+============================================================
+
+Connected to: postgresql://postgres:monil7908@localhost:5432/postgres
+
+Connection: SUCCESS
+
+Total lawyers in database: 5
+
+Lawyers found:
+  - Monil (patelmonil1807@gmail.com) - active
+  - Test Lawyer (test@example.com) - active
+  - Test Lawyer 2 (test2@example.com) - active
+  - test lawyer 3 (test3@gmail.com) - active
+  - test lawyer4 (test4@gmail.com) - active
+
+============================================================
+If you see lawyers listed above, data IS being saved.
+Make sure you're looking at the correct database in pgAdmin:
+  Host: localhost
+  Database: postgres

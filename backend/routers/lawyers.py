@@ -24,6 +24,11 @@ def read_lawyer(lawyer_id: str, db: Session = Depends(database.get_db)):
 
 @router.post("/", response_model=schemas.Lawyer)
 def create_lawyer(lawyer: schemas.LawyerCreate, db: Session = Depends(database.get_db)):
+    # Check if lawyer with same email already exists
+    existing_lawyer = db.query(models.Lawyer).filter(models.Lawyer.email == lawyer.email).first()
+    if existing_lawyer:
+        raise HTTPException(status_code=400, detail="Email already registered")
+
     from routers.auth import get_password_hash
     try:
         hashed_password = get_password_hash(lawyer.password)

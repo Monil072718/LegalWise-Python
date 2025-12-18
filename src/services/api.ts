@@ -4,8 +4,14 @@ const API_BASE_URL = 'http://localhost:8000';
 
 const handleResponse = async (response: Response) => {
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: response.statusText }));
-    throw new Error(error.detail || 'API Error');
+    let errorDetail = response.statusText;
+    try {
+        const errorData = await response.json();
+        errorDetail = errorData.detail || errorData.message || response.statusText;
+    } catch (e) {
+        // failed to parse json, keep statusText
+    }
+    throw new Error(errorDetail);
   }
   return response.json();
 };

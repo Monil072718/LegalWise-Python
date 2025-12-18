@@ -145,9 +145,10 @@ export default function LawyerManagement() {
       fetchLawyers();
       resetForm();
       setShowAddModal(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to save lawyer:', error);
-      showToast('Failed to save lawyer. Please try again.', 'error');
+      const errorMessage = error.message || 'Failed to save lawyer. Please try again.';
+      showToast(errorMessage, 'error');
     }
   };
 

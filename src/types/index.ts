@@ -92,6 +92,10 @@ export interface Book {
   downloads: number;
   rating: number;
   publishedAt: string;
+  isbn?: string;
+  quantity: number;
+  cover_image?: string;
+  description?: string;
 }
 
 export interface Article {
@@ -103,4 +107,6 @@ export interface Article {
   likes: number;
   publishedAt: string;
   status: 'published' | 'draft' | 'archived';
+  content?: string;
+  image?: string;
 }

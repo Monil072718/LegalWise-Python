@@ -166,9 +166,19 @@ export const api = {
   updateAppointment: (id: string, data: Partial<Appointment>) => api.put<Appointment>(`/appointments/${id}`, data),
   deleteAppointment: (id: string) => api.delete<void>(`/appointments/${id}`),
   
-  // Books & Articles
+  // Books
   getBooks: () => api.get<Book[]>('/books/'),
+  getBook: (id: string) => api.get<Book>(`/books/${id}`),
+  createBook: (data: Partial<Book>) => api.post<Book>('/books/', data),
+  updateBook: (id: string, data: Partial<Book>) => api.put<Book>(`/books/${id}`, data),
+  deleteBook: (id: string) => api.delete<void>(`/books/${id}`),
+
+  // Articles
   getArticles: () => api.get<Article[]>('/articles/'),
+  getArticle: (id: string) => api.get<Article>(`/articles/${id}`),
+  createArticle: (data: Partial<Article>) => api.post<Article>('/articles/', data),
+  updateArticle: (id: string, data: Partial<Article>) => api.put<Article>(`/articles/${id}`, data),
+  deleteArticle: (id: string) => api.delete<void>(`/articles/${id}`),
 
   // Financials
   getPayments: () => api.get<Payment[]>('/payments/'),

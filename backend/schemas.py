@@ -182,9 +182,29 @@ class BookBase(BaseModel):
     author: str
     category: str
     price: float
-    downloads: int
-    rating: float
+    downloads: int = 0
+    rating: float = 0.0
     publishedAt: str
+    isbn: Optional[str] = None
+    quantity: int = 0
+    cover_image: Optional[str] = None
+    description: Optional[str] = None
+
+class BookCreate(BookBase):
+    pass
+
+class BookUpdate(BaseModel):
+    title: Optional[str] = None
+    author: Optional[str] = None
+    category: Optional[str] = None
+    price: Optional[float] = None
+    downloads: Optional[int] = None
+    rating: Optional[float] = None
+    publishedAt: Optional[str] = None
+    isbn: Optional[str] = None
+    quantity: Optional[int] = None
+    cover_image: Optional[str] = None
+    description: Optional[str] = None
 
 class Book(BookBase):
     id: str
@@ -195,10 +215,26 @@ class ArticleBase(BaseModel):
     title: str
     author: str
     category: str
-    views: int
-    likes: int
+    views: int = 0
+    likes: int = 0
     publishedAt: str
     status: str
+    content: Optional[str] = None
+    image: Optional[str] = None
+
+class ArticleCreate(ArticleBase):
+    pass
+
+class ArticleUpdate(BaseModel):
+    title: Optional[str] = None
+    author: Optional[str] = None
+    category: Optional[str] = None
+    views: Optional[int] = None
+    likes: Optional[int] = None
+    publishedAt: Optional[str] = None
+    status: Optional[str] = None
+    content: Optional[str] = None
+    image: Optional[str] = None
 
 class Article(ArticleBase):
     id: str

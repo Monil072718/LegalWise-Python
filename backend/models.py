@@ -102,9 +102,13 @@ class Book(Base):
     author = Column(String)
     category = Column(String)
     price = Column(Float)
-    downloads = Column(Integer)
-    rating = Column(Float)
+    downloads = Column(Integer, default=0)
+    rating = Column(Float, default=0.0)
     publishedAt = Column(String)
+    isbn = Column(String, nullable=True)
+    quantity = Column(Integer, default=0)
+    cover_image = Column(String, nullable=True)
+    description = Column(String, nullable=True)
 
 class Article(Base):
     __tablename__ = "articles"
@@ -113,10 +117,12 @@ class Article(Base):
     title = Column(String)
     author = Column(String)
     category = Column(String)
-    views = Column(Integer)
-    likes = Column(Integer)
+    views = Column(Integer, default=0)
+    likes = Column(Integer, default=0)
     publishedAt = Column(String)
-    status = Column(String)
+    status = Column(String) # draft, published
+    content = Column(String, nullable=True)
+    image = Column(String, nullable=True)
 
 class PasswordReset(Base):
     __tablename__ = "password_resets"

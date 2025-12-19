@@ -99,6 +99,13 @@ class ClientBase(BaseModel):
 
     notes: Optional[str] = None
 
+class ClientCreate(ClientBase):
+    password: str
+
+class ClientLogin(BaseModel):
+    email: str
+    password: str
+
 class ClientUpdate(BaseModel):
     name: Optional[str] = None
     email: Optional[str] = None

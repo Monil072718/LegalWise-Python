@@ -145,6 +145,23 @@ def login_admin(form_data: schemas.AdminLogin, db: Session = Depends(get_db)):
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
+@router.post("/client/login", response_model=schemas.Token)
+def login_client(form_data: schemas.ClientLogin, db: Session = Depends(get_db)):
+    client = db.query(models.Client).filter(models.Client.email == form_data.email).first()
+    if not client or not verify_password(form_data.password, client.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": client.email, "role": "client", "id": client.id}, 
+        expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
 @router.post("/login", response_model=schemas.Token)
 def login_universal(form_data: schemas.LoginRequest, db: Session = Depends(get_db)):
     print(f"Login attempt for: {form_data.email}")
@@ -173,9 +190,16 @@ def login_universal(form_data: schemas.LoginRequest, db: Session = Depends(get_d
         )
         return {"access_token": access_token, "token_type": "bearer"}
         
-    # Check Client (Future)
-    # client = db.query(models.Client).filter(models.Client.email == form_data.email).first()
-    # ...
+    
+    # Check Client
+    client = db.query(models.Client).filter(models.Client.email == form_data.email).first()
+    if client and verify_password(form_data.password, client.hashed_password):
+        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token = create_access_token(
+            data={"sub": client.email, "role": "client", "id": client.id}, 
+            expires_delta=access_token_expires
+        )
+        return {"access_token": access_token, "token_type": "bearer"}
 
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

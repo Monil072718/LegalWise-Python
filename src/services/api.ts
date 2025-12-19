@@ -21,6 +21,7 @@ export const api = {
   getHeaders: () => {
     const adminToken = typeof window !== 'undefined' ? (sessionStorage.getItem('adminToken') || localStorage.getItem('adminToken')) : null;
     const lawyerToken = typeof window !== 'undefined' ? (sessionStorage.getItem('lawyerToken') || localStorage.getItem('lawyerToken')) : null;
+    const userToken = typeof window !== 'undefined' ? (sessionStorage.getItem('userToken') || localStorage.getItem('userToken')) : null;
     
     let token = null;
     if (typeof window !== 'undefined') {
@@ -29,12 +30,14 @@ export const api = {
             token = lawyerToken;
         } else if (path.startsWith('/admin')) {
             token = adminToken;
+        } else if (path.startsWith('/user')) {
+            token = userToken;
         } else {
              // Fallback or explicit public routes
-             token = adminToken || lawyerToken;
+             token = adminToken || lawyerToken || userToken;
         }
     } else {
-        token = adminToken || lawyerToken;
+        token = adminToken || lawyerToken || userToken;
     }
     
     return {
@@ -67,6 +70,16 @@ export const api = {
       console.error(`API POST Error:`, error);
       throw error;
     }
+  },
+
+  loginClient: async (credentials: any) => {
+    const response = await api.post<any>('/auth/client/login', credentials);
+    return response;
+  },
+
+  registerClient: async (data: any) => {
+    const response = await api.post<any>('/clients/register', data);
+    return response;
   },
 
   put: async <T>(endpoint: string, data: any): Promise<T> => {

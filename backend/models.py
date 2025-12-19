@@ -20,6 +20,7 @@ class Client(Base):
     address = Column(String, nullable=True)
     company = Column(String, nullable=True)
     notes = Column(String, nullable=True)
+    hashed_password = Column(String)
 
 class Admin(Base):
     __tablename__ = "admins"

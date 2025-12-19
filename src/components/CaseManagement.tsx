@@ -20,6 +20,9 @@ export default function CaseManagement() {
   const [showViewModal, setShowViewModal] = useState(false);
   const [selectedCase, setSelectedCase] = useState<Case | null>(null);
   
+  // Admin restriction state
+  const [isAdmin, setIsAdmin] = useState(false);
+  
   // Modal state for deletion
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [caseToDelete, setCaseToDelete] = useState<string | null>(null);
@@ -41,6 +44,9 @@ export default function CaseManagement() {
   });
 
   useEffect(() => {
+    // Check if user is admin
+    setIsAdmin(!!(typeof window !== 'undefined' && sessionStorage.getItem('adminToken')));
+    
     const fetchData = async () => {
       try {
         const [casesData, lawyersData, clientsData] = await Promise.all([
@@ -102,10 +108,7 @@ export default function CaseManagement() {
         title: formData.title,
         clientId: formData.clientId,
         lawyerId: formData.lawyerId,
-        status: isEditing ? undefined : 'open' as const, // proper status handling for edits? 
-        // actually for edits we probably want to keep existing status unless changed elsewhere
-        // But the form doesn't show status for creation. customSelect for status is in list.
-        // Let's assume status isn't edited here for now, or use existing.
+        status: isEditing ? undefined : 'open' as const, 
         stage: formData.stage,
         priority: formData.priority as 'low' | 'medium' | 'high',
         nextHearing: formData.nextHearing || undefined,
@@ -225,6 +228,7 @@ export default function CaseManagement() {
     <div className="p-3 sm:p-6 space-y-4 sm:space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Case Management</h1>
+        {!isAdmin && (
         <button 
           onClick={() => setShowAddModal(true)}
           className="w-full sm:w-auto bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center space-x-2"
@@ -232,6 +236,7 @@ export default function CaseManagement() {
           <Plus className="w-4 h-4" />
           <span>Create Case</span>
         </button>
+        )}
       </div>
 
       {/* Summary Cards */}
@@ -347,6 +352,8 @@ export default function CaseManagement() {
                     </div>
                   </div>
                   <div className="flex space-x-1">
+                    {!isAdmin && (
+                    <>
                     <button 
                       onClick={() => handleViewCase(caseItem)}
                       className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors duration-200"
@@ -359,6 +366,8 @@ export default function CaseManagement() {
                     >
                       <Edit className="w-4 h-4" />
                     </button>
+                    </>
+                    )}
                     <button 
                         onClick={() => initiateDeleteCase(caseItem.id)}
                       className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors duration-200"
@@ -368,6 +377,8 @@ export default function CaseManagement() {
                   </div>
                 </div>
                 
+                {!isAdmin && (
+                <>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-gray-500">Client:</span>
@@ -417,6 +428,8 @@ export default function CaseManagement() {
                     variant="status"
                   />
                 </div>
+                </>
+                )}
               </div>
             ))}
           </div>
@@ -465,29 +478,41 @@ export default function CaseManagement() {
                     <span className="text-sm text-gray-900">{caseItem.stage}</span>
                   </td>
                   <td className="px-6 py-4">
-                    <CustomSelect
-                      value={caseItem.priority}
-                      onChange={(val) => handleUpdateCasePriority(caseItem.id, val)}
-                      options={[
-                        { label: 'High', value: 'high' },
-                        { label: 'Medium', value: 'medium' },
-                        { label: 'Low', value: 'low' }
-                      ]}
-                      variant="status"
-                    />
+                    {isAdmin ? (
+                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPriorityBadge(caseItem.priority)}`}>
+                        {caseItem.priority}
+                      </span>
+                    ) : (
+                      <CustomSelect
+                        value={caseItem.priority}
+                        onChange={(val) => handleUpdateCasePriority(caseItem.id, val)}
+                        options={[
+                          { label: 'High', value: 'high' },
+                          { label: 'Medium', value: 'medium' },
+                          { label: 'Low', value: 'low' }
+                        ]}
+                        variant="status"
+                      />
+                    )}
                   </td>
                   <td className="px-6 py-4">
-                    <CustomSelect
-                      value={caseItem.status}
-                      onChange={(val) => handleUpdateCaseStatus(caseItem.id, val)}
-                      options={[
-                        { label: 'Open', value: 'open' },
-                        { label: 'In Progress', value: 'in-progress' },
-                        { label: 'Closed', value: 'closed' },
-                        { label: 'Pending', value: 'pending' }
-                      ]}
-                      variant="status"
-                    />
+                    {isAdmin ? (
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadge(caseItem.status)}`}>
+                        {caseItem.status}
+                      </span>
+                    ) : (
+                      <CustomSelect
+                        value={caseItem.status}
+                        onChange={(val) => handleUpdateCaseStatus(caseItem.id, val)}
+                        options={[
+                          { label: 'Open', value: 'open' },
+                          { label: 'In Progress', value: 'in-progress' },
+                          { label: 'Closed', value: 'closed' },
+                          { label: 'Pending', value: 'pending' }
+                        ]}
+                        variant="status"
+                      />
+                    )}
                   </td>
                   <td className="px-6 py-4">
                     {caseItem.nextHearing ? (
@@ -503,6 +528,8 @@ export default function CaseManagement() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex space-x-2">
+                      {!isAdmin && (
+                      <>
                       <button 
                         onClick={() => handleViewCase(caseItem)}
                         className="p-1 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors duration-200"
@@ -515,6 +542,8 @@ export default function CaseManagement() {
                       >
                         <Edit className="w-4 h-4" />
                       </button>
+                      </>
+                      )}
                       <button 
                           onClick={() => initiateDeleteCase(caseItem.id)}
                         className="p-1 text-red-600 hover:bg-red-100 rounded-lg transition-colors duration-200"

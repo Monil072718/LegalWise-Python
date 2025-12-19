@@ -33,12 +33,14 @@ export default function HiringManagement() {
 
   const fetchData = async () => {
     try {
+      console.log("Fetching categories and lawyers...");
       const [categoriesData, lawyersData] = await Promise.all([
         api.getCategories(),
         api.getLawyers()
       ]);
-      setCategories(categoriesData);
-      setLawyers(lawyersData);
+      console.log("Data fetched:", categoriesData, lawyersData);
+      setCategories(categoriesData || []);
+      setLawyers(lawyersData || []);
     } catch (error) {
       console.error('Failed to fetch data:', error);
       showToast('Failed to fetch data', 'error');
@@ -48,6 +50,7 @@ export default function HiringManagement() {
   };
 
   const handleAddCategory = async () => {
+    console.log("Adding category:", formData);
     try {
         await api.createCategory({
             name: formData.name,
@@ -65,6 +68,7 @@ export default function HiringManagement() {
   };
 
   const initiateDelete = (id: string) => {
+      console.log("Initiating delete for:", id);
       setDeleteModal({ show: true, id });
   };
 
@@ -83,6 +87,7 @@ export default function HiringManagement() {
   };
 
   const handleViewCategory = (category: Category) => {
+    console.log("Viewing category:", category);
     setSelectedCategory(category);
     setShowViewModal(true);
   };
@@ -93,7 +98,7 @@ export default function HiringManagement() {
 
   const filteredLawyers = lawyers.filter(lawyer => 
     lawyer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (lawyer.specialization && lawyer.specialization.some(s => s.toLowerCase().includes(searchTerm.toLowerCase())))
+    (lawyer.specialization && lawyer.specialization.some((s: string) => s.toLowerCase().includes(searchTerm.toLowerCase())))
   );
 
   // Prepare chart data from real categories
@@ -110,8 +115,11 @@ export default function HiringManagement() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Service Category Management</h1>
         <button 
-          onClick={() => setShowAddCategoryModal(true)}
-          className="w-full sm:w-auto bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center space-x-2"
+          onClick={() => {
+            console.log("Open Add Modal Clicked");
+            setShowAddCategoryModal(true);
+          }}
+          className="w-full sm:w-auto bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center space-x-2 z-10"
         >
           <Plus className="w-4 h-4" />
           <span>Add Category</span>
@@ -160,7 +168,7 @@ export default function HiringManagement() {
             <div>
               <p className="text-sm font-medium text-gray-600">Avg Rating</p>
               <p className="text-2xl font-bold text-orange-600">
-                {(lawyers.reduce((acc, l) => acc + l.rating, 0) / (lawyers.length || 1)).toFixed(1)}
+                {(lawyers.reduce((acc, l) => acc + (l.rating || 0), 0) / (lawyers.length || 1)).toFixed(1)}
               </p>
               <p className="text-sm text-gray-500 mt-1">Platform average</p>
             </div>
@@ -226,7 +234,10 @@ export default function HiringManagement() {
         <div className="border-b border-gray-200">
           <nav className="flex space-x-8 px-4 sm:px-6">
             <button
-              onClick={() => setActiveTab('categories')}
+              onClick={() => {
+                  console.log("Switched to Categories Tab");
+                  setActiveTab('categories');
+              }}
               className={`py-4 text-sm font-medium border-b-2 transition-colors duration-200 ${
                 activeTab === 'categories'
                   ? 'border-blue-500 text-blue-600'
@@ -236,7 +247,10 @@ export default function HiringManagement() {
               Expert Categories
             </button>
             <button
-              onClick={() => setActiveTab('stats')}
+              onClick={() => {
+                  console.log("Switched to Stats Tab");
+                  setActiveTab('stats');
+              }}
               className={`py-4 text-sm font-medium border-b-2 transition-colors duration-200 ${
                 activeTab === 'stats'
                   ? 'border-blue-500 text-blue-600'
@@ -275,7 +289,7 @@ export default function HiringManagement() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {filteredCategories.map((category) => (
+                    {filteredCategories.length > 0 ? filteredCategories.map((category) => (
                       <tr key={category.id} className="hover:bg-gray-50 transition-colors duration-200">
                         <td className="px-6 py-4">
                           <div>
@@ -308,23 +322,31 @@ export default function HiringManagement() {
                           <div className="flex space-x-2">
                             <button 
                               onClick={() => handleViewCategory(category)}
-                              className="p-1 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors duration-200"
+                              className="p-1 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors duration-200 cursor-pointer"
+                              title="View Details"
                             >
                               <Eye className="w-4 h-4" />
                             </button>
-                            <button className="p-1 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                            <button className="p-1 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors duration-200 cursor-not-allowed" title="Edit (Coming Soon)">
                               <Edit className="w-4 h-4" />
                             </button>
                             <button 
                               onClick={() => initiateDelete(category.id)}
-                              className="p-1 text-red-600 hover:bg-red-100 rounded-lg transition-colors duration-200"
+                              className="p-1 text-red-600 hover:bg-red-100 rounded-lg transition-colors duration-200 cursor-pointer"
+                              title="Delete Category"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
                         </td>
                       </tr>
-                    ))}
+                    )) : (
+                        <tr>
+                            <td colSpan={6} className="px-6 py-10 text-center text-gray-500">
+                                No categories found. Add one to get started!
+                            </td>
+                        </tr>
+                    )}
                   </tbody>
                 </table>
              ) : (
@@ -340,13 +362,13 @@ export default function HiringManagement() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {filteredLawyers.map((lawyer) => (
+                    {filteredLawyers.length > 0 ? filteredLawyers.map((lawyer) => (
                       <tr key={lawyer.id} className="hover:bg-gray-50 transition-colors duration-200">
                         <td className="px-6 py-4">
                           <div className="flex items-center space-x-3">
                             <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
                               <span className="text-white font-medium">
-                                {lawyer.name.split(' ').map(n => n[0]).join('')}
+                                {lawyer.name.split(' ').map((n: string) => n[0]).join('')}
                               </span>
                             </div>
                             <div className="font-medium text-gray-900">{lawyer.name}</div>
@@ -354,7 +376,7 @@ export default function HiringManagement() {
                         </td>
                         <td className="px-6 py-4">
                             <div className="flex flex-wrap gap-1">
-                                {lawyer.specialization && lawyer.specialization.map((spec, i) => (
+                                {lawyer.specialization && lawyer.specialization.map((spec: string, i: number) => (
                                     <span key={i} className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">
                                         {spec}
                                     </span>
@@ -380,11 +402,17 @@ export default function HiringManagement() {
                                 lawyer.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                                 'bg-gray-100 text-gray-800'
                             }`}>
-                                {lawyer.status.toUpperCase()}
+                                {(lawyer.status || 'unknown').toUpperCase()}
                             </span>
                         </td>
                       </tr>
-                    ))}
+                    )) : (
+                        <tr>
+                            <td colSpan={6} className="px-6 py-10 text-center text-gray-500">
+                                No lawyers found.
+                            </td>
+                        </tr>
+                    )}
                   </tbody>
                 </table>
              )}

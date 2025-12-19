@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from fastapi.staticfiles import StaticFiles
-from routers import lawyers, clients, cases, appointments, dashboard, books, articles, payments, analytics, auth, upload
+from routers import lawyers, clients, cases, appointments, dashboard, books, articles, payments, analytics, auth, upload, categories
 from websocket_manager import manager
 import models
 import database
@@ -60,6 +60,7 @@ app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 app.include_router(auth.router)
 app.include_router(upload.router)
+app.include_router(categories.router)
 app.include_router(lawyers.router)
 app.include_router(clients.router)
 app.include_router(cases.router)

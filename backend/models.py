@@ -120,7 +120,18 @@ class Article(Base):
     views = Column(Integer, default=0)
     likes = Column(Integer, default=0)
     publishedAt = Column(String)
-    status = Column(String) # draft, published
+    status = Column(String)
+
+class Category(Base):
+    __tablename__ = "categories"
+
+    id = Column(String, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)
+    description = Column(String)
+    avg_rate = Column(Float)
+    lawyers_count = Column(Integer, default=0)
+    total_hires = Column(Integer, default=0)
+    avg_rating = Column(Float, default=0.0) # draft, published
     content = Column(String, nullable=True)
     image = Column(String, nullable=True)
 

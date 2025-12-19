@@ -1,4 +1,4 @@
-import { Lawyer, Client, Case, Appointment, Book, Article, Payment } from '../types';
+import { Lawyer, Client, Case, Appointment, Book, Article, Payment, Category } from '../types';
 
 const API_BASE_URL = 'http://localhost:8000';
 
@@ -180,6 +180,11 @@ export const api = {
   updateArticle: (id: string, data: Partial<Article>) => api.put<Article>(`/articles/${id}`, data),
   deleteArticle: (id: string) => api.delete<void>(`/articles/${id}`),
   scrapeArticle: (url: string) => api.post<{title: string, description: string, image: string}>('/articles/scrape', { url }),
+
+  // Categories
+  getCategories: () => api.get<Category[]>('/categories/'),
+  createCategory: (data: Partial<Category>) => api.post<Category>('/categories/', data),
+  deleteCategory: (id: string) => api.delete<void>(`/categories/${id}`),
 
   // Financials
   getPayments: () => api.get<Payment[]>('/payments/'),

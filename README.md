@@ -18,7 +18,9 @@ A comprehensive legal management system built with Next.js (Frontend) and FastAP
 - **Case Management**: Oversee all legal cases across the platform.
 - **Appointments**: View and manage scheduled appointments.
 - **Billing & Payments**: Track total platform revenue and transaction history.
-- **Content Management**: Manage blogs, legal articles, and resources.
+- **Service Categories**: Manage expert legal categories and rates.
+- **Inventory (Books)**: Manage physical/digital book inventory.
+- **Content Management**: Manage blogs, legal articles (with URL import), and resources.
 
 ### ⚖️ Lawyer Panel
 

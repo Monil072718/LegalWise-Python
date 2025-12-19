@@ -209,7 +209,7 @@ class BookUpdate(BaseModel):
 class Book(BookBase):
     id: str
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class ArticleBase(BaseModel):
     title: str
@@ -239,4 +239,24 @@ class ArticleUpdate(BaseModel):
 class Article(ArticleBase):
     id: str
     class Config:
-        orm_mode = True
+        from_attributes = True
+
+class CategoryBase(BaseModel):
+    name: str
+    description: str
+    avg_rate: float
+
+class CategoryCreate(CategoryBase):
+    pass
+
+class CategoryUpdate(CategoryBase):
+    pass
+
+class Category(CategoryBase):
+    id: str
+    lawyers_count: int
+    total_hires: int
+    avg_rating: float
+    
+    class Config:
+        from_attributes = True

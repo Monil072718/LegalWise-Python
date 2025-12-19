@@ -110,3 +110,13 @@ export interface Article {
   content?: string;
   image?: string;
 }
+
+export interface Category {
+  id: string;
+  name: string;
+  description: string;
+  avg_rate: number;
+  lawyers_count: number;
+  total_hires: number;
+  avg_rating: number;
+}

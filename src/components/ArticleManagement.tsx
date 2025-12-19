@@ -29,6 +29,29 @@ export default function ArticleManagement() {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [deleteModal, setDeleteModal] = useState({ show: false, id: null as string | null });
 
+  const [importUrl, setImportUrl] = useState('');
+  const [isImporting, setIsImporting] = useState(false);
+
+  const handleImport = async () => {
+    if (!importUrl) return;
+    setIsImporting(true);
+    try {
+        const data = await api.scrapeArticle(importUrl);
+        setFormData({
+            ...formData,
+            title: data.title,
+            content: data.description,
+            image: data.image
+        });
+        showToast('Article imported successfully!', 'success');
+    } catch (error) {
+        console.error('Import failed:', error);
+        showToast('Failed to import article', 'error');
+    } finally {
+        setIsImporting(false);
+    }
+  };
+
   useEffect(() => {
     fetchArticles();
   }, []);
@@ -143,6 +166,8 @@ export default function ArticleManagement() {
 
   if (loading) return <div className="text-center p-10">Loading articles...</div>;
 
+
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
@@ -213,6 +238,29 @@ export default function ArticleManagement() {
               <button onClick={closeModal}><X className="w-5 h-5 text-gray-500" /></button>
             </div>
             <div className="p-6 space-y-4">
+               {!isEditing && (
+               <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                 <label className="block text-sm font-medium text-blue-800 mb-2">Import from URL</label>
+                 <div className="flex space-x-2">
+                    <input 
+                        type="text" 
+                        placeholder="Paste article URL here..."
+                        value={importUrl}
+                        onChange={(e) => setImportUrl(e.target.value)}
+                        className="flex-1 border border-blue-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500"
+                    />
+                    <button 
+                        onClick={handleImport}
+                        disabled={isImporting || !importUrl}
+                        className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {isImporting ? 'Fetching...' : 'Fetch'}
+                    </button>
+                 </div>
+                 <p className="text-xs text-blue-600 mt-1">Found content will auto-fill the form below.</p>
+               </div>
+               )}
+
                <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Article Title</label>
                   <input 

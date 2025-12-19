@@ -46,7 +46,7 @@ class LawyerUpdate(BaseModel):
 class Lawyer(LawyerBase):
     id: str
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class LawyerCreate(LawyerBase):
     password: str
@@ -118,7 +118,7 @@ class ClientUpdate(BaseModel):
 class Client(ClientBase):
     id: str
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class CaseBase(BaseModel):
     title: str
@@ -147,7 +147,7 @@ class CaseUpdate(BaseModel):
 class Case(CaseBase):
     id: str
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class AppointmentBase(BaseModel):
     clientName: str
@@ -161,7 +161,7 @@ class AppointmentBase(BaseModel):
 class Appointment(AppointmentBase):
     id: str
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class PaymentBase(BaseModel):
     clientName: str
@@ -175,7 +175,7 @@ class PaymentBase(BaseModel):
 class Payment(PaymentBase):
     id: str
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class BookBase(BaseModel):
     title: str

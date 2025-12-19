@@ -179,6 +179,7 @@ export const api = {
   createArticle: (data: Partial<Article>) => api.post<Article>('/articles/', data),
   updateArticle: (id: string, data: Partial<Article>) => api.put<Article>(`/articles/${id}`, data),
   deleteArticle: (id: string) => api.delete<void>(`/articles/${id}`),
+  scrapeArticle: (url: string) => api.post<{title: string, description: string, image: string}>('/articles/scrape', { url }),
 
   // Financials
   getPayments: () => api.get<Payment[]>('/payments/'),

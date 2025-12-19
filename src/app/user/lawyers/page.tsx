@@ -84,7 +84,8 @@ export default function LawyerSearch() {
       {/* Lawyer List */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredLawyers.map(lawyer => (
-              <div key={lawyer.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-200 flex flex-col h-full cursor-pointer group">
+              <Link key={lawyer.id} href={`/user/lawyers/${lawyer.id}`} className="block">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-200 flex flex-col h-full cursor-pointer group">
                   <div className="p-6 flex-1">
                       <div className="flex items-start justify-between mb-4">
                           <div className="flex items-center space-x-3">
@@ -136,11 +137,12 @@ export default function LawyerSearch() {
                               <span className="text-gray-500">Offline</span>
                           )}
                       </span>
-                      <button className="text-blue-600 font-medium text-sm hover:text-blue-800 flex items-center">
+                      <span className="text-blue-600 font-medium text-sm hover:text-blue-800 flex items-center">
                           View Profile <ArrowRight className="w-4 h-4 ml-1" />
-                      </button>
+                      </span>
                   </div>
               </div>
+            </Link>
           ))}
 
           {filteredLawyers.length === 0 && (

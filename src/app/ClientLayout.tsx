@@ -13,6 +13,7 @@ interface User {
   name: string;
   email: string;
   role: string;
+  image?: string;
 }
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
@@ -46,7 +47,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             setUser({
                 name: 'Admin User', // Hardcoded as we don't have Admin API yet
                 email: decoded.sub || 'admin@legalwise.com',
-                role: 'admin'
+                role: 'admin',
+                image: undefined
             });
         } catch (e) {
             console.error(e);
@@ -69,7 +71,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                      setUser({
                          name: lawyerProfile.name,
                          email: lawyerProfile.email,
-                         role: 'lawyer'
+                         role: 'lawyer',
+                         image: lawyerProfile.image
                      });
                  } catch (err) {
                     console.error("Failed to fetch lawyer profile", err);

@@ -144,6 +144,19 @@ export const api = {
           body: formData
       }).then(handleResponse);
   },
+  
+  // File Upload
+  uploadImage: (file: File) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      return fetch(`${API_BASE_URL}/upload/image`, {
+          method: 'POST',
+          // No headers needed, browser sets Content-Type to multipart/form-data
+          body: formData
+      }).then(handleResponse);
+  },
+
   deleteCaseDocument: (caseId: string, docId: string) => api.delete<void>(`/cases/${caseId}/documents/${docId}`),
   getCaseDocumentUrl: (caseId: string, filename: string) => `${API_BASE_URL}/cases/${caseId}/documents/${filename}`,
 

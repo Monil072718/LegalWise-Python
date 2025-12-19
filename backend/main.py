@@ -3,12 +3,20 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from typing import List
 
-from routers import lawyers, clients, cases, appointments, dashboard, books, articles, payments, analytics, auth
+from fastapi.staticfiles import StaticFiles
+from routers import lawyers, clients, cases, appointments, dashboard, books, articles, payments, analytics, auth, upload
 from websocket_manager import manager
 import models
 import database
+import os
 
 models.Base.metadata.create_all(bind=database.engine)
+
+# Create uploads directory if not exists (redundant but safe)
+if not os.path.exists("uploads"):
+    os.makedirs("uploads")
+
+# ... (admin creation code skipped for brevity, keeping it unchanged) ...
 
 # Seed default admin
 def create_default_admin():
@@ -47,7 +55,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Mount Static Files
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
 app.include_router(auth.router)
+app.include_router(upload.router)
 app.include_router(lawyers.router)
 app.include_router(clients.router)
 app.include_router(cases.router)

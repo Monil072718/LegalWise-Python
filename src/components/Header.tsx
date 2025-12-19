@@ -9,6 +9,7 @@ interface HeaderProps {
     name: string;
     email: string;
     role: string;
+    image?: string | null;
   } | null;
 }
 
@@ -72,8 +73,12 @@ export default function Header({ onToggleSidebar, user }: HeaderProps) {
           </div>
           
           <div className="flex items-center space-x-2 sm:space-x-3">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${user?.role === 'lawyer' ? 'bg-blue-600' : 'bg-gray-800'}`}>
-              <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center overflow-hidden ${user?.role === 'lawyer' ? 'bg-blue-600' : 'bg-gray-800'}`}>
+              {user?.image ? (
+                <img src={user.image} alt={user.name} className="w-full h-full object-cover" />
+              ) : (
+                <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+              )}
             </div>
             <div className="text-sm hidden sm:block">
               <div className="font-medium">{user?.name || 'Loading...'}</div>

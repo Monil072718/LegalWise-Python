@@ -38,6 +38,8 @@ export default function LawyerManagement() {
     verified: false,
     image: ''
   });
+  
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     fetchLawyers();
@@ -217,6 +219,23 @@ export default function LawyerManagement() {
     } catch (error) {
       console.error('Failed to verify lawyer:', error);
       showToast('Failed to verify lawyer.', 'error');
+    }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setUploading(true);
+      try {
+        const response: any = await api.uploadImage(file);
+        setFormData({ ...formData, image: response.url });
+        showToast('Image uploaded successfully', 'success');
+      } catch (error) {
+        console.error('Failed to upload image:', error);
+        showToast('Failed to upload image', 'error');
+      } finally {
+        setUploading(false);
+      }
     }
   };
 
@@ -547,14 +566,23 @@ export default function LawyerManagement() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Profile Image URL</label>
-                <input
-                    type="text"
-                    value={formData.image}
-                    onChange={(e) => setFormData({...formData, image: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="https://example.com/profile.jpg"
-                />
+                <label className="block text-sm font-medium text-gray-700 mb-2">Profile Image</label>
+                <div className="flex items-center space-x-4">
+                    {formData.image && (
+                        <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-100">
+                            <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
+                        </div>
+                    )}
+                    <div className="flex-1">
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                        />
+                        {uploading && <p className="text-xs text-blue-600 mt-1">Uploading...</p>}
+                    </div>
+                </div>
               </div>
 
               <div>

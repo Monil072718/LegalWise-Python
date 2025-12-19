@@ -14,6 +14,7 @@ export default function HiringManagement() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
+  const [showEditCategoryModal, setShowEditCategoryModal] = useState(false); // New state for Edit Modal
   const [showViewModal, setShowViewModal] = useState(false);
   const [activeTab, setActiveTab] = useState<'categories' | 'stats'>('categories');
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
@@ -67,6 +68,35 @@ export default function HiringManagement() {
     }
   };
 
+  const initiateEdit = (category: Category) => {
+      setSelectedCategory(category);
+      setFormData({
+          name: category.name,
+          description: category.description,
+          avg_rate: category.avg_rate.toString()
+      });
+      setShowEditCategoryModal(true);
+  };
+
+  const handleEditCategory = async () => {
+      if (!selectedCategory) return;
+      try {
+          await api.updateCategory(selectedCategory.id, {
+              name: formData.name,
+              description: formData.description,
+              avg_rate: parseFloat(formData.avg_rate) || 0
+          });
+          showToast('Category updated successfully', 'success');
+          fetchData();
+          setShowEditCategoryModal(false);
+          setFormData({ name: '', description: '', avg_rate: '' });
+          setSelectedCategory(null);
+      } catch (error) {
+          console.error('Failed to update category:', error);
+          showToast('Failed to update category', 'error');
+      }
+  };
+
   const initiateDelete = (id: string) => {
       console.log("Initiating delete for:", id);
       setDeleteModal({ show: true, id });
@@ -116,10 +146,10 @@ export default function HiringManagement() {
         <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Service Category Management</h1>
         <button 
           onClick={() => {
-            console.log("Open Add Modal Clicked");
+            setFormData({ name: '', description: '', avg_rate: '' }); // Clear form for add
             setShowAddCategoryModal(true);
           }}
-          className="w-full sm:w-auto bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center space-x-2 z-10"
+          className="w-full sm:w-auto bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center space-x-2 z-10 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>Add Category</span>
@@ -327,7 +357,11 @@ export default function HiringManagement() {
                             >
                               <Eye className="w-4 h-4" />
                             </button>
-                            <button className="p-1 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors duration-200 cursor-not-allowed" title="Edit (Coming Soon)">
+                            <button 
+                              onClick={() => initiateEdit(category)}
+                              className="p-1 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors duration-200 cursor-pointer" 
+                              title="Edit Category"
+                            >
                               <Edit className="w-4 h-4" />
                             </button>
                             <button 
@@ -479,6 +513,72 @@ export default function HiringManagement() {
                 className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
               >
                 Add Category
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Category Modal */}
+      {showEditCategoryModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-lg w-full">
+            <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-900">Edit Category</h3>
+              <button
+                onClick={() => setShowEditCategoryModal(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Category Name *</label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="e.g., Environmental Law"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Average Rate ($/hour)</label>
+                <input
+                  type="number"
+                  value={formData.avg_rate}
+                  onChange={(e) => setFormData({...formData, avg_rate: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="250"
+                  min="0"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Description *</label>
+                <textarea
+                  rows={3}
+                  value={formData.description}
+                  onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Brief description of this legal category..."
+                />
+              </div>
+            </div>
+            <div className="p-6 border-t border-gray-200 flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3">
+              <button
+                onClick={() => setShowEditCategoryModal(false)}
+                className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleEditCategory}
+                className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+              >
+                Update Category
               </button>
             </div>
           </div>

@@ -157,7 +157,7 @@ export default function BillingPayments() {
 
       {/* Revenue Summary */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200 cursor-pointer">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Total Revenue</p>
@@ -171,7 +171,7 @@ export default function BillingPayments() {
           </div>
         </div>
         
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200 cursor-pointer">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Platform Commission</p>
@@ -182,7 +182,7 @@ export default function BillingPayments() {
           </div>
         </div>
         
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200 cursor-pointer">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Pending Payments</p>
@@ -193,7 +193,7 @@ export default function BillingPayments() {
           </div>
         </div>
         
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200 cursor-pointer">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Failed Payments</p>
@@ -207,7 +207,7 @@ export default function BillingPayments() {
 
       {/* Revenue Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200 cursor-pointer">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Revenue Breakdown</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={revenueData}>
@@ -221,7 +221,7 @@ export default function BillingPayments() {
           </ResponsiveContainer>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200 cursor-pointer">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Revenue Trends</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={revenueData}>
@@ -236,7 +236,7 @@ export default function BillingPayments() {
       </div>
 
       {/* Payment Methods Overview */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200 cursor-pointer">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Payment Methods Overview</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {paymentMethodData.map((method, index) => (
@@ -261,7 +261,7 @@ export default function BillingPayments() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200 cursor-pointer">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex items-center space-x-2">
             <Filter className="w-5 h-5 text-gray-400" />

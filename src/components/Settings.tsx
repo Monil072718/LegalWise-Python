@@ -293,7 +293,7 @@ export default function Settings() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Settings Navigation */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow duration-200 cursor-pointer">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Settings</h3>
             <nav className="space-y-2">
               {settingSections.map((section) => {
@@ -324,7 +324,7 @@ export default function Settings() {
 
         {/* Settings Content */}
         <div className="lg:col-span-3">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200 cursor-pointer">
             <div className="mb-6">
               <h2 className="text-xl font-semibold text-gray-900">
                 {settingSections.find(s => s.id === activeSection)?.title}

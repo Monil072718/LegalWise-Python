@@ -24,10 +24,21 @@ def read_appointments(skip: int = 0, limit: int = 100, db: Session = Depends(dat
     # Actually, current_user (Lawyer) has 'name'. 
     
     if hasattr(current_user, "role") and current_user.role == "lawyer":
-         # Filter by lawyerName matching user name. 
-         appointments = db.query(models.Appointment).filter(models.Appointment.lawyerName == current_user.name).offset(skip).limit(limit).all()
+         # Filter by lawyerId match
+         appointments = db.query(models.Appointment).filter(models.Appointment.lawyerId == current_user.id).offset(skip).limit(limit).all()
     else:
          appointments = db.query(models.Appointment).offset(skip).limit(limit).all()
+    return appointments
+
+@router.get("/lawyer/{lawyer_id}", response_model=List[schemas.Appointment])
+def read_lawyer_appointments(lawyer_id: str, db: Session = Depends(database.get_db)):
+    # Public endpoint to check availability
+    appointments = db.query(models.Appointment).filter(models.Appointment.lawyerId == lawyer_id).all()
+    return appointments
+
+@router.get("/client/{client_id}", response_model=List[schemas.Appointment])
+def read_client_appointments(client_id: str, db: Session = Depends(database.get_db)):
+    appointments = db.query(models.Appointment).filter(models.Appointment.clientId == client_id).all()
     return appointments
 
 @router.get("/{appointment_id}", response_model=schemas.Appointment)

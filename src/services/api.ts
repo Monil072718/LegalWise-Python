@@ -175,6 +175,8 @@ export const api = {
 
   // Appointments
   getAppointments: () => api.get<Appointment[]>('/appointments/'),
+  getLawyerAppointments: (lawyerId: string) => api.get<Appointment[]>(`/appointments/lawyer/${lawyerId}`),
+  getClientAppointments: (clientId: string) => api.get<Appointment[]>(`/appointments/client/${clientId}`),
   createAppointment: (data: Partial<Appointment>) => api.post<Appointment>('/appointments/', data),
   updateAppointment: (id: string, data: Partial<Appointment>) => api.put<Appointment>(`/appointments/${id}`, data),
   deleteAppointment: (id: string) => api.delete<void>(`/appointments/${id}`),

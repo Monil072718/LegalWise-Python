@@ -159,6 +159,8 @@ class Case(CaseBase):
 class AppointmentBase(BaseModel):
     clientName: str
     lawyerName: str
+    lawyerId: Optional[str] = None
+    clientId: Optional[str] = None
     date: str
     time: str
     type: str

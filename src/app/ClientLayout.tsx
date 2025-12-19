@@ -87,16 +87,16 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   // Render appropriate layout
   return (
     <div className="flex h-screen bg-gray-50 relative">
-      {isLawyerRoute ? (
+      {!isAuthPage && (isLawyerRoute ? (
         <LawyerSidebar isCollapsed={sidebarCollapsed} />
       ) : isUserRoute ? (
         <UserSidebar isCollapsed={sidebarCollapsed} />
       ) : (
         <Sidebar isCollapsed={sidebarCollapsed} />
-      )}
+      ))}
       
       <div className="flex-1 flex flex-col overflow-hidden transition-all duration-300">
-        <Header user={user} onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)} />
+        {!isAuthPage && <Header user={user} onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)} />}
         
         <main className="flex-1 overflow-y-auto bg-gray-50">
           {children}

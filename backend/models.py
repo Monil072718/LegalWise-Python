@@ -77,6 +77,9 @@ class Appointment(Base):
     id = Column(String, primary_key=True, index=True)
     clientName = Column(String)
     lawyerName = Column(String)
+    # Map python 'lawyerId' to db 'lawyerid' to handle postgres case folding
+    lawyerId = Column("lawyerid", String, index=True)
+    clientId = Column("clientid", String, index=True)
     date = Column(String)
     time = Column(String)
     type = Column(String)

@@ -63,12 +63,14 @@ export interface Document {
 
 export interface Appointment {
   id: string;
+  clientId: string;
+  lawyerId: string;
   clientName: string;
   lawyerName: string;
   date: string;
   time: string;
   type: 'consultation' | 'hearing' | 'meeting';
-  status: 'pending' | 'approved' | 'declined' | 'completed';
+  status: 'pending' | 'approved' | 'declined' | 'completed' | 'cancelled';
   notes?: string;
 }
 

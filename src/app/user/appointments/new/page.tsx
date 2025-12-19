@@ -84,8 +84,8 @@ export default function NewAppointment() {
   };
 
   const handleSubmit = async () => {
-      if (!lawyer || !currentUser || !selectedDate || !selectedTime) {
-          showToast("Please fill all fields", "error");
+      if (!lawyer || !currentUser || !selectedDate || !selectedTime || !notes.trim()) {
+          showToast("Please fill all fields including case details", "error");
           return;
       }
 
@@ -97,7 +97,7 @@ export default function NewAppointment() {
               clientId: currentUser.id,
               date: selectedDate.toISOString().split('T')[0],
               time: selectedTime,
-              type: 'Consultation',
+              type: 'consultation',
               status: 'pending',
               notes: notes
           });
@@ -300,12 +300,13 @@ export default function NewAppointment() {
                       
                       <div className="mt-8 border-t border-gray-100 pt-6">
                            <label className="block text-sm font-bold text-gray-700 mb-3">
-                              Additional Notes
+                              Case Details <span className="text-red-500">*</span>
                           </label>
                           <textarea
-                              rows={3}
+                              rows={4}
+                              required
                               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-shadow"
-                              placeholder="Briefly describe your case..."
+                              placeholder="Please describe your case details, key events, or what you need help with..."
                               value={notes}
                               onChange={(e) => setNotes(e.target.value)}
                           />
@@ -315,10 +316,10 @@ export default function NewAppointment() {
                   <div className="p-6 bg-gray-50 border-t border-gray-200">
                       <button
                           onClick={handleSubmit}
-                          disabled={!selectedTime || !selectedDate}
+                          disabled={!selectedTime || !selectedDate || !notes.trim()}
                           className={`
                               w-full py-4 rounded-xl font-bold text-lg shadow-lg flex items-center justify-center transition-all
-                              ${!selectedTime || !selectedDate 
+                              ${!selectedTime || !selectedDate || !notes.trim()
                                   ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
                                   : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]'
                               }

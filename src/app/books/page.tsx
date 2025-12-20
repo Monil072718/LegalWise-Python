@@ -1,6 +1,6 @@
 "use client";
 
-import BookManagement from '../../components/BookManagement';
+import BookManagement from '../../components/admin/BookManagement';
 
 export default function BooksPage() {
   return (

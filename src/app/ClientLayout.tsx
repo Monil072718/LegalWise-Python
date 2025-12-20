@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import Sidebar from '../components/Sidebar';
-import Header from '../components/Header';
-import UserSidebar from '../components/UserSidebar';
-import LawyerSidebar from '../components/LawyerSidebar'; 
+import Sidebar from '../components/common/Sidebar';
+import Header from '../components/common/Header';
+import UserSidebar from '../components/common/UserSidebar';
+import LawyerSidebar from '../components/common/LawyerSidebar'; 
 import { jwtDecode } from 'jwt-decode';
 import { User, X } from 'lucide-react';
 import { api } from '../services/api';

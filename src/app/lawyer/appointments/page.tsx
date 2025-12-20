@@ -8,7 +8,7 @@ import {
   XCircle,
   User,
 } from 'lucide-react';
-import CustomSelect from '@/components/CustomSelect';
+import CustomSelect from '@/components/common/CustomSelect';
 import { api } from '@/services/api';
 import { useToast } from '@/context/ToastContext';
 import { Appointment } from '@/types';

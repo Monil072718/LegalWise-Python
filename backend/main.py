@@ -4,7 +4,8 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from fastapi.staticfiles import StaticFiles
-from routers import lawyers, clients, cases, appointments, dashboard, books, articles, payments, analytics, auth, upload, categories
+from routers.admin import lawyers, clients, cases, dashboard, books, articles, payments, analytics, categories
+from routers.common import auth, appointments, upload
 from websocket_manager import manager
 import models
 import database

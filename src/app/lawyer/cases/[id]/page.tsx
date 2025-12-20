@@ -10,7 +10,7 @@ import {
   Calendar,
   X
 } from 'lucide-react';
-import CustomSelect from '@/components/CustomSelect';
+import CustomSelect from '@/components/common/CustomSelect';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { api } from '@/services/api';

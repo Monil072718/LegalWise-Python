@@ -1,6 +1,6 @@
 "use client";
 
-import ArticleManagement from '../../components/ArticleManagement';
+import ArticleManagement from '../../components/admin/ArticleManagement';
 
 export default function ArticlesPage() {
   return (

@@ -70,8 +70,65 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         return;
     }
     
-    // 3. Admin/Lawyer Protection (simplified for now to existing logic)
-    // ... allow existing logic if needed, but for now we focus on User panel stability
+    // 3. Lawyer Route Protection  
+    if (isLawyerRoute) {
+        const token = sessionStorage.getItem('lawyerToken');
+        if (!token) {
+            console.log("No lawyer token, redirecting...");
+            router.push('/login');
+            return;
+        }
+        
+        try {
+            if (!user) {
+                const decoded: any = jwtDecode(token);
+                if (decoded.id) {
+                    const profile = await api.getLawyer(decoded.id);
+                    setUser({
+                        ...profile,
+                        name: profile.name,
+                        role: 'lawyer'
+                    });
+                }
+            }
+            setLoading(false);
+        } catch (e) {
+            console.error("Auth check failed:", e);
+            sessionStorage.removeItem('lawyerToken');
+            router.push('/login');
+        }
+        return;
+    }
+
+    // 4. Admin Route Protection
+    if (isAdminRoute || (!isUserRoute && !isLawyerRoute && !isAuthPage)) {
+        const token = sessionStorage.getItem('adminToken');
+        if (!token) {
+            console.log("No admin token, redirecting...");
+            router.push('/login');
+            return;
+        }
+        
+        try {
+            if (!user) {
+                const decoded: any = jwtDecode(token);
+                // Set basic admin info from token
+                setUser({
+                    id: decoded.id,
+                    email: decoded.sub,
+                    name: 'Admin',
+                    role: 'admin'
+                });
+            }
+            setLoading(false);
+        } catch (e) {
+            console.error("Auth check failed:", e);
+            sessionStorage.removeItem('adminToken');
+            router.push('/login');
+        }
+        return;
+    }
+    
     setLoading(false); 
   };
 

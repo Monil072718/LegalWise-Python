@@ -49,8 +49,8 @@ export default function UniversalLogin() {
         sessionStorage.setItem('lawyerToken', token);
         router.push('/lawyer/dashboard');
       } else if (role === 'client') {
-        sessionStorage.setItem('clientToken', token); // Future proof
-        router.push('/client/dashboard');
+        sessionStorage.setItem('userToken', token);
+        router.push('/user/dashboard');
       } else {
         setError('Unknown user role');
       }

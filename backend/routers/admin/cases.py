@@ -11,7 +11,7 @@ router = APIRouter(
 import uuid
 from datetime import datetime
 
-from routers.auth import get_current_user # Import here or top level if no circular dep
+from routers.common.auth import get_current_user # Import here or top level if no circular dep
 
 @router.get("/", response_model=List[schemas.Case])
 def read_cases(skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db), current_user = Depends(get_current_user)):

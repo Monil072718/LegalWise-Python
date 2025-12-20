@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 import models, schemas, database
-from routers.auth import get_password_hash
+from routers.common.auth import get_password_hash
 from datetime import datetime
 
 router = APIRouter(
@@ -80,7 +80,7 @@ def register_client(client: schemas.ClientCreate, db: Session = Depends(database
     db.refresh(new_client)
     
     # Auto login
-    from routers.auth import create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
+    from routers.common.auth import create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
     from datetime import timedelta
     
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)

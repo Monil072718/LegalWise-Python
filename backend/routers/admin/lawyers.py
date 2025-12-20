@@ -29,7 +29,7 @@ def create_lawyer(lawyer: schemas.LawyerCreate, db: Session = Depends(database.g
     if existing_lawyer:
         raise HTTPException(status_code=400, detail="Email already registered")
 
-    from routers.auth import get_password_hash
+    from routers.common.auth import get_password_hash
     try:
         hashed_password = get_password_hash(lawyer.password)
         

@@ -10,7 +10,7 @@ router = APIRouter(
 
 import uuid
 
-from routers.auth import get_current_user
+from routers.common.auth import get_current_user
 
 @router.get("/", response_model=List[schemas.Appointment])
 def read_appointments(skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db), current_user = Depends(get_current_user)):

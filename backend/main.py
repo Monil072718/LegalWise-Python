@@ -22,7 +22,7 @@ if not os.path.exists("uploads"):
 # Seed default admin
 def create_default_admin():
     db = database.SessionLocal()
-    from routers.auth import get_password_hash
+    from routers.common.auth import get_password_hash
     import uuid
     from datetime import datetime
     

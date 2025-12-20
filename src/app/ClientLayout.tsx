@@ -72,7 +72,12 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     
     // 3. Lawyer Route Protection  
     if (isLawyerRoute) {
-        const token = sessionStorage.getItem('lawyerToken');
+        const lawyerToken = sessionStorage.getItem('lawyerToken');
+        const adminToken = sessionStorage.getItem('adminToken');
+        
+        // Allow admin token for /lawyers management page (not /lawyer/*)
+        const token = lawyerToken || (pathname === '/lawyers' ? adminToken : null);
+        
         if (!token) {
             console.log("No lawyer token, redirecting...");
             router.push('/login');
@@ -82,12 +87,20 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         try {
             if (!user) {
                 const decoded: any = jwtDecode(token);
-                if (decoded.id) {
+                if (decoded.role === 'lawyer' && decoded.id) {
                     const profile = await api.getLawyer(decoded.id);
                     setUser({
                         ...profile,
                         name: profile.name,
                         role: 'lawyer'
+                    });
+                } else if (decoded.role === 'admin') {
+                    // Admin accessing lawyer management page
+                    setUser({
+                        id: decoded.id,
+                        name: decoded.sub || 'Admin',
+                        email: decoded.sub || '',
+                        role: 'admin'
                     });
                 }
             }

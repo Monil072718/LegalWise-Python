@@ -377,8 +377,6 @@ export default function CaseManagement() {
                   </div>
                 </div>
                 
-                {!isAdmin && (
-                <>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-gray-500">Client:</span>
@@ -402,34 +400,47 @@ export default function CaseManagement() {
                 
                 <div className="flex justify-between items-center">
                   <div className="flex space-x-2">
+                    {isAdmin ? (
+                      <>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPriorityBadge(caseItem.priority)}`}>
+                          {caseItem.priority}
+                        </span>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadge(caseItem.status)}`}>
+                          {caseItem.status}
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <CustomSelect
+                          value={caseItem.priority}
+                          onChange={(val) => handleUpdateCasePriority(caseItem.id, val)}
+                          options={[
+                            { label: 'High', value: 'high' },
+                            { label: 'Medium', value: 'medium' },
+                            { label: 'Low', value: 'low' }
+                          ]}
+                          variant="status"
+                        />
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadge(caseItem.status)}`}>
+                          {caseItem.status}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                  {!isAdmin && (
                     <CustomSelect
-                      value={caseItem.priority}
-                      onChange={(val) => handleUpdateCasePriority(caseItem.id, val)}
+                      value={caseItem.status}
+                      onChange={(val) => handleUpdateCaseStatus(caseItem.id, val)}
                       options={[
-                        { label: 'High', value: 'high' },
-                        { label: 'Medium', value: 'medium' },
-                        { label: 'Low', value: 'low' }
+                        { label: 'Open', value: 'open' },
+                        { label: 'In Progress', value: 'in-progress' },
+                        { label: 'Closed', value: 'closed' },
+                        { label: 'Pending', value: 'pending' }
                       ]}
                       variant="status"
                     />
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadge(caseItem.status)}`}>
-                      {caseItem.status}
-                    </span>
-                  </div>
-                  <CustomSelect
-                    value={caseItem.status}
-                    onChange={(val) => handleUpdateCaseStatus(caseItem.id, val)}
-                    options={[
-                      { label: 'Open', value: 'open' },
-                      { label: 'In Progress', value: 'in-progress' },
-                      { label: 'Closed', value: 'closed' },
-                      { label: 'Pending', value: 'pending' }
-                    ]}
-                    variant="status"
-                  />
+                  )}
                 </div>
-                </>
-                )}
               </div>
             ))}
           </div>

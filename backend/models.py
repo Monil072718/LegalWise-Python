@@ -147,3 +147,30 @@ class PasswordReset(Base):
     email = Column(String, index=True)
     otp = Column(String)
     expires_at = Column(String) # ISO format datetime
+
+class Conversation(Base):
+    __tablename__ = "conversations"
+
+    id = Column(String, primary_key=True, index=True)
+    clientId = Column(String, index=True)
+    lawyerId = Column(String, index=True)
+    clientName = Column(String)
+    lawyerName = Column(String)
+    lastMessage = Column(String, nullable=True)
+    lastMessageAt = Column(String, nullable=True)
+    unreadByClient = Column(Integer, default=0)
+    unreadByLawyer = Column(Integer, default=0)
+    createdAt = Column(String)
+
+class Message(Base):
+    __tablename__ = "messages"
+
+    id = Column(String, primary_key=True, index=True)
+    conversationId = Column(String, index=True)
+    senderId = Column(String)
+    senderRole = Column(String)  # 'client' or 'lawyer'
+    senderName = Column(String)
+    content = Column(String)
+    timestamp = Column(String)
+    read = Column(Boolean, default=False)
+

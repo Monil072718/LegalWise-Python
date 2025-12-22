@@ -270,3 +270,37 @@ class Category(CategoryBase):
     
     class Config:
         from_attributes = True
+
+class ConversationBase(BaseModel):
+    clientId: str
+    lawyerId: str
+    clientName: str
+    lawyerName: str
+    lastMessage: Optional[str] = None
+    lastMessageAt: Optional[str] = None
+    unreadByClient: int = 0
+    unreadByLawyer: int = 0
+    createdAt: str
+
+class Conversation(ConversationBase):
+    id: str
+    class Config:
+        from_attributes = True
+
+class MessageBase(BaseModel):
+    conversationId: str
+    senderId: str
+    senderRole: str
+    senderName: str
+    content: str
+    timestamp: str
+    read: bool = False
+
+class Message(MessageBase):
+    id: str
+    class Config:
+        from_attributes = True
+
+class MessageCreate(BaseModel):
+    content: str
+

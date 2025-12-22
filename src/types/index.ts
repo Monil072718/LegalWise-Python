@@ -123,3 +123,27 @@ export interface Category {
   total_hires: number;
   avg_rating: number;
 }
+
+export interface Conversation {
+  id: string;
+  clientId: string;
+  lawyerId: string;
+  clientName: string;
+  lawyerName: string;
+  lastMessage?: string;
+  lastMessageAt?: string;
+  unreadByClient: number;
+  unreadByLawyer: number;
+  createdAt: string;
+}
+
+export interface ChatMessage {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  senderRole: 'client' | 'lawyer';
+  senderName: string;
+  content: string;
+  timestamp: string;
+  read: boolean;
+}

@@ -6,6 +6,7 @@ from typing import List
 from fastapi.staticfiles import StaticFiles
 from routers.admin import lawyers, clients, cases, dashboard, books, articles, payments, analytics, categories
 from routers.common import auth, appointments, upload
+from routers.client import cases_router, payments_router, books_router, articles_router
 from websocket_manager import manager
 import models
 import database
@@ -71,6 +72,13 @@ app.include_router(books.router)
 app.include_router(articles.router)
 app.include_router(payments.router)
 app.include_router(analytics.router)
+
+# Client routers
+app.include_router(cases_router, prefix="/client")
+app.include_router(payments_router, prefix="/client")
+app.include_router(books_router, prefix="/client")
+app.include_router(articles_router, prefix="/client")
+
 
 @app.websocket("/ws/{client_id}")
 async def websocket_endpoint(websocket: WebSocket, client_id: int):

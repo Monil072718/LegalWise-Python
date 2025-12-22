@@ -97,6 +97,7 @@ class Payment(Base):
     status = Column(String)
     date = Column(String)
     platformFee = Column(Float)
+    itemId = Column(String, nullable=True)  # Track which book/item was purchased
 
 class Book(Base):
     __tablename__ = "books"

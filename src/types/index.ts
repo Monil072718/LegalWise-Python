@@ -83,6 +83,7 @@ export interface Payment {
   status: 'completed' | 'pending' | 'failed' | 'refunded';
   date: string;
   platformFee: number;
+  itemId?: string;
 }
 
 export interface Book {

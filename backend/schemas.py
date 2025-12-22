@@ -180,6 +180,7 @@ class PaymentBase(BaseModel):
     status: str
     date: str
     platformFee: float
+    itemId: Optional[str] = None
 
 class Payment(PaymentBase):
     id: str

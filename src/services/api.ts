@@ -208,4 +208,24 @@ export const api = {
   
   // Dashboard
   getDashboardStats: () => api.get<any>('/dashboard/stats'), 
+  
+  // Client-specific endpoints
+  getClientCases: () => api.get<Case[]>('/client/cases/'),
+  getClientCase: (id: string) => api.get<Case>(`/client/cases/${id}`),
+  getClientPayments: () => api.get<Payment[]>('/client/payments/'),
+  getClientBooks: (category?: string) => {
+    const params = category ? `?category=${encodeURIComponent(category)}` : '';
+    return api.get<Book[]>(`/client/books/${params}`);
+  },
+  getAvailableBooks: (category?: string) => {
+    const params = category ? `?category=${encodeURIComponent(category)}` : '';
+    return api.get<Book[]>(`/client/books/available${params}`);
+  },
+  purchaseBook: (bookId: string) => api.post<Payment>(`/client/books/${bookId}/purchase`, {}),
+  getClientArticles: (category?: string) => {
+    const params = category ? `?category=${encodeURIComponent(category)}` : '';
+    return api.get<Article[]>(`/client/articles/${params}`);
+  },
+  getClientArticle: (id: string) => api.get<Article>(`/client/articles/${id}`),
+  likeArticle: (articleId: string) => api.post<{message: string; likes: number}>(`/client/articles/${articleId}/like`, {}),
 };

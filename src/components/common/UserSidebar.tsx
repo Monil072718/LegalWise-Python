@@ -7,7 +7,8 @@ import {
   FileText,
   LogOut,
   Settings,
-  Clock
+  Clock,
+  MessageSquare
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -20,6 +21,7 @@ const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/user/dashboard' },
   { icon: Search, label: 'Find a Lawyer', href: '/user/lawyers' },
   { icon: Clock, label: 'My Appointments', href: '/user/appointments' },
+  { icon: MessageSquare, label: 'Chat', href: '/user/chat' },
   { icon: Scale, label: 'My Cases', href: '/user/cases' },
   { icon: CreditCard, label: 'Payments', href: '/user/payments' },
   { icon: BookOpen, label: 'Legal Books', href: '/user/books' },

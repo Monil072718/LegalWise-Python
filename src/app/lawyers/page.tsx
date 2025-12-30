@@ -1,5 +1,14 @@
-import LawyerManagement from '../../components/admin/LawyerManagement';
+"use client";
 
-export default function Page() {
-  return <LawyerManagement />;
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+
+export default function LawyersIndex() {
+  const router = useRouter();
+  
+  useEffect(() => {
+    router.replace('/find-lawyer');
+  }, [router]);
+
+  return null;
 }

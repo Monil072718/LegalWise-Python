@@ -30,15 +30,21 @@ export default function PublicHeader() {
     { name: 'Contact', href: '/contact' },
   ];
 
+  const isDarkHeader = ['/find-lawyer', '/contact'].includes(pathname);
+  const textColor = !isScrolled && isDarkHeader ? 'text-white' : 'text-gray-700';
+  const hoverColor = !isScrolled && isDarkHeader ? 'hover:text-blue-100' : 'hover:text-blue-600';
+  const logoColor = !isScrolled && isDarkHeader ? 'text-white' : 'text-gray-900';
+  const logoSuffix = !isScrolled && isDarkHeader ? 'text-blue-200' : 'text-blue-600';
+
   return (
     <>
     <motion.header 
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${
         isScrolled 
-          ? 'bg-white/80 backdrop-blur-xl shadow-lg py-4' 
+          ? 'bg-white/95 backdrop-blur-xl shadow-lg py-4 border-b border-gray-100' 
           : 'py-6 bg-transparent'
       }`}
     >
@@ -46,50 +52,47 @@ export default function PublicHeader() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg transition-all duration-300 ${isScrolled ? 'bg-blue-600' : 'bg-gradient-to-br from-blue-700 to-indigo-600 shadow-blue-500/30'}`}>
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg transition-all duration-300 ${!isScrolled && isDarkHeader ? 'bg-white/20 backdrop-blur' : (isScrolled ? 'bg-blue-600' : 'bg-gradient-to-br from-blue-700 to-indigo-600 shadow-blue-500/30')}`}>
               <Scale className="w-6 h-6" />
             </div>
-            <span className={`text-xl font-bold tracking-tight transition-colors duration-300 ${isScrolled ? 'text-gray-900' : 'text-gray-900'}`}>
-              Legal<span className="text-blue-600">Wise</span>
+            <span className={`text-xl font-bold tracking-tight transition-colors duration-300 ${logoColor}`}>
+              Legal<span className={logoSuffix}>Wise</span>
             </span>
           </Link>
           
           {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-1 bg-white/50 backdrop-blur-sm px-4 py-2 rounded-full border border-gray-100/50 shadow-sm">
+          <nav className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => (
               <Link 
                 key={link.name}
                 href={link.href} 
                 className={`relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                   isActive(link.href) 
-                    ? 'text-blue-600 bg-blue-50/80 shadow-sm' 
-                    : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'
+                    ? (!isScrolled && isDarkHeader ? 'bg-white/20 text-white backdrop-blur-sm' : 'text-blue-600 bg-blue-50 shadow-sm')
+                    : `${textColor} ${hoverColor}`
                 }`}
               >
                 {link.name}
-                {isActive(link.href) && (
-                   <motion.div 
-                     layoutId="activeTab"
-                     className="absolute inset-0 bg-blue-50 rounded-full -z-10"
-                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                   />
-                )}
               </Link>
             ))}
           </nav>
           
           
           {/* Auth Buttons */}
-          <div className="hidden lg:flex items-center gap-4 bg-white/50 backdrop-blur-sm px-2 py-1.5 rounded-full border border-gray-100/50 shadow-sm">
+          <div className="hidden lg:flex items-center gap-4">
             <Link 
               href="/user/login" 
-              className="px-4 py-2 text-sm font-semibold text-gray-700 hover:text-blue-600 transition-colors"
+              className={`px-4 py-2 text-sm font-semibold transition-colors ${textColor} ${hoverColor}`}
             >
               Sign In
             </Link>
             <Link 
               href="/user/register" 
-              className="group px-5 py-2 bg-gray-900 text-white rounded-full text-sm font-semibold shadow-lg shadow-gray-200 hover:shadow-xl hover:bg-blue-600 hover:scale-105 transition-all duration-300 flex items-center gap-2"
+              className={`group px-5 py-2 rounded-full text-sm font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center gap-2 ${
+                  !isScrolled && isDarkHeader 
+                    ? 'bg-white text-blue-600' 
+                    : 'bg-gray-900 text-white hover:bg-blue-600'
+              }`}
             >
               Get Started <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
@@ -97,7 +100,7 @@ export default function PublicHeader() {
           
           {/* Mobile Menu Button */}
           <button 
-            className="lg:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+            className={`lg:hidden p-2 rounded-lg transition-colors ${!isScrolled && isDarkHeader ? 'text-white hover:bg-white/20' : 'text-gray-600 hover:bg-gray-100'}`}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}

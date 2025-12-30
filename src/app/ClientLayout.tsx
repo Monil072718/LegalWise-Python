@@ -39,9 +39,11 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         return;
     }
 
-    // List of public routes that don't need authentication
-    const publicRoutes = ['/', '/find-lawyer', '/contact', '/books', '/articles', '/ai-chat'];
-    if (publicRoutes.includes(pathname)) {
+    // List of public routes that don't need authentication (including sub-routes)
+    const publicRoutes = ['/', '/find-lawyer', '/contact', '/books', '/articles', '/ai-chat', '/lawyers'];
+    const isPublicRoute = publicRoutes.some(route => pathname === route || pathname.startsWith(route + '/'));
+
+    if (isPublicRoute) {
         setLoading(false);
         return;
     }

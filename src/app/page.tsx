@@ -15,11 +15,11 @@ export default function Page() {
       <PublicHeader />
       <main>
         <Hero />
+        <AboutSection />
         <ServicesSection />
         <HowItWorks />
         <FeaturedLawyers />
         <SubscriptionSection />
-        <AboutSection />
         <ReviewsSection />
         <FAQSection />
       </main>

@@ -24,24 +24,40 @@ export default function AIChatPage() {
     // Simulated AI Logic with Legal Domain Restriction
     setTimeout(() => {
         const lowerInput = userMessage.toLowerCase();
+        
+        // Knowledge Base for specific topics
+        const knowledgeBase: Record<string, string> = {
+            "divorce": "Divorce proceedings generally involve filing a petition, disclosing financial assets, and determining child custody arrangements if applicable. Laws vary significantly by state.",
+            "custody": "Child custody is usually determined based on the 'best interests of the child' standard. This considers factors like the child's age, emotional ties, and the parents' ability to provide care.",
+            "contract": "A valid contract typically requires three elements: an offer, acceptance, and consideration (exchange of value). If one party fails to fulfill terms, it may be considered a breach.",
+            "arrest": "If arrested, you have the right to remain silent and the right to an attorney (Miranda Rights). It is generally advised to exercise these rights immediately.",
+            "ticket": "Traffic violations can often be contested in court or resolved by paying a fine. Some jurisdictions offer traffic school to prevent points on your license.",
+            "will": "A will is a legal document setting forth your wishes regarding the distribution of your property and the care of any minor children. It usually requires witnesses to be valid.",
+            "copyright": "Copyright protection exists from the moment an original work of authorship is fixed in a tangible medium. Registration provides additional benefits for enforcement."
+        };
+
         const legalKeywords = [
             "law", "legal", "court", "judge", "attorney", "lawyer", 
-            "crime", "civil", "rights", "contract", "agreement", "sue", 
-            "divorce", "custody", "property", "tenant", "landlord", 
-            "eviction", "arrest", "police", "justice", "statute", 
+            "crime", "civil", "rights", "sue", 
+            "property", "tenant", "landlord", 
+            "eviction", "police", "justice", "statute", 
             "regulation", "compliance", "fraud", "negligence", "injury", 
-            "damages", "will", "trust", "estate", "patent", "copyright", 
+            "damages", "trust", "estate", "patent", 
             "trademark", "help", "advice", "case"
         ];
 
-        const isLegalRelated = legalKeywords.some(keyword => lowerInput.includes(keyword));
+        // Check for specific topic match first
+        const topicMatch = Object.keys(knowledgeBase).find(key => lowerInput.includes(key));
+        const isLegalRelated = topicMatch || legalKeywords.some(keyword => lowerInput.includes(keyword));
 
         let botResponse = "";
 
-        if (isLegalRelated) {
-             botResponse = "I understand you're asking about a legal matter regarding '" + userMessage + "'. While I can provide general legal information, specific situations require professional counsel. I recommend using our 'Find Lawyer' page to connect with an expert in this field.";
+        if (topicMatch) {
+            botResponse = knowledgeBase[topicMatch] + " Would you like to know more about this topic?";
+        } else if (isLegalRelated) {
+             botResponse = "I understand you're inquiring about a legal matter regarding '" + userMessage + "'. Legal definitions and procedures can be complex. Could you broaden your question so I can explain the general concepts?";
         } else {
-             botResponse = "I apologize, but I am programmed to assist only with legal and law-related inquiries. I cannot provide information on non-legal topics. Please ask a question related to law, rights, or legal procedures.";
+             botResponse = "I apologize, but I am programmed to assist only with legal and law-related inquiries. Please ask a question related to law, rights, or legal procedures.";
         }
 
         setMessages(prev => [...prev, {

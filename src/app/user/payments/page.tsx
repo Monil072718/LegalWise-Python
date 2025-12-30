@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CreditCard, Download, Filter, Calendar, DollarSign, AlertCircle } from 'lucide-react';
 import { api } from '../../../services/api';
 import { Payment } from '../../../types';
@@ -50,7 +50,7 @@ export default function PaymentsPage() {
   };
 
   const getTypeIcon = (type: string) => {
-    const icons: Record<string, JSX.Element> = {
+    const icons: Record<string, React.ReactNode> = {
       'consultation': <Calendar className="w-5 h-5" />,
       'case': <CreditCard className="w-5 h-5" />,
       'book': <Download className="w-5 h-5" />,

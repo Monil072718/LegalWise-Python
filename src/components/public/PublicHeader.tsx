@@ -12,13 +12,15 @@ export default function PublicHeader() {
           <span className="text-xl font-bold text-gray-900">LegalWise</span>
         </Link>
         
-        <nav className="hidden md:flex items-center gap-8">
-          <Link href="#lawyers" className="text-gray-600 hover:text-blue-600 font-medium">
-            Find a Lawyer
-          </Link>
-          <Link href="/user/login" className="text-gray-600 hover:text-blue-600 font-medium">
-            Sign In
-          </Link>
+        <nav className="hidden md:flex items-center gap-6">
+          <Link href="/" className="text-gray-600 hover:text-blue-600 font-medium">Home</Link>
+          <Link href="/find-lawyer" className="text-gray-600 hover:text-blue-600 font-medium">Find Lawyers</Link>
+          <Link href="/books" className="text-gray-600 hover:text-blue-600 font-medium">Books</Link>
+          <Link href="/articles" className="text-gray-600 hover:text-blue-600 font-medium">Articles</Link>
+          <Link href="/ai-chat" className="text-gray-600 hover:text-blue-600 font-medium">AI Chat</Link>
+          <Link href="/contact" className="text-gray-600 hover:text-blue-600 font-medium">Contact</Link>
+          <div className="border-l border-gray-200 h-6 mx-2"></div>
+          <Link href="/user/login" className="text-gray-600 hover:text-blue-600 font-medium">Sign In</Link>
           <Link 
             href="/user/register" 
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors"

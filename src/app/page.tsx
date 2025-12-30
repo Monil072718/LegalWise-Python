@@ -9,7 +9,6 @@ export default function Page() {
       <PublicHeader />
       <main>
         <Hero />
-        <PublicLawyerList />
       </main>
       <PublicFooter />
     </div>

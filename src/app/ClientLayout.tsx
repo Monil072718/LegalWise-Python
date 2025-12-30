@@ -39,8 +39,9 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         return;
     }
 
-    // Allow public access to landing page
-    if (pathname === '/') {
+    // List of public routes that don't need authentication
+    const publicRoutes = ['/', '/find-lawyer', '/contact', '/books', '/articles', '/ai-chat'];
+    if (publicRoutes.includes(pathname)) {
         setLoading(false);
         return;
     }
@@ -161,9 +162,11 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   }
 
   // Render appropriate layout
+  const publicRoutes = ['/', '/find-lawyer', '/contact', '/books', '/articles', '/ai-chat'];
+
   return (
     <div className="flex h-screen bg-gray-50 relative">
-      {!isAuthPage && pathname !== '/' && (isLawyerRoute ? (
+      {!isAuthPage && !publicRoutes.includes(pathname) && (isLawyerRoute ? (
         <LawyerSidebar isCollapsed={sidebarCollapsed} />
       ) : isUserRoute ? (
         <UserSidebar isCollapsed={sidebarCollapsed} />
@@ -172,7 +175,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       ))}
       
       <div className="flex-1 flex flex-col overflow-hidden transition-all duration-300">
-        {!isAuthPage && pathname !== '/' && <Header user={user} onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)} />}
+        {!isAuthPage && !publicRoutes.includes(pathname) && <Header user={user} onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)} />}
         
         <main className="flex-1 overflow-y-auto bg-gray-50">
           {children}

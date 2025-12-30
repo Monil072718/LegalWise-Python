@@ -5,7 +5,7 @@ import PublicHeader from '../../components/public/PublicHeader';
 import PublicFooter from '../../components/public/PublicFooter';
 import { api } from '../../services/api';
 import { Book } from '../../types';
-import { Download, Book as BookIcon } from 'lucide-react';
+import { Download, Book as BookIcon, Star, ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
 
 export default function PublicBooksPage() {
@@ -28,47 +28,66 @@ export default function PublicBooksPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50 font-sans">
       <PublicHeader />
-      <main>
-        <div className="bg-purple-900 text-white py-16">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 className="text-4xl font-bold mb-4">Legal Library</h1>
-            <p className="text-purple-200 text-lg max-w-2xl mx-auto">
-                Explore our collection of legal books and resources to empower yourself with knowledge.
-            </p>
+      <main className="pt-20">
+        {/* Header Section */}
+        <div className="bg-white border-b border-gray-200">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+                <span className="inline-block px-3 py-1 rounded-full bg-purple-50 text-purple-600 text-xs font-bold uppercase tracking-wider mb-4">
+                    Knowledge Base
+                </span>
+                <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 tracking-tight">
+                    Premium Legal <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">Library</span>
+                </h1>
+                <p className="text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed">
+                    Master legal concepts with our curated collection of expert-written books and resources.
+                </p>
             </div>
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             {loading ? (
                 <div className="flex justify-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-600 border-t-transparent"></div>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {books.map((book) => (
-                        <div key={book.id} className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow">
-                            <div className="h-48 bg-gray-100 flex items-center justify-center relative">
+                        <div key={book.id} className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-gray-100 flex flex-col h-full">
+                            <div className="h-64 bg-gray-100 relative overflow-hidden group-hover:bg-gray-200 transition-colors">
                                 {book.cover_image ? (
-                                    <img src={book.cover_image} alt={book.title} className="h-full w-full object-cover" />
+                                    <img src={book.cover_image} alt={book.title} className="h-full w-full object-cover transform group-hover:scale-105 transition-transform duration-700" />
                                 ) : (
-                                    <BookIcon className="w-16 h-16 text-gray-400" />
+                                    <div className="w-full h-full flex items-center justify-center">
+                                        <BookIcon className="w-20 h-20 text-gray-300" />
+                                    </div>
                                 )}
-                                <div className="absolute top-2 right-2 bg-white px-2 py-1 rounded-md text-sm font-bold shadow-sm">
-                                    ${book.price}
+                                <div className="absolute top-4 right-4">
+                                    <span className="bg-white/90 backdrop-blur px-3 py-1 rounded-full text-sm font-bold shadow-sm text-gray-900">
+                                        ${book.price}
+                                    </span>
                                 </div>
                             </div>
-                            <div className="p-6">
-                                <span className="text-xs font-semibold text-purple-600 bg-purple-50 px-2 py-1 rounded-full">
-                                    {book.category}
-                                </span>
-                                <h3 className="text-lg font-bold text-gray-900 mt-3 mb-1 line-clamp-2">{book.title}</h3>
-                                <p className="text-sm text-gray-600 mb-4">{book.author}</p>
+                            
+                            <div className="p-6 flex-1 flex flex-col">
+                                <div className="mb-4">
+                                    <span className="text-xs font-bold text-purple-600 uppercase tracking-wide">
+                                        {book.category}
+                                    </span>
+                                    <h3 className="text-lg font-bold text-gray-900 mt-2 leading-snug line-clamp-2 group-hover:text-purple-600 transition-colors">
+                                        {book.title}
+                                    </h3>
+                                    <p className="text-sm text-gray-500 mt-1">by {book.author}</p>
+                                </div>
                                 
-                                <div className="mt-4 pt-4 border-t border-gray-100">
-                                    <Link href="/user/login" className="block w-full text-center bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition-colors">
-                                        Sign in to Buy
+                                <div className="mt-auto">
+                                    <Link 
+                                        href="/user/login" 
+                                        className="w-full flex items-center justify-center gap-2 bg-gray-900 text-white py-3 rounded-xl font-medium hover:bg-purple-600 transition-colors shadow-lg shadow-gray-200"
+                                    >
+                                        <ShoppingCart className="w-4 h-4" />
+                                        Buy Now
                                     </Link>
                                 </div>
                             </div>

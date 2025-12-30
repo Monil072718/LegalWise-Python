@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { api } from '../../services/api';
 import { Lawyer } from '../../types';
 import { Star, Shield, ArrowRight } from 'lucide-react';
+import ScrollAnimation from '../ui/ScrollAnimation';
 
 export default function FeaturedLawyers() {
   const [lawyers, setLawyers] = useState<Lawyer[]>([]);
@@ -22,7 +23,7 @@ export default function FeaturedLawyers() {
   return (
     <section className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6 animate-slide-up">
+        <ScrollAnimation direction="up" className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
             <div className="max-w-2xl">
                 <span className="inline-block px-3 py-1 rounded-full bg-amber-50 text-amber-600 text-xs font-bold uppercase tracking-wide mb-4">
                     Top Rated
@@ -35,7 +36,7 @@ export default function FeaturedLawyers() {
             <Link href="/find-lawyer" className="inline-flex items-center gap-2 px-6 py-3 bg-gray-50 text-gray-900 font-bold rounded-full hover:bg-gray-100 transition-colors">
                 View All Lawyers <ArrowRight className="w-4 h-4" />
             </Link>
-        </div>
+        </ScrollAnimation>
 
         {loading ? (
              <div className="flex justify-center py-10">
@@ -44,10 +45,10 @@ export default function FeaturedLawyers() {
         ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {lawyers.map((lawyer, idx) => (
-                    <div 
+                    <ScrollAnimation 
                         key={lawyer.id} 
-                        className="group relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 animate-slide-up"
-                        style={{ animationDelay: `${idx * 0.15}s` }}
+                        delay={idx * 0.15}
+                        className="group relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 h-full"
                     >
                         <div className="h-80 relative overflow-hidden">
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
@@ -78,7 +79,7 @@ export default function FeaturedLawyers() {
                                 </Link>
                             </div>
                         </div>
-                    </div>
+                    </ScrollAnimation>
                 ))}
             </div>
         )}

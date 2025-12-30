@@ -1,4 +1,5 @@
 import { Search, MessageSquare, CheckCircle } from 'lucide-react';
+import ScrollAnimation from '../ui/ScrollAnimation';
 
 const steps = [
     {
@@ -22,19 +23,23 @@ export default function HowItWorks() {
   return (
     <section className="py-24 bg-white relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-20 animate-slide-up">
+        <ScrollAnimation direction="up" className="text-center mb-20">
             <span className="inline-block px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-bold uppercase tracking-wide mb-4">
                 The Process
             </span>
             <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900">How LegalWise Works</h2>
-        </div>
+        </ScrollAnimation>
 
         <div className="relative grid grid-cols-1 md:grid-cols-3 gap-12">
             {/* Connecting Line (Desktop) */}
             <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-blue-200 via-indigo-200 to-blue-200 z-0"></div>
 
             {steps.map((step, idx) => (
-                <div key={idx} className="relative z-10 flex flex-col items-center text-center animate-slide-up" style={{ animationDelay: `${idx * 0.2}s` }}>
+                <ScrollAnimation 
+                    key={idx} 
+                    delay={idx * 0.2} 
+                    className="relative z-10 flex flex-col items-center text-center"
+                >
                     <div className="w-24 h-24 bg-white rounded-full border-4 border-blue-50 flex items-center justify-center mb-8 shadow-lg shadow-blue-100 group hover:scale-110 transition-transform duration-300">
                         <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center text-white">
                             <step.icon className="w-8 h-8" />
@@ -44,7 +49,7 @@ export default function HowItWorks() {
                     <p className="text-gray-500 leading-relaxed max-w-sm">
                         {step.desc}
                     </p>
-                </div>
+                </ScrollAnimation>
             ))}
         </div>
       </div>

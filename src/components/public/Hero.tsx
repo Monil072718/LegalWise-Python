@@ -1,20 +1,21 @@
 import Link from "next/link";
 import { ArrowRight, Shield, Star, Users } from 'lucide-react';
+import ScrollAnimation from '../ui/ScrollAnimation';
 
 export default function Hero() {
   return (
     <div className="relative bg-white overflow-hidden pt-20">
       {/* Abstract Background Shapes */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
-        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-blue-100/50 blur-3xl animate-float"></div>
-        <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-indigo-50/50 blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
+        <ScrollAnimation direction="down" delay={0.2} className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-blue-100/50 blur-3xl animate-float"></ScrollAnimation>
+        <ScrollAnimation direction="up" delay={0.4} className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-indigo-50/50 blur-3xl animate-float" style={{ animationDelay: '2s' }}></ScrollAnimation>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center py-20 lg:py-32">
           
           {/* Text Content */}
-          <div className="max-w-2xl animate-slide-up">
+          <ScrollAnimation direction="right" className="max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-xs font-semibold uppercase tracking-wide mb-6">
               <span className="w-2 h-2 rounded-full bg-blue-600"></span>
               #1 Trusted Legal Platform
@@ -67,11 +68,11 @@ export default function Hero() {
                 <span>10k+ Clients</span>
               </div>
             </div>
-          </div>
+          </ScrollAnimation>
           
           {/* Image/Visual Content */}
-          <div className="relative lg:h-full flex items-center justify-center lg:justify-end animate-fade-in" style={{ animationDelay: '0.3s' }}>
-            <div className="relative w-full max-w-lg aspect-square">
+          <div className="relative lg:h-full flex items-center justify-center lg:justify-end">
+            <ScrollAnimation direction="left" delay={0.3} className="relative w-full max-w-lg aspect-square">
                {/* Decorative Circle */}
                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-br from-blue-50 to-indigo-50 rounded-full -z-10 blur-3xl"></div>
                
@@ -115,7 +116,7 @@ export default function Hero() {
                     </div>
                   </div>
                </div>
-            </div>
+            </ScrollAnimation>
           </div>
 
         </div>

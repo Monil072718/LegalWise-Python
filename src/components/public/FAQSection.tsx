@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import ScrollAnimation from '../ui/ScrollAnimation';
 
 const faqs = [
     {
@@ -28,19 +29,19 @@ export default function FAQSection() {
   return (
     <section className="py-24 bg-gray-50">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16 animate-slide-up">
+        <ScrollAnimation direction="up" className="text-center mb-16">
             <h2 className="text-4xl font-extrabold text-gray-900 mb-4">Frequently Asked Questions</h2>
             <p className="text-gray-500">
                 Common questions about our services and process.
             </p>
-        </div>
+        </ScrollAnimation>
 
         <div className="space-y-4">
             {faqs.map((faq, idx) => (
-                <div 
+                <ScrollAnimation 
                     key={idx} 
-                    className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden animate-slide-up transition-all duration-300 hover:shadow-md"
-                    style={{ animationDelay: `${idx * 0.1}s` }}
+                    delay={idx * 0.1}
+                    className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-md"
                 >
                     <button 
                         onClick={() => setOpenIndex(openIndex === idx ? null : idx)}
@@ -62,7 +63,7 @@ export default function FAQSection() {
                             {faq.answer}
                         </div>
                     </div>
-                </div>
+                </ScrollAnimation>
             ))}
         </div>
       </div>

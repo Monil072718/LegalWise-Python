@@ -3,6 +3,7 @@ import Hero from '../components/public/Hero';
 import ServicesSection from '../components/public/ServicesSection';
 import HowItWorks from '../components/public/HowItWorks';
 import FeaturedLawyers from '../components/public/FeaturedLawyers';
+import SubscriptionSection from '../components/public/SubscriptionSection';
 import AboutSection from '../components/public/AboutSection';
 import ReviewsSection from '../components/public/ReviewsSection';
 import FAQSection from '../components/public/FAQSection';
@@ -17,6 +18,7 @@ export default function Page() {
         <ServicesSection />
         <HowItWorks />
         <FeaturedLawyers />
+        <SubscriptionSection />
         <AboutSection />
         <ReviewsSection />
         <FAQSection />

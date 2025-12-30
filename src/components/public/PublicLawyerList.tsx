@@ -43,8 +43,8 @@ export default function PublicLawyerList() {
             >
               <div className="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
                 <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors"></div>
-                {lawyer.imageUrl ? (
-                  <img src={lawyer.imageUrl} alt={lawyer.name} className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" />
+                {lawyer.image ? (
+                  <img src={lawyer.image} alt={lawyer.name} className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-gray-400">
                     <User className="w-20 h-20" />

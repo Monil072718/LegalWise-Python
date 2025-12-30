@@ -39,6 +39,12 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         return;
     }
 
+    // Allow public access to landing page
+    if (pathname === '/') {
+        setLoading(false);
+        return;
+    }
+
     // 2. User Route Protection
     if (isUserRoute) {
         const token = sessionStorage.getItem('userToken');
@@ -157,7 +163,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   // Render appropriate layout
   return (
     <div className="flex h-screen bg-gray-50 relative">
-      {!isAuthPage && (isLawyerRoute ? (
+      {!isAuthPage && pathname !== '/' && (isLawyerRoute ? (
         <LawyerSidebar isCollapsed={sidebarCollapsed} />
       ) : isUserRoute ? (
         <UserSidebar isCollapsed={sidebarCollapsed} />
@@ -166,7 +172,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       ))}
       
       <div className="flex-1 flex flex-col overflow-hidden transition-all duration-300">
-        {!isAuthPage && <Header user={user} onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)} />}
+        {!isAuthPage && pathname !== '/' && <Header user={user} onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)} />}
         
         <main className="flex-1 overflow-y-auto bg-gray-50">
           {children}

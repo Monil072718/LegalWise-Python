@@ -23,6 +23,16 @@ def get_purchased_books(
     if not hasattr(current_user, 'role') or current_user.role != 'client':
         raise HTTPException(status_code=403, detail="Only clients can access this endpoint")
     
+    # Security check: Show books only if user has booked a lawyer (consultation or case)
+    has_booking = db.query(models.Payment).filter(
+        models.Payment.clientName == current_user.name,
+        models.Payment.type.in_(['consultation', 'case']),
+        models.Payment.status == 'completed'
+    ).first()
+    
+    if not has_booking:
+        return []
+    
     # Get all book purchases for this client
     book_payments = db.query(models.Payment).filter(
         models.Payment.clientName == current_user.name,

@@ -5,8 +5,22 @@ import { usePathname } from 'next/navigation';
 import { Scale, Menu, X, ChevronRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useCart } from '../../context/CartContext';
+
+
+
+function CartBadge() {
+  const { totalItems } = useCart();
+  if (totalItems === 0) return null;
+  return (
+    <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/4 -translate-y-1/4 bg-red-600 rounded-full">
+      {totalItems}
+    </span>
+  );
+}
 
 export default function PublicHeader() {
+
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -78,8 +92,15 @@ export default function PublicHeader() {
           </nav>
           
           
+
           {/* Auth Buttons */}
           <div className="hidden lg:flex items-center gap-4">
+             {/* Cart Button */}
+             <Link href="/user/cart" className={`relative p-2 rounded-full transition-colors ${textColor} ${hoverColor}`}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-shopping-bag"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                <CartBadge />
+             </Link>
+
             <Link 
               href="/user/login" 
               className={`px-4 py-2 text-sm font-semibold transition-colors ${textColor} ${hoverColor}`}
@@ -97,6 +118,7 @@ export default function PublicHeader() {
               Get Started <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
+
           
           {/* Mobile Menu Button */}
           <button 

@@ -40,7 +40,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     }
 
     // List of public routes that don't need authentication (including sub-routes)
-    const publicRoutes = ['/', '/find-lawyer', '/contact', '/books', '/articles', '/ai-chat', '/lawyers'];
+    const publicRoutes = ['/', '/find-lawyer', '/contact', '/books', '/articles', '/ai-chat', '/lawyers', '/user/cart'];
     const isPublicRoute = publicRoutes.some(route => pathname === route || pathname.startsWith(route + '/'));
 
     if (isPublicRoute) {
@@ -164,7 +164,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   }
 
   // Render appropriate layout
-  const publicRoutes = ['/', '/find-lawyer', '/contact', '/books', '/articles', '/ai-chat'];
+  const publicRoutes = ['/', '/find-lawyer', '/contact', '/books', '/articles', '/ai-chat', '/user/cart'];
 
   return (
     <div className="flex h-screen bg-gray-50 relative">

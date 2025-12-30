@@ -7,10 +7,16 @@ import { api } from '../../services/api';
 import { Book } from '../../types';
 import { Download, Book as BookIcon, Star, ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
+import { useCart } from '../../context/CartContext';
+
 
 export default function PublicBooksPage() {
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
+  const { addItem } = useCart();
+  const router = useRouter();
 
   useEffect(() => {
     fetchBooks();
@@ -25,6 +31,11 @@ export default function PublicBooksPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleAddToCart = (book: Book) => {
+      addItem(book);
+      router.push('/user/cart');
   };
 
   return (
@@ -82,13 +93,13 @@ export default function PublicBooksPage() {
                                 </div>
                                 
                                 <div className="mt-auto">
-                                    <Link 
-                                        href="/user/login" 
+                                    <button 
+                                        onClick={() => handleAddToCart(book)}
                                         className="w-full flex items-center justify-center gap-2 bg-gray-900 text-white py-3 rounded-xl font-medium hover:bg-purple-600 transition-colors shadow-lg shadow-gray-200"
                                     >
                                         <ShoppingCart className="w-4 h-4" />
-                                        Buy Now
-                                    </Link>
+                                        Add to Cart
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -101,3 +112,4 @@ export default function PublicBooksPage() {
     </div>
   );
 }
+

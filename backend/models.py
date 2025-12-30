@@ -174,3 +174,14 @@ class Message(Base):
     timestamp = Column(String)
     read = Column(Boolean, default=False)
 
+class Order(Base):
+    __tablename__ = "orders"
+
+    id = Column(String, primary_key=True, index=True)
+    clientId = Column(String, index=True)
+    items = Column(JSON) # List of {bookId, title, price, quantity}
+    totalAmount = Column(Float)
+    status = Column(String) # 'completed', 'pending'
+    createdAt = Column(String)
+
+

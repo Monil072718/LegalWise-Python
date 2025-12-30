@@ -32,11 +32,18 @@ export default function UserLogin() {
       
       if (response && response.access_token) {
           sessionStorage.setItem('userToken', response.access_token);
-          // Also set in localStorage for persistence if "Remember me" is checked (optional, skipping for now for simplicity)
           
           showToast('Login successful!', 'success');
-          // Force a hard navigation or router push to ensure layout picks up the new token
-          window.location.href = '/user/dashboard'; 
+          
+          // Check for redirect param
+          const params = new URLSearchParams(window.location.search);
+          const redirect = params.get('redirect');
+          
+          if (redirect) {
+              window.location.href = redirect;
+          } else {
+              window.location.href = '/user/dashboard'; 
+          }
       } else {
           throw new Error('No access token received');
       }

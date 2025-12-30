@@ -304,3 +304,24 @@ class Message(MessageBase):
 class MessageCreate(BaseModel):
     content: str
 
+class OrderItem(BaseModel):
+    bookId: str
+    title: str
+    price: float
+    quantity: int
+
+class OrderCreate(BaseModel):
+    items: List[OrderItem]
+    totalAmount: float
+
+class Order(BaseModel):
+    id: str
+    clientId: str
+    items: List[OrderItem]
+    totalAmount: float
+    status: str
+    createdAt: str
+
+    class Config:
+        from_attributes = True
+

@@ -228,7 +228,12 @@ export const api = {
   },
   getClientArticle: (id: string) => api.get<Article>(`/client/articles/${id}`),
   likeArticle: (articleId: string) => api.post<{message: string; likes: number}>(`/client/articles/${articleId}/like`, {}),
+
   
+  // Orders
+  createOrder: (data: { items: any[], totalAmount: number }) => api.post<any>('/client/orders/', data),
+  getOrderHistory: () => api.get<any[]>('/client/orders/history'),
+
   // Chat endpoints
   getConversations: () => api.get<any[]>('/chat/conversations'),
   getMessages: (conversationId: string) => api.get<any[]>(`/chat/conversations/${conversationId}/messages`),
@@ -238,3 +243,4 @@ export const api = {
   getOrCreateConversation: (otherUserId: string) => 
     api.get<any>(`/chat/conversations/with/${otherUserId}`),
 };
+

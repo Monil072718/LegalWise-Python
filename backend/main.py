@@ -78,7 +78,10 @@ app.include_router(analytics.router)
 app.include_router(cases_router, prefix="/client")
 app.include_router(payments_router, prefix="/client")
 app.include_router(books_router, prefix="/client")
+
 app.include_router(articles_router, prefix="/client")
+from routers.client import orders
+app.include_router(orders.router, prefix="/client")
 
 
 @app.websocket("/ws/chat")
@@ -187,3 +190,5 @@ async def chat_websocket(websocket: WebSocket, token: str = "", db: Session = De
 @app.get("/")
 def read_root():
     return {"message": "Welcome to LegalWise Admin API"}
+
+# Trigger Reload

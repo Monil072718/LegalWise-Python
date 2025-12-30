@@ -21,13 +21,35 @@ export default function AIChatPage() {
     setInput('');
     setLoading(true);
 
+    // Simulated AI Logic with Legal Domain Restriction
     setTimeout(() => {
+        const lowerInput = userMessage.toLowerCase();
+        const legalKeywords = [
+            "law", "legal", "court", "judge", "attorney", "lawyer", 
+            "crime", "civil", "rights", "contract", "agreement", "sue", 
+            "divorce", "custody", "property", "tenant", "landlord", 
+            "eviction", "arrest", "police", "justice", "statute", 
+            "regulation", "compliance", "fraud", "negligence", "injury", 
+            "damages", "will", "trust", "estate", "patent", "copyright", 
+            "trademark", "help", "advice", "case"
+        ];
+
+        const isLegalRelated = legalKeywords.some(keyword => lowerInput.includes(keyword));
+
+        let botResponse = "";
+
+        if (isLegalRelated) {
+             botResponse = "I understand you're asking about a legal matter regarding '" + userMessage + "'. While I can provide general legal information, specific situations require professional counsel. I recommend using our 'Find Lawyer' page to connect with an expert in this field.";
+        } else {
+             botResponse = "I apologize, but I am programmed to assist only with legal and law-related inquiries. I cannot provide information on non-legal topics. Please ask a question related to law, rights, or legal procedures.";
+        }
+
         setMessages(prev => [...prev, {
             role: 'bot', 
-            content: "I understand you're asking about '" + userMessage + "'. While I can provide general information, legal matters often require specific advice. I recommend browsing our 'Find Lawyers' section to connect with a specialist in this field."
+            content: botResponse
         }]);
         setLoading(false);
-    }, 1000);
+    }, 1500);
   };
 
   return (

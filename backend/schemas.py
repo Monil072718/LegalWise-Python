@@ -320,6 +320,8 @@ class OrderCreate(BaseModel):
     totalAmount: float
     shippingAddress: str
     paymentMethod: str
+    fullName: str
+    phoneNumber: str
 
 class Order(BaseModel):
     id: str
@@ -329,6 +331,8 @@ class Order(BaseModel):
     status: str
     shippingAddress: Optional[str] = None
     paymentMethod: Optional[str] = None
+    fullName: Optional[str] = None
+    phoneNumber: Optional[str] = None
     createdAt: str
 
     class Config:

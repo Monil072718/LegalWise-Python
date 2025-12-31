@@ -184,6 +184,8 @@ class Order(Base):
     status = Column(String) # 'completed', 'pending'
     shippingAddress = Column(String, name="shippingaddress", nullable=True)
     paymentMethod = Column(String, name="paymentmethod", nullable=True)
+    fullName = Column(String, name="fullname", nullable=True)
+    phoneNumber = Column(String, name="phonenumber", nullable=True)
     createdAt = Column(String)
 
 

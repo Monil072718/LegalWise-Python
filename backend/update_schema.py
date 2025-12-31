@@ -22,6 +22,20 @@ def update_schema():
         except Exception as e:
             print(f"paymentMethod might already exist or error: {e}")
             
+        try:
+            print("Adding fullname column...")
+            connection.execute(text("ALTER TABLE orders ADD COLUMN fullname VARCHAR"))
+            print("fullname added.")
+        except Exception as e:
+            print(f"fullname might already exist or error: {e}")
+            
+        try:
+            print("Adding phonenumber column...")
+            connection.execute(text("ALTER TABLE orders ADD COLUMN phonenumber VARCHAR"))
+            print("phonenumber added.")
+        except Exception as e:
+            print(f"phonenumber might already exist or error: {e}")
+            
     print("Schema update complete.")
 
 if __name__ == "__main__":

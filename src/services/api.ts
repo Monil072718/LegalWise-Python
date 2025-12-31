@@ -245,7 +245,7 @@ export const api = {
 
   
   // Orders
-  createOrder: (data: { items: any[], totalAmount: number, shippingAddress: string, paymentMethod: string }) => api.post<any>('/client/orders/', data),
+  createOrder: (data: { items: any[], totalAmount: number, shippingAddress: string, paymentMethod: string, fullName: string, phoneNumber: string }) => api.post<any>('/client/orders/', data),
   getOrderHistory: () => api.get<any[]>('/client/orders/history'),
 
   // Chat endpoints

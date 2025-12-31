@@ -106,6 +106,11 @@ class ClientLogin(BaseModel):
     email: str
     password: str
 
+class ClientRegistration(BaseModel):
+    name: str
+    email: str
+    password: str
+
 class ClientUpdate(BaseModel):
     name: Optional[str] = None
     email: Optional[str] = None

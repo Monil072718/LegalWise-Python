@@ -56,7 +56,8 @@ def delete_client(client_id: str, db: Session = Depends(database.get_db)):
     return {"ok": True}
 
 @router.post("/register", response_model=schemas.Token)
-def register_client(client: schemas.ClientCreate, db: Session = Depends(database.get_db)):
+def register_client(client: schemas.ClientRegistration, db: Session = Depends(database.get_db)):
+    print(f"DEBUG: register_client called with {client.email}")
     db_client = db.query(models.Client).filter(models.Client.email == client.email).first()
     if db_client:
         raise HTTPException(status_code=400, detail="Email already registered")

@@ -106,7 +106,10 @@ export default function UserLogin() {
           <div className="mt-6 text-center text-sm">
             <p className="text-gray-600">
               New to LegalWise?{' '}
-              <Link href="/user/register" className="text-blue-600 hover:underline font-medium">
+              <Link 
+                href={`/user/register${typeof window !== 'undefined' && window.location.search ? window.location.search : ''}`} 
+                className="text-blue-600 hover:underline font-medium"
+              >
                 Create an account
               </Link>
             </p>

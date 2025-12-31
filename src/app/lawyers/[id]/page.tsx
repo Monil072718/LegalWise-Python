@@ -82,25 +82,25 @@ export default function PublicLawyerProfile() {
                         )}
                     </div>
                     
-                    <div className="flex-1 text-white md:mb-4">
+                    <div className="flex-1 text-gray-900 md:mb-4">
                         <div className="flex items-center gap-3 mb-2">
                             <h1 className="text-3xl md:text-4xl font-bold">{lawyer.name}</h1>
-                            <span className="bg-blue-500/20 backdrop-blur-md border border-blue-400/30 text-blue-100 py-1 px-3 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1">
+                            <span className="bg-blue-100 border border-blue-200 text-blue-700 py-1 px-3 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1">
                                 <Shield className="w-3 h-3" /> Verified Partner
                             </span>
                         </div>
-                        <p className="text-blue-100 text-lg flex items-center gap-2">
+                        <p className="text-blue-600 text-lg flex items-center gap-2">
                              {lawyer.specialization && lawyer.specialization.join(', ')} Specialist
                         </p>
                     </div>
 
                     <div className="flex gap-3 mb-4 md:mb-6">
-                         <div className="bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl border border-white/20 text-white text-center">
-                             <div className="text-xs text-blue-200 uppercase font-bold tracking-wider">Experience</div>
+                         <div className="bg-gray-50 px-4 py-2 rounded-xl border border-gray-200 text-gray-900 text-center shadow-sm">
+                             <div className="text-xs text-gray-500 uppercase font-bold tracking-wider">Experience</div>
                              <div className="font-bold text-xl">{lawyer.experience}+ Years</div>
                          </div>
-                         <div className="bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl border border-white/20 text-white text-center">
-                             <div className="text-xs text-blue-200 uppercase font-bold tracking-wider">Rating</div>
+                         <div className="bg-gray-50 px-4 py-2 rounded-xl border border-gray-200 text-gray-900 text-center shadow-sm">
+                             <div className="text-xs text-gray-500 uppercase font-bold tracking-wider">Rating</div>
                              <div className="font-bold text-xl flex items-center gap-1">
                                  {lawyer.rating} <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
                              </div>

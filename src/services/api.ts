@@ -7,7 +7,21 @@ const handleResponse = async (response: Response) => {
     let errorDetail = response.statusText;
     try {
         const errorData = await response.json();
-        errorDetail = errorData.detail || errorData.message || response.statusText;
+        if (errorData.detail) {
+            if (typeof errorData.detail === 'string') {
+                errorDetail = errorData.detail;
+            } else if (Array.isArray(errorData.detail)) {
+                // Handle FastAPI validation errors (list of dicts)
+                errorDetail = errorData.detail.map((err: any) => err.msg || JSON.stringify(err)).join(', ');
+            } else {
+                errorDetail = JSON.stringify(errorData.detail);
+            }
+        } else if (errorData.message) {
+            errorDetail = errorData.message;
+        } else {
+            // If no standard error field, stringify the whole thing if it's an object
+            errorDetail = typeof errorData === 'object' ? JSON.stringify(errorData) : String(errorData);
+        }
     } catch (e) {
         // failed to parse json, keep statusText
     }

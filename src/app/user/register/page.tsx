@@ -37,7 +37,16 @@ export default function UserRegister() {
       if (response && response.access_token) {
           sessionStorage.setItem('userToken', response.access_token);
           showToast('Account created successfully!', 'success');
-          window.location.href = '/user/dashboard';
+          
+          // Check for redirect param
+          const params = new URLSearchParams(window.location.search);
+          const redirect = params.get('redirect');
+          
+          if (redirect) {
+              window.location.href = redirect;
+          } else {
+              window.location.href = '/user/dashboard';
+          }
       }
     } catch (error: any) {
       console.error('Registration failed:', error);

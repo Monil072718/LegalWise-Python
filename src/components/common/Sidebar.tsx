@@ -32,7 +32,7 @@ const navigationItems = [
   // { id: 'notifications', label: 'Notifications', icon: Bell, href: '/notifications' }, // Moved to Header
   { id: 'billing', label: 'Billing & Payments', icon: CreditCard, href: '/billing' },
   { id: 'analytics', label: 'Analytics & Reports', icon: BarChart3, href: '/analytics' },
-  { id: 'books', label: 'Book Inventory', icon: BookOpen, href: '/books' },
+  { id: 'books', label: 'Book Inventory', icon: BookOpen, href: '/admin/books' },
   { id: 'articles', label: 'Legal Articles', icon: FileText, href: '/articles' },
   { id: 'hiring', label: 'Hire Management', icon: Briefcase, href: '/hiring' },
   { id: 'settings', label: 'Settings', icon: Settings, href: '/settings' }

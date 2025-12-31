@@ -20,7 +20,7 @@ export default function UniversalLogin() {
     const lawyerToken = sessionStorage.getItem('lawyerToken');
 
     if (adminToken) {
-      router.push('/');
+      router.push('/admin/dashboard');
     } else if (lawyerToken) {
       router.push('/lawyer/dashboard');
     }
@@ -44,7 +44,7 @@ export default function UniversalLogin() {
 
       if (role === 'admin') {
         sessionStorage.setItem('adminToken', token);
-        router.push('/');
+        router.push('/admin/dashboard');
       } else if (role === 'lawyer') {
         sessionStorage.setItem('lawyerToken', token);
         router.push('/lawyer/dashboard');

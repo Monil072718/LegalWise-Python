@@ -22,8 +22,60 @@ function CartBadge() {
 export default function PublicHeader() {
 
   const pathname = usePathname();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = () => {
+      const adminToken = sessionStorage.getItem('adminToken') || localStorage.getItem('adminToken');
+      const lawyerToken = sessionStorage.getItem('lawyerToken') || localStorage.getItem('lawyerToken');
+      const userToken = sessionStorage.getItem('userToken') || localStorage.getItem('userToken');
+
+      if (adminToken) {
+        setIsLoggedIn(true);
+        setUserRole('admin');
+      } else if (lawyerToken) {
+        setIsLoggedIn(true);
+        setUserRole('lawyer');
+      } else if (userToken) {
+        setIsLoggedIn(true);
+        setUserRole('user');
+      } else {
+        setIsLoggedIn(false);
+        setUserRole(null);
+      }
+    };
+
+    checkAuth();
+    // Listen for storage events in case login happens in another tab/window
+    window.addEventListener('storage', checkAuth);
+    // Custom event for same-tab login updates if needed
+    window.addEventListener('auth-change', checkAuth);
+    
+    return () => {
+      window.removeEventListener('storage', checkAuth);
+      window.removeEventListener('auth-change', checkAuth);
+    };
+  }, []);
+
+  const handleLogout = () => {
+    sessionStorage.clear();
+    localStorage.clear();
+    setIsLoggedIn(false);
+    setUserRole(null);
+    window.location.href = '/';
+  };
+
+  const getDashboardLink = () => {
+    switch(userRole) {
+      case 'admin': return '/admin/dashboard';
+      case 'lawyer': return '/lawyer/dashboard';
+      case 'user': return '/user/dashboard';
+      default: return '/';
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -101,22 +153,45 @@ export default function PublicHeader() {
                 <CartBadge />
              </Link>
 
-            <Link 
-              href="/user/login" 
-              className={`px-4 py-2 text-sm font-semibold transition-colors ${textColor} ${hoverColor}`}
-            >
-              Sign In
-            </Link>
-            <Link 
-              href="/user/register" 
-              className={`group px-5 py-2 rounded-full text-sm font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center gap-2 ${
-                  !isScrolled && isDarkHeader 
-                    ? 'bg-white text-blue-600' 
-                    : 'bg-gray-900 text-white hover:bg-blue-600'
-              }`}
-            >
-              Get Started <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
+            {isLoggedIn ? (
+                <>
+                    <Link 
+                        href={getDashboardLink()}
+                        className={`px-4 py-2 text-sm font-semibold transition-colors ${textColor} ${hoverColor}`}
+                    >
+                        Dashboard
+                    </Link>
+                    <button 
+                        onClick={handleLogout}
+                        className={`group px-5 py-2 rounded-full text-sm font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center gap-2 ${
+                            !isScrolled && isDarkHeader 
+                                ? 'bg-white text-red-600' 
+                                : 'bg-gray-900 text-white hover:bg-red-600'
+                        }`}
+                    >
+                        Logout
+                    </button>
+                </>
+            ) : (
+                <>
+                    <Link 
+                      href="/user/login" 
+                      className={`px-4 py-2 text-sm font-semibold transition-colors ${textColor} ${hoverColor}`}
+                    >
+                      Sign In
+                    </Link>
+                    <Link 
+                      href="/user/register" 
+                      className={`group px-5 py-2 rounded-full text-sm font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center gap-2 ${
+                          !isScrolled && isDarkHeader 
+                            ? 'bg-white text-blue-600' 
+                            : 'bg-gray-900 text-white hover:bg-blue-600'
+                      }`}
+                    >
+                      Get Started <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                </>
+            )}
           </div>
 
           
@@ -155,18 +230,37 @@ export default function PublicHeader() {
               </Link>
             ))}
             <div className="h-px bg-gray-100 my-2"></div>
-            <Link 
-              href="/user/login" 
-              className="p-4 rounded-xl text-base font-medium text-gray-700 hover:bg-gray-50 text-center"
-            >
-              Sign In
-            </Link>
-            <Link 
-              href="/user/register" 
-              className="p-4 rounded-xl text-base font-bold bg-blue-600 text-white text-center shadow-md"
-            >
-              Get Started Now
-            </Link>
+            {isLoggedIn ? (
+                <>
+                    <Link 
+                        href={getDashboardLink()}
+                        className="p-4 rounded-xl text-base font-medium text-gray-700 hover:bg-gray-50 text-center"
+                    >
+                        Go to Dashboard
+                    </Link>
+                    <button 
+                        onClick={handleLogout}
+                        className="p-4 rounded-xl text-base font-bold bg-gray-100 text-red-600 text-center shadow-sm hover:bg-red-50"
+                    >
+                        Logout
+                    </button>
+                </>
+            ) : (
+                <>
+                    <Link 
+                      href="/user/login" 
+                      className="p-4 rounded-xl text-base font-medium text-gray-700 hover:bg-gray-50 text-center"
+                    >
+                      Sign In
+                    </Link>
+                    <Link 
+                      href="/user/register" 
+                      className="p-4 rounded-xl text-base font-bold bg-blue-600 text-white text-center shadow-md"
+                    >
+                      Get Started Now
+                    </Link>
+                </>
+            )}
           </div>
         </motion.div>
       )}

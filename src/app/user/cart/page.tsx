@@ -3,7 +3,7 @@
 import { useCart } from '../../../context/CartContext';
 import PublicHeader from '../../../components/public/PublicHeader';
 import PublicFooter from '../../../components/public/PublicFooter';
-import { Trash2, ArrowRight, ShoppingBag } from 'lucide-react';
+import { Trash2, ArrowRight, ShoppingBag, Lock } from 'lucide-react';
 import Link from 'next/link';
 import { api } from '../../../services/api';
 import { useRouter } from 'next/navigation';
@@ -115,80 +115,116 @@ export default function CartPage() {
                         ))}
                     </div>
 
-                    {/* Summary & Checkout Form */}
-                    <div className="lg:col-span-1">
-                        <div className="bg-white p-6 rounded-2xl shadow-xl border border-gray-100 sticky top-28">
-                            <h3 className="font-bold text-lg mb-4">Delivery Details</h3>
-                            <div className="mb-4">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Shipping Address</label>
-                                <textarea
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                                    rows={3}
-                                    placeholder="Enter your full address..."
-                                    value={shippingAddress}
-                                    onChange={(e) => setShippingAddress(e.target.value)}
-                                    required
-                                />
-                            </div>
+                    {/* Checkout Details Form (Left Column) */}
+                    <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 mt-6">
+                        <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                            <span className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-sm">1</span>
+                            Delivery Details
+                        </h2>
+                        <div className="mb-8">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Shipping Address</label>
+                            <textarea
+                                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm transition-all"
+                                rows={3}
+                                placeholder="Enter your full street address, city, and zip code..."
+                                value={shippingAddress}
+                                onChange={(e) => setShippingAddress(e.target.value)}
+                                required
+                            />
+                        </div>
 
-                            <h3 className="font-bold text-lg mb-4 mt-6">Payment Method</h3>
-                            <div className="space-y-2 mb-6">
-                                <label className="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
+                        <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                             <span className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-sm">2</span>
+                            Payment Method
+                        </h2>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <label className={`flex items-center gap-4 p-4 border rounded-xl cursor-pointer transition-all ${
+                                paymentMethod === 'card' 
+                                ? 'border-blue-500 bg-blue-50/50 ring-1 ring-blue-500' 
+                                : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                            }`}>
+                                <div className="flex items-center justify-center w-5 h-5">
                                     <input 
                                         type="radio" 
                                         name="payment" 
                                         value="card" 
                                         checked={paymentMethod === 'card'}
                                         onChange={(e) => setPaymentMethod(e.target.value)}
-                                        className="text-blue-600 focus:ring-blue-500" 
+                                        className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300" 
                                     />
-                                    <span className="font-medium text-gray-800">Credit / Debit Card</span>
-                                </label>
-                                <label className="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
+                                </div>
+                                <span className="font-semibold text-gray-900">Credit / Debit Card</span>
+                            </label>
+
+                            <label className={`flex items-center gap-4 p-4 border rounded-xl cursor-pointer transition-all ${
+                                paymentMethod === 'paypal' 
+                                ? 'border-blue-500 bg-blue-50/50 ring-1 ring-blue-500' 
+                                : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                            }`}>
+                                <div className="flex items-center justify-center w-5 h-5">
                                     <input 
                                         type="radio" 
                                         name="payment" 
                                         value="paypal" 
                                         checked={paymentMethod === 'paypal'}
                                         onChange={(e) => setPaymentMethod(e.target.value)}
-                                        className="text-blue-600 focus:ring-blue-500" 
+                                        className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300" 
                                     />
-                                    <span className="font-medium text-gray-800">PayPal</span>
-                                </label>
-                            </div>
-
-                            <hr className="my-6 border-gray-100" />
-                            
-                            <h3 className="font-bold text-lg mb-4">Order Summary</h3>
-                            <div className="space-y-2 mb-6 text-sm">
-                                <div className="flex justify-between text-gray-600">
-                                    <span>Subtotal</span>
-                                    <span>${totalAmount.toFixed(2)}</span>
                                 </div>
-                                <div className="flex justify-between text-gray-600">
-                                    <span>Tax (0%)</span>
-                                    <span>$0.00</span>
-                                </div>
-                                <div className="border-t pt-2 mt-2 flex justify-between font-bold text-lg text-gray-900">
-                                    <span>Total</span>
-                                    <span>${totalAmount.toFixed(2)}</span>
-                                </div>
-                            </div>
-                            
-                            <button 
-                                onClick={handleCheckout}
-                                disabled={isProcessing}
-                                className="w-full py-3 bg-gray-900 text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {isProcessing ? (
-                                    'Processing...' 
-                                ) : (
-                                    <>Pay ${totalAmount.toFixed(2)} <ArrowRight className="w-4 h-4" /></>
-                                )}
-                            </button>
+                                <span className="font-semibold text-gray-900">PayPal</span>
+                            </label>
                         </div>
                     </div>
                 </div>
+
+                {/* Summary (Right Column - Sticky) */}
+                <div className="lg:col-span-1">
+                    <div className="bg-white p-6 rounded-2xl shadow-xl border border-gray-100 sticky top-28">
+                        <h3 className="font-bold text-lg mb-6">Order Summary</h3>
+                        
+                        <div className="space-y-3 mb-6">
+                            <div className="flex justify-between text-gray-600">
+                                <span>Subtotal</span>
+                                <span>${totalAmount.toFixed(2)}</span>
+                            </div>
+                            <div className="flex justify-between text-gray-600">
+                                <span>Tax (0%)</span>
+                                <span>$0.00</span>
+                            </div>
+                            <div className="flex justify-between text-gray-600">
+                                <span>Shipping</span>
+                                <span className="text-green-600 font-medium">Free</span>
+                            </div>
+                        </div>
+
+                        <div className="border-t border-dashed border-gray-200 pt-4 mb-8">
+                             <div className="flex justify-between items-end">
+                                <span className="font-bold text-gray-900">Total</span>
+                                <span className="text-2xl font-extrabold text-gray-900">${totalAmount.toFixed(2)}</span>
+                            </div>
+                        </div>
+                        
+                        <button 
+                            onClick={handleCheckout}
+                            disabled={isProcessing}
+                            className="w-full py-4 bg-gray-900 text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-black transition-all shadow-lg shadow-gray-900/20 disabled:opacity-70 disabled:cursor-not-allowed transform active:scale-95 duration-200"
+                        >
+                            {isProcessing ? (
+                                <span className="flex items-center gap-2">
+                                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                    Processing...
+                                </span>
+                            ) : (
+                                <>Pay Now <ArrowRight className="w-5 h-5" /></>
+                            )}
+                        </button>
+                        
+                        <p className="text-xs text-center text-gray-400 mt-4 flex items-center justify-center gap-1">
+                            <Lock className="w-3 h-3" /> Secure Encrypted Payment
+                        </p>
+                    </div>
+                </div>
+            </div>
             )}
         </div>
       </main>

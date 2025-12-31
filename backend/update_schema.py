@@ -4,7 +4,7 @@ import models
 
 def update_schema():
     print("Connecting to database...")
-    with engine.connect() as connection:
+    with engine.begin() as connection:
         # Check if columns exist (basic check, blindly trying to add is also an option but risky with some DBs)
         # SQLite doesn't support IF NOT EXISTS for ADD COLUMN in older versions, but we'll try standard SQL
         

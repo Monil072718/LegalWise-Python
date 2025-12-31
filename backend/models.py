@@ -182,8 +182,8 @@ class Order(Base):
     items = Column(JSON) # List of {bookId, title, price, quantity}
     totalAmount = Column(Float)
     status = Column(String) # 'completed', 'pending'
-    shippingAddress = Column(String, nullable=True)
-    paymentMethod = Column(String, nullable=True)
+    shippingAddress = Column(String, name="shippingaddress", nullable=True)
+    paymentMethod = Column(String, name="paymentmethod", nullable=True)
     createdAt = Column(String)
 
 

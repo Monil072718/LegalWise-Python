@@ -13,14 +13,14 @@ class LawyerBase(BaseModel):
     email: str
     role: str = "lawyer"
     status: str
-    specialization: List[str]
-    experience: int
-    rating: float
-    casesHandled: int
-    availability: str
-    verified: bool
+    specialization: Optional[List[str]] = []
+    experience: Optional[int] = 0
+    rating: Optional[float] = 0.0
+    casesHandled: Optional[int] = 0
+    availability: Optional[str] = "Available"
+    verified: Optional[bool] = False
     createdAt: str
-    documents: List[dict] = [] # Simply dicts for now
+    documents: Optional[List[dict]] = [] # Simply dicts for now
     phone: Optional[str] = None
     address: Optional[str] = None
     bio: Optional[str] = None

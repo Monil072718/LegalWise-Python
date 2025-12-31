@@ -154,24 +154,16 @@ export default function PublicHeader() {
              </Link>
 
             {isLoggedIn ? (
-                <>
-                    <Link 
-                        href={getDashboardLink()}
-                        className={`px-4 py-2 text-sm font-semibold transition-colors ${textColor} ${hoverColor}`}
-                    >
-                        Dashboard
-                    </Link>
-                    <button 
-                        onClick={handleLogout}
-                        className={`group px-5 py-2 rounded-full text-sm font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center gap-2 ${
-                            !isScrolled && isDarkHeader 
-                                ? 'bg-white text-red-600' 
-                                : 'bg-gray-900 text-white hover:bg-red-600'
-                        }`}
-                    >
-                        Logout
-                    </button>
-                </>
+                <button 
+                    onClick={handleLogout}
+                    className={`group px-5 py-2 rounded-full text-sm font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center gap-2 ${
+                        !isScrolled && isDarkHeader 
+                            ? 'bg-white text-red-600' 
+                            : 'bg-gray-900 text-white hover:bg-red-600'
+                    }`}
+                >
+                    Logout
+                </button>
             ) : (
                 <>
                     <Link 
@@ -231,20 +223,12 @@ export default function PublicHeader() {
             ))}
             <div className="h-px bg-gray-100 my-2"></div>
             {isLoggedIn ? (
-                <>
-                    <Link 
-                        href={getDashboardLink()}
-                        className="p-4 rounded-xl text-base font-medium text-gray-700 hover:bg-gray-50 text-center"
-                    >
-                        Go to Dashboard
-                    </Link>
-                    <button 
-                        onClick={handleLogout}
-                        className="p-4 rounded-xl text-base font-bold bg-gray-100 text-red-600 text-center shadow-sm hover:bg-red-50"
-                    >
-                        Logout
-                    </button>
-                </>
+                <button 
+                    onClick={handleLogout}
+                    className="p-4 rounded-xl text-base font-bold bg-gray-100 text-red-600 text-center shadow-sm hover:bg-red-50"
+                >
+                    Logout
+                </button>
             ) : (
                 <>
                     <Link 

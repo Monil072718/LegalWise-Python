@@ -164,7 +164,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   }
 
   // Render appropriate layout
-  const publicRoutes = ['/', '/find-lawyer', '/contact', '/books', '/articles', '/ai-chat', '/user/cart'];
+  const publicRoutes = ['/', '/find-lawyer', '/contact', '/books', '/articles', '/ai-chat', '/lawyers', '/user/cart'];
   const isPublicRoute = publicRoutes.some(route => pathname === route || pathname.startsWith(route + '/'));
 
   if (isPublicRoute) {

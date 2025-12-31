@@ -8,7 +8,7 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-white">
       <PublicHeader />
-      <main className="pt-20">
+      <main className="pt-0">
         <div className="relative bg-gray-900 py-24 sm:py-32 overflow-hidden">
             <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80')] bg-cover bg-center opacity-10"></div>
             <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent"></div>

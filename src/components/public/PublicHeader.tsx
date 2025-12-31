@@ -44,7 +44,7 @@ export default function PublicHeader() {
     { name: 'Contact', href: '/contact' },
   ];
 
-  const isDarkHeader = ['/find-lawyer', '/contact'].includes(pathname);
+  const isDarkHeader = ['/find-lawyer', '/contact', '/books'].includes(pathname);
   const textColor = !isScrolled && isDarkHeader ? 'text-white' : 'text-gray-700';
   const hoverColor = !isScrolled && isDarkHeader ? 'hover:text-blue-100' : 'hover:text-blue-600';
   const logoColor = !isScrolled && isDarkHeader ? 'text-white' : 'text-gray-900';

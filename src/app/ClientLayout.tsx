@@ -165,10 +165,15 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
   // Render appropriate layout
   const publicRoutes = ['/', '/find-lawyer', '/contact', '/books', '/articles', '/ai-chat', '/user/cart'];
+  const isPublicRoute = publicRoutes.some(route => pathname === route || pathname.startsWith(route + '/'));
+
+  if (isPublicRoute) {
+      return <>{children}</>;
+  }
 
   return (
     <div className="flex h-screen bg-gray-50 relative">
-      {!isAuthPage && !publicRoutes.includes(pathname) && (isLawyerRoute ? (
+      {!isAuthPage && (isLawyerRoute ? (
         <LawyerSidebar isCollapsed={sidebarCollapsed} />
       ) : isUserRoute ? (
         <UserSidebar isCollapsed={sidebarCollapsed} />
@@ -177,7 +182,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       ))}
       
       <div className="flex-1 flex flex-col overflow-hidden transition-all duration-300">
-        {!isAuthPage && !publicRoutes.includes(pathname) && <Header user={user} onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)} />}
+        {!isAuthPage && <Header user={user} onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)} />}
         
         <main className="flex-1 overflow-y-auto bg-gray-50">
           {children}

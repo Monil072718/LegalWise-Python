@@ -23,6 +23,8 @@ def create_order(order: schemas.OrderCreate, db: Session = Depends(database.get_
         clientId=current_user.id,
         items=[item.dict() for item in order.items],
         totalAmount=order.totalAmount,
+        shippingAddress=order.shippingAddress,
+        paymentMethod=order.paymentMethod,
         status="completed", # Auto-complete for now
         createdAt=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     )

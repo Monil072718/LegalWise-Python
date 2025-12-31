@@ -318,6 +318,8 @@ class OrderItem(BaseModel):
 class OrderCreate(BaseModel):
     items: List[OrderItem]
     totalAmount: float
+    shippingAddress: str
+    paymentMethod: str
 
 class Order(BaseModel):
     id: str
@@ -325,6 +327,8 @@ class Order(BaseModel):
     items: List[OrderItem]
     totalAmount: float
     status: str
+    shippingAddress: Optional[str] = None
+    paymentMethod: Optional[str] = None
     createdAt: str
 
     class Config:

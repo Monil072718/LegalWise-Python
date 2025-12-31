@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { LayoutDashboard, Scale, Clock, MessageSquare, Search } from 'lucide-react';
+import { LayoutDashboard, Scale, Clock, MessageSquare, Search, User } from 'lucide-react';
 import Link from 'next/link';
 import { api } from '../../../services/api';
 
@@ -105,6 +105,16 @@ export default function UserDashboard() {
                 <div>
                     <h3 className="font-semibold text-gray-900">Book Appointment</h3>
                     <p className="text-gray-500 text-sm">Schedule a consultation</p>
+                </div>
+            </Link>
+
+            <Link href="/user/profile" className="flex items-center p-4 bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-all">
+                <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mr-4 text-gray-600">
+                    <User className="w-5 h-5" />
+                </div>
+                <div>
+                    <h3 className="font-semibold text-gray-900">My Profile</h3>
+                    <p className="text-gray-500 text-sm">Update personal info</p>
                 </div>
             </Link>
         </div>

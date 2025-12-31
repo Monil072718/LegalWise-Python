@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Scale, Menu, X, ChevronRight } from 'lucide-react';
+import { Scale, Menu, X, ChevronRight, User } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../../context/CartContext';
@@ -89,7 +89,7 @@ export default function PublicHeader() {
   
   const navLinks = [
     { name: 'Home', href: '/' },
-    { name: 'Find Lawyers', href: '/find-lawyer' },
+    { name: 'Lawyers', href: '/find-lawyer' },
     { name: 'Books', href: '/books' },
     { name: 'Articles', href: '/articles' },
     { name: 'AI Chat', href: '/ai-chat' },
@@ -154,16 +154,25 @@ export default function PublicHeader() {
              </Link>
 
             {isLoggedIn ? (
-                <button 
-                    onClick={handleLogout}
-                    className={`group px-5 py-2 rounded-full text-sm font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center gap-2 ${
-                        !isScrolled && isDarkHeader 
-                            ? 'bg-white text-red-600' 
-                            : 'bg-gray-900 text-white hover:bg-red-600'
-                    }`}
-                >
-                    Logout
-                </button>
+                <>
+                    <Link 
+                        href="/user/profile"
+                        className={`p-2 rounded-full transition-colors ${textColor} ${hoverColor}`}
+                        title="Edit Profile"
+                    >
+                        <User className="w-6 h-6" />
+                    </Link>
+                    <button 
+                        onClick={handleLogout}
+                        className={`group px-5 py-2 rounded-full text-sm font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center gap-2 ${
+                            !isScrolled && isDarkHeader 
+                                ? 'bg-white text-red-600' 
+                                : 'bg-gray-900 text-white hover:bg-red-600'
+                        }`}
+                    >
+                        Logout
+                    </button>
+                </>
             ) : (
                 <>
                     <Link 
@@ -223,12 +232,21 @@ export default function PublicHeader() {
             ))}
             <div className="h-px bg-gray-100 my-2"></div>
             {isLoggedIn ? (
-                <button 
-                    onClick={handleLogout}
-                    className="p-4 rounded-xl text-base font-bold bg-gray-100 text-red-600 text-center shadow-sm hover:bg-red-50"
-                >
-                    Logout
-                </button>
+                <>
+                    <Link 
+                        href="/user/profile"
+                        className="p-4 rounded-xl text-base font-medium text-gray-700 hover:bg-gray-50 text-center flex items-center justify-center gap-2"
+                        onClick={() => setMobileMenuOpen(false)}
+                    >
+                        <User className="w-5 h-5" /> Edit Profile
+                    </Link>
+                    <button 
+                        onClick={handleLogout}
+                        className="p-4 rounded-xl text-base font-bold bg-gray-100 text-red-600 text-center shadow-sm hover:bg-red-50"
+                    >
+                        Logout
+                    </button>
+                </>
             ) : (
                 <>
                     <Link 

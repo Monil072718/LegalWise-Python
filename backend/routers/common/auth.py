@@ -160,7 +160,16 @@ def login_client(form_data: schemas.ClientLogin, db: Session = Depends(get_db)):
         data={"sub": client.email, "role": "client", "id": client.id}, 
         expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {
+        "access_token": access_token, 
+        "token_type": "bearer",
+        "user": {
+            "id": client.id,
+            "name": client.name,
+            "email": client.email,
+            "role": "client"
+        }
+    }
 
 @router.post("/login", response_model=schemas.Token)
 def login_universal(form_data: schemas.LoginRequest, db: Session = Depends(get_db)):
@@ -199,7 +208,16 @@ def login_universal(form_data: schemas.LoginRequest, db: Session = Depends(get_d
             data={"sub": client.email, "role": "client", "id": client.id}, 
             expires_delta=access_token_expires
         )
-        return {"access_token": access_token, "token_type": "bearer"}
+        return {
+            "access_token": access_token, 
+            "token_type": "bearer",
+            "user": {
+                "id": client.id,
+                "name": client.name,
+                "email": client.email,
+                "role": "client"
+            }
+        }
 
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

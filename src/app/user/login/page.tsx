@@ -32,6 +32,9 @@ export default function UserLogin() {
       
       if (response && response.access_token) {
           sessionStorage.setItem('userToken', response.access_token);
+          if (response.user && response.user.id) {
+              sessionStorage.setItem('userId', response.user.id);
+          }
           
           showToast('Login successful!', 'success');
           

@@ -195,12 +195,14 @@ export const api = {
   updateAppointment: (id: string, data: Partial<Appointment>) => api.put<Appointment>(`/appointments/${id}`, data),
   deleteAppointment: (id: string) => api.delete<void>(`/appointments/${id}`),
   
-  // Books
-  getBooks: () => api.get<Book[]>('/books/'),
-  getBook: (id: string) => api.get<Book>(`/books/${id}`),
+  // Books - Admin
+  getAdminBooks: () => api.get<Book[]>('/books/'), // Calls /books/ (which maps to backend/routers/admin/books.py)
   createBook: (data: Partial<Book>) => api.post<Book>('/books/', data),
   updateBook: (id: string, data: Partial<Book>) => api.put<Book>(`/books/${id}`, data),
   deleteBook: (id: string) => api.delete<void>(`/books/${id}`),
+
+  // Books - Client (Public/Private)
+  getBooks: () => api.get<Book[]>('/books/'), // This might overlap, usually client uses specific endpoints like below
 
   // Articles
   getArticles: () => api.get<Article[]>('/articles/'),

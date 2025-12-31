@@ -83,11 +83,19 @@ export default function BookInventory() {
         setIsSubmitting(true);
 
         try {
+            const payload = {
+                ...currentBook,
+                price: typeof currentBook.price === 'string' ? parseFloat(currentBook.price) : currentBook.price,
+                quantity: typeof currentBook.quantity === 'string' ? parseInt(currentBook.quantity) : currentBook.quantity,
+                // Add default publishedAt if missing (required by backend)
+                publishedAt: currentBook.publishedAt || new Date().toISOString()
+            };
+
             if (isEditing && currentBook.id) {
-                await api.updateBook(currentBook.id, currentBook);
+                await api.updateBook(currentBook.id, payload);
                 showToast('Book updated successfully', 'success');
             } else {
-                await api.createBook(currentBook);
+                await api.createBook(payload);
                 showToast('Book created successfully', 'success');
             }
             fetchBooks();

@@ -126,7 +126,16 @@ def login_lawyer(form_data: schemas.LawyerLogin, db: Session = Depends(get_db)):
         data={"sub": lawyer.email, "role": "lawyer", "id": lawyer.id}, 
         expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {
+        "access_token": access_token, 
+        "token_type": "bearer",
+        "user": {
+            "id": lawyer.id,
+            "name": lawyer.name,
+            "email": lawyer.email,
+            "role": "lawyer"
+        }
+    }
 
 @router.post("/admin/login", response_model=schemas.Token)
 def login_admin(form_data: schemas.AdminLogin, db: Session = Depends(get_db)):
@@ -143,7 +152,16 @@ def login_admin(form_data: schemas.AdminLogin, db: Session = Depends(get_db)):
         data={"sub": admin.email, "role": "admin", "id": admin.id}, 
         expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {
+        "access_token": access_token, 
+        "token_type": "bearer",
+        "user": {
+            "id": admin.id,
+            "name": admin.name,
+            "email": admin.email,
+            "role": "admin"
+        }
+    }
 
 @router.post("/client/login", response_model=schemas.Token)
 def login_client(form_data: schemas.ClientLogin, db: Session = Depends(get_db)):
@@ -178,7 +196,7 @@ def login_universal(form_data: schemas.LoginRequest, db: Session = Depends(get_d
     admin = db.query(models.Admin).filter(models.Admin.email == form_data.email).first()
     print(f"Admin found: {admin}")
     if admin:
-         print(f"Verifying password for admin...")
+         print(f"Verifying password for admin... stored hash length: {len(admin.hashed_password)}")
          is_valid = verify_password(form_data.password, admin.hashed_password)
          print(f"Password valid: {is_valid}")
          if is_valid:

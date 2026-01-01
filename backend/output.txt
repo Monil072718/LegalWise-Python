@@ -1,0 +1,17 @@
+MARKER 1: Imports start
+MARKER 2: Stdlib imports done
+MARKER 3: Importing routers.admin
+Traceback (most recent call last):
+  File "D:\Self\legalwise-admin-next\backend\debug_main.py", line 10, in <module>
+    from routers.admin import lawyers, clients, cases, dashboard, books, articles, payments, analytics, categories
+  File "D:\Self\legalwise-admin-next\backend\routers\admin\lawyers.py", line 1, in <module>
+    import models, schemas, database
+  File "D:\Self\legalwise-admin-next\backend\models.py", line 3, in <module>
+    from database import Base
+  File "D:\Self\legalwise-admin-next\backend\database.py", line 22, in <module>
+    print("\u2705 Connected DB:", engine.url)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python314\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2705' in position 0: character maps to <undefined>

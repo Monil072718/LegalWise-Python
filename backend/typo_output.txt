@@ -1,0 +1,5 @@
+Searching for 'router =' in usage...
+SUSPICIOUS: d:/Self/legalwise-admin-next/backend\find_typo.py:5: print("Searching for 'router =' in usage...")
+SUSPICIOUS: d:/Self/legalwise-admin-next/backend\find_typo.py:15: if 'router =' in line or 'router=' in line:
+SUSPICIOUS: d:/Self/legalwise-admin-next/backend\venv\Lib\site-packages\starlette\applications.py:69: self.router = Router(routes, on_startup=on_startup, on_shutdown=on_shutdown, lifespan=lifespan)
+SUSPICIOUS: d:/Self/legalwise-admin-next/backend\venv\Lib\site-packages\starlette\routing.py:568: self._router = router

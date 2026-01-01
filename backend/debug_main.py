@@ -1,21 +1,36 @@
+print("MARKER 1: Imports start")
 from fastapi import FastAPI, Depends, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 import os
+print("MARKER 2: Stdlib imports done")
 
+print("MARKER 3: Importing routers.admin")
 from routers.admin import lawyers, clients, cases, dashboard, books, articles, payments, analytics, categories
+print("MARKER 4: Admin routers imported")
+
+print("MARKER 5: Importing routers.common")
 from routers.common import auth, appointments, upload, chat
+print("MARKER 6: Common routers imported")
+
+print("MARKER 7: Importing routers.client")
 from routers.client import cases as client_cases, payments as client_payments, books as client_books, articles as client_articles
 from routers.client import orders, dashboard as client_dashboard
+print("MARKER 8: Client routers imported")
+
+print("MARKER 9: Importing routers.lawyer")
 from routers.lawyer import dashboard as lawyer_dashboard
+print("MARKER 10: Lawyer routers imported")
 
 from websocket_manager import manager
 import models
 import database
+print("MARKER 11: Models/Database imported")
 
 # Database
 models.Base.metadata.create_all(bind=database.engine)
+print("MARKER 12: DB Tables created")
 
 if not os.path.exists("uploads"):
     os.makedirs("uploads")
@@ -44,6 +59,7 @@ def create_default_admin():
     db.close()
 
 create_default_admin()
+print("MARKER 13: Default admin created")
 
 app = FastAPI()
 
@@ -62,6 +78,7 @@ app.include_router(auth.router)
 app.include_router(upload.router)
 app.include_router(chat.router)
 app.include_router(appointments.router)
+print("MARKER 14: Common routers included")
 
 # Admin Routers
 app.include_router(lawyers.router)
@@ -73,6 +90,7 @@ app.include_router(articles.router)
 app.include_router(payments.router)
 app.include_router(analytics.router)
 app.include_router(categories.router)
+print("MARKER 15: Admin routers included")
 
 # Client Routers - Explicit imports to avoid confusion
 app.include_router(client_cases.router, prefix="/client")
@@ -81,64 +99,13 @@ app.include_router(client_books.router, prefix="/client")
 app.include_router(client_articles.router, prefix="/client")
 app.include_router(orders.router, prefix="/client")
 app.include_router(client_dashboard.router, prefix="/client")
+print("MARKER 16: Client routers included")
 
 # Lawyer Routers
 app.include_router(lawyer_dashboard.router, prefix="/lawyer")
-
-@app.websocket("/ws/chat")
-async def chat_websocket(websocket: WebSocket, token: str = "", db: Session = Depends(database.get_db)):
-    """WebSocket endpoint for real-time chat"""
-    from routers.common.auth import SECRET_KEY, ALGORITHM
-    from jose import jwt, JWTError
-    import json
-    
-    # Authenticate
-    try:
-        if not token:
-            await websocket.close(code=1008, reason="Token required")
-            return
-        
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id = payload.get("id")
-        user_role = payload.get("role")
-        user_name = payload.get("sub")
-        
-        if not user_id:
-            await websocket.close(code=1008, reason="Invalid token")
-            return
-    except Exception as e:
-        print(f"WS Auth Error: {e}")
-        await websocket.close(code=1008, reason="Authentication failed")
-        return
-
-    await manager.connect(user_id, websocket, user_role, user_name)
-    
-    try:
-        while True:
-            data = await websocket.receive_text()
-            message_data = json.loads(data)
-            
-            if message_data.get("type") == "message":
-                conversation_id = message_data.get("conversationId")
-                content = message_data.get("content")
-                
-                conversation = db.query(models.Conversation).filter(models.Conversation.id == conversation_id).first()
-                if conversation:
-                    other_id = conversation.lawyerId if user_role == "client" else conversation.clientId
-                    await manager.send_to_conversation({
-                        "type": "message",
-                        "conversationId": conversation_id,
-                        "senderId": user_id,
-                        "content": content,
-                        "timestamp": message_data.get("timestamp")
-                    }, [user_id, other_id])
-    except WebSocketDisconnect:
-        manager.disconnect(user_id) 
-    
-@app.get("/")
-def read_root():
-    return {"message": "LegalWise API"}
+print("MARKER 17: Lawyer routers included")
 
 if __name__ == "__main__":
+    print("MARKER 18: Running Uvicorn")
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)

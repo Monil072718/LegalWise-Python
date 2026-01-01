@@ -1,0 +1,241 @@
+Printing headers of router files...
+
+--- d:/Self/legalwise-admin-next/backend/routers\admin\analytics.py ---
+from fastapi import APIRouter, Depends
+from typing import List, Dict, Any
+
+from routers.common.auth import get_current_admin
+
+router = APIRouter(
+    prefix="/analytics",
+    tags=["analytics"],
+    dependencies=[Depends(get_current_admin)]
+)
+
+--- d:/Self/legalwise-admin-next/backend/routers\admin\articles.py ---
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+from typing import List
+import models, schemas, database
+import uuid
+from datetime import datetime
+import requests
+from bs4 import BeautifulSoup
+from pydantic import BaseModel
+
+
+--- d:/Self/legalwise-admin-next/backend/routers\admin\books.py ---
+import models, schemas, database
+import uuid
+from datetime import datetime
+from routers.common.auth import get_current_admin
+
+router = APIRouter(
+    prefix="/books",
+    tags=["books"],
+    dependencies=[Depends(get_current_admin)]
+)
+
+--- d:/Self/legalwise-admin-next/backend/routers\admin\cases.py ---
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from typing import List
+import models, schemas, database
+
+router = APIRouter(
+    prefix="/cases",
+    tags=["cases"],
+)
+
+
+--- d:/Self/legalwise-admin-next/backend/routers\admin\categories.py ---
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+from typing import List
+import models, schemas, database
+import uuid
+
+router = APIRouter(
+    prefix="/categories",
+    tags=["categories"]
+)
+
+--- d:/Self/legalwise-admin-next/backend/routers\admin\clients.py ---
+import models, schemas, database
+from routers.common.auth import get_password_hash, get_current_admin
+from datetime import datetime
+
+router = APIRouter(
+    prefix="/clients",
+    tags=["clients"],
+    dependencies=[Depends(get_current_admin)]
+)
+
+
+--- d:/Self/legalwise-admin-next/backend/routers\admin\dashboard.py ---
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+import models, database
+from routers.common.auth import get_current_admin
+
+router = APIRouter(
+    prefix="/dashboard",
+    tags=["dashboard"],
+    dependencies=[Depends(get_current_admin)]
+)
+
+--- d:/Self/legalwise-admin-next/backend/routers\admin\lawyers.py ---
+import models, schemas, database
+from routers.common.auth import get_current_admin
+
+router = APIRouter(
+    prefix="/lawyers",
+    tags=["lawyers"],
+    dependencies=[Depends(get_current_admin)]
+)
+
+import uuid
+
+--- d:/Self/legalwise-admin-next/backend/routers\admin\payments.py ---
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from typing import List
+import models, schemas, database
+
+router = APIRouter(
+    prefix="/payments",
+    tags=["payments"],
+)
+
+
+--- d:/Self/legalwise-admin-next/backend/routers\client\articles.py ---
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from typing import List
+import models, schemas, database
+from routers.common.auth import get_current_user
+
+router = APIRouter(
+    prefix="/articles",
+    tags=["client-articles"],
+)
+
+--- d:/Self/legalwise-admin-next/backend/routers\client\books.py ---
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from typing import List
+import models, schemas, database
+from routers.common.auth import get_current_user
+from datetime import datetime
+import uuid
+
+router = APIRouter(
+    prefix="/books",
+
+--- d:/Self/legalwise-admin-next/backend/routers\client\cases.py ---
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from typing import List
+import models, schemas, database
+from routers.common.auth import get_current_user
+
+router = APIRouter(
+    prefix="/cases",
+    tags=["client-cases"],
+)
+
+--- d:/Self/legalwise-admin-next/backend/routers\client\dashboard.py ---
+import models, schemas, database
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from routers.common.auth import get_current_user
+from datetime import datetime
+
+router = APIRouter(
+    prefix="/dashboard",
+    tags=["client-dashboard"],
+)
+
+--- d:/Self/legalwise-admin-next/backend/routers\client\orders.py ---
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from typing import List
+import models, schemas, database
+from routers.common.auth import get_current_user
+import uuid
+from datetime import datetime
+
+router = APIRouter(
+    prefix="/orders",
+
+--- d:/Self/legalwise-admin-next/backend/routers\client\payments.py ---
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from typing import List
+import models, schemas, database
+from routers.common.auth import get_current_user
+
+router = APIRouter(
+    prefix="/payments",
+    tags=["client-payments"],
+)
+
+--- d:/Self/legalwise-admin-next/backend/routers\common\appointments.py ---
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from typing import List
+import models, schemas, database
+
+router = APIRouter(
+    prefix="/appointments",
+    tags=["appointments"],
+)
+
+
+--- d:/Self/legalwise-admin-next/backend/routers\common\auth.py ---
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+from datetime import datetime, timedelta
+from typing import Optional
+from jose import JWTError, jwt
+from passlib.context import CryptContext
+from fastapi.security import OAuth2PasswordBearer
+import os
+
+import database
+
+--- d:/Self/legalwise-admin-next/backend/routers\common\chat.py ---
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from typing import List
+import models, schemas, database
+from routers.common.auth import get_current_user
+from datetime import datetime
+import uuid
+
+router = APIRouter(
+    prefix="/chat",
+
+--- d:/Self/legalwise-admin-next/backend/routers\common\upload.py ---
+from fastapi import APIRouter, UploadFile, File, HTTPException
+import shutil
+import os
+import uuid
+
+router = APIRouter(
+    prefix="/upload",
+    tags=["upload"]
+)
+
+
+--- d:/Self/legalwise-admin-next/backend/routers\lawyer\dashboard.py ---
+import models, schemas, database
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from routers.common.auth import get_current_lawyer
+from datetime import datetime
+
+router = APIRouter(
+    prefix="/dashboard",
+    tags=["lawyer-dashboard"],
+)

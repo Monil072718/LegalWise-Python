@@ -87,6 +87,14 @@ def get_current_lawyer(user = Depends(get_current_user)):
         )
     return user
 
+def get_current_admin(user = Depends(get_current_user)):
+    if user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="Not authorized as an admin"
+        )
+    return user
+
 # Routes
 # @router.post("/lawyer/register", response_model=schemas.Lawyer)
 # def register_lawyer(lawyer: schemas.LawyerCreate, db: Session = Depends(get_db)):

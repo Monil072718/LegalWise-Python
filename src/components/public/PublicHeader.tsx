@@ -176,7 +176,7 @@ export default function PublicHeader() {
             ) : (
                 <>
                     <Link 
-                      href="/user/login" 
+                      href="/login" 
                       className={`px-4 py-2 text-sm font-semibold transition-colors ${textColor} ${hoverColor}`}
                     >
                       Sign In
@@ -250,7 +250,7 @@ export default function PublicHeader() {
             ) : (
                 <>
                     <Link 
-                      href="/user/login" 
+                      href="/login" 
                       className="p-4 rounded-xl text-base font-medium text-gray-700 hover:bg-gray-50 text-center"
                     >
                       Sign In

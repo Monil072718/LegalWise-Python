@@ -91,6 +91,11 @@ export const api = {
     return response;
   },
 
+  login: async (credentials: any) => {
+    const response = await api.post<any>('/auth/login', credentials);
+    return response;
+  },
+
   registerClient: async (data: any) => {
     const response = await api.post<any>('/clients/register', data);
     return response;

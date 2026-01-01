@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { api } from '../../services/api';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 export default function UniversalLogin() {
   const router = useRouter();
@@ -32,8 +32,9 @@ export default function UniversalLogin() {
     setLoading(true);
 
     try {
-      // Use the new universal login endpoint
-      const response = await api.post<any>('/auth/login', formData);
+      console.log('Attempting login with:', formData.email);
+      // Explicitly use the new universal login method
+      const response = await api.login(formData);
       const token = response.access_token;
       
       // Decode to find role
@@ -57,7 +58,7 @@ export default function UniversalLogin() {
         sessionStorage.setItem('userToken', token);
         router.push('/user/dashboard');
       } else {
-        setError('Unknown user role');
+        setError('Unknown user role: ' + role);
       }
 
     } catch (err: any) {

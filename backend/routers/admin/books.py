@@ -1,13 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from typing import List
 import models, schemas, database
 import uuid
 from datetime import datetime
+from routers.common.auth import get_current_admin
 
 router = APIRouter(
     prefix="/books",
     tags=["books"],
+    dependencies=[Depends(get_current_admin)]
 )
 
 def get_db():

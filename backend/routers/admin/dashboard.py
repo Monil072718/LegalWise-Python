@@ -1,11 +1,10 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
-from sqlalchemy import func
 import models, database
+from routers.common.auth import get_current_admin
 
 router = APIRouter(
     prefix="/dashboard",
     tags=["dashboard"],
+    dependencies=[Depends(get_current_admin)]
 )
 
 @router.get("/stats")

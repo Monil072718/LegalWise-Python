@@ -10,15 +10,32 @@ import {
   ArrowUpRight,
   ArrowRight
 } from 'lucide-react';
+import { api } from '../../../services/api';
 
 export default function LawyerDashboard() {
-  // Mock data for now
-  const stats = {
-    activeCases: 12,
-    pendingRequests: 3,
-    upcomingAppointments: 4,
-    unreadMessages: 8
-  };
+  const [stats, setStats] = useState({
+    activeCases: 0,
+    pendingRequests: 0,
+    upcomingAppointments: 0,
+    unreadMessages: 0
+  });
+  const [loading, setLoading] = useState(true);
+
+  // Use API for stats
+  useEffect(() => {
+    const fetchStats = async () => {
+        try {
+            const data = await api.getLawyerStats();
+            setStats(data);
+        } catch (error) {
+            console.error("Failed to fetch dashboard stats", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+    
+    fetchStats();
+  }, []);
 
   const upcomingAppointments = [
     { id: 1, client: 'Alice Johnson', type: 'Consultation', time: '10:00 AM', date: 'Today' },

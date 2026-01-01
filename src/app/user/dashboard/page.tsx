@@ -14,16 +14,18 @@ export default function UserDashboard() {
   });
 
   useEffect(() => {
-    // Simulate fetching user stats
-    // in real app, we would fetch /client/me/stats
-    setTimeout(() => {
-        setStats({
-            activeCases: 2,
-            upcomingAppointments: 1,
-            unreadMessages: 3
-        });
-        setLoading(false);
-    }, 1000);
+    const fetchStats = async () => {
+        try {
+            const data = await api.getUserStats();
+            setStats(data);
+        } catch (error) {
+            console.error("Failed to fetch dashboard stats", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+    
+    fetchStats();
   }, []);
 
   if (loading) {

@@ -42,6 +42,11 @@ export default function UniversalLogin() {
       
       sessionStorage.setItem('showWelcome', 'true');
 
+      // Store User ID if available
+      if (response.user && response.user.id) {
+          sessionStorage.setItem('userId', response.user.id);
+      }
+
       if (role === 'admin') {
         sessionStorage.setItem('adminToken', token);
         router.push('/admin/dashboard');

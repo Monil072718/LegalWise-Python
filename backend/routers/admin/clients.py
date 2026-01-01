@@ -1,13 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
-from typing import List
 import models, schemas, database
-from routers.common.auth import get_password_hash
+from routers.common.auth import get_password_hash, get_current_admin
 from datetime import datetime
 
 router = APIRouter(
     prefix="/clients",
     tags=["clients"],
+    dependencies=[Depends(get_current_admin)]
 )
 
 import uuid

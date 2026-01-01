@@ -172,17 +172,7 @@ export const api = {
       }).then(handleResponse);
   },
   
-  // File Upload
-  uploadImage: (file: File) => {
-      const formData = new FormData();
-      formData.append('file', file);
-      
-      return fetch(`${API_BASE_URL}/upload/image`, {
-          method: 'POST',
-          // No headers needed, browser sets Content-Type to multipart/form-data
-          body: formData
-      }).then(handleResponse);
-  },
+
 
   deleteCaseDocument: (caseId: string, docId: string) => api.delete<void>(`/cases/${caseId}/documents/${docId}`),
   getCaseDocumentUrl: (caseId: string, filename: string) => `${API_BASE_URL}/cases/${caseId}/documents/${filename}`,
@@ -258,5 +248,33 @@ export const api = {
   markAsRead: (conversationId: string) => api.put<any>(`/chat/conversations/${conversationId}/read`, {}),
   getOrCreateConversation: (otherUserId: string) => 
     api.get<any>(`/chat/conversations/with/${otherUserId}`),
+
+    // Client Dashboard
+    getUserStats: async () => {
+        const response = await api.get<any>('/client/dashboard/stats');
+        return response;
+    },
+
+    // Lawyer Dashboard
+    getLawyerStats: async () => {
+        const response = await api.get<any>('/lawyer/dashboard/stats');
+        return response;
+    },
+
+    // File Upload
+    uploadImage: async (file: File) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        try {
+            const response = await fetch(`${API_BASE_URL}/upload/image`, {
+                method: 'POST',
+                body: formData
+            });
+            return handleResponse(response);
+        } catch (error) {
+           throw error;
+        }
+    }
 };
 

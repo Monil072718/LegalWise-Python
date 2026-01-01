@@ -187,7 +187,16 @@ def login_universal(form_data: schemas.LoginRequest, db: Session = Depends(get_d
                 data={"sub": admin.email, "role": "admin", "id": admin.id}, 
                 expires_delta=access_token_expires
             )
-            return {"access_token": access_token, "token_type": "bearer"}
+            return {
+                "access_token": access_token, 
+                "token_type": "bearer",
+                "user": {
+                    "id": admin.id,
+                    "name": admin.name,
+                    "email": admin.email,
+                    "role": "admin"
+                }
+            }
     
     # Check Lawyer
     lawyer = db.query(models.Lawyer).filter(models.Lawyer.email == form_data.email).first()
@@ -197,7 +206,16 @@ def login_universal(form_data: schemas.LoginRequest, db: Session = Depends(get_d
             data={"sub": lawyer.email, "role": "lawyer", "id": lawyer.id}, 
             expires_delta=access_token_expires
         )
-        return {"access_token": access_token, "token_type": "bearer"}
+        return {
+            "access_token": access_token, 
+            "token_type": "bearer",
+            "user": {
+                "id": lawyer.id,
+                "name": lawyer.name,
+                "email": lawyer.email,
+                "role": "lawyer"
+            }
+        }
         
     
     # Check Client

@@ -8,6 +8,9 @@ import requests
 from bs4 import BeautifulSoup
 from pydantic import BaseModel
 
+from pydantic import BaseModel
+from routers.common.auth import get_current_admin
+
 class ScrapeRequest(BaseModel):
     url: str
 
@@ -19,6 +22,7 @@ class ScrapeResponse(BaseModel):
 router = APIRouter(
     prefix="/articles",
     tags=["articles"],
+    dependencies=[Depends(get_current_admin)]
 )
 
 @router.post("/scrape", response_model=ScrapeResponse)

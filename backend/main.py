@@ -80,8 +80,13 @@ app.include_router(payments_router, prefix="/client")
 app.include_router(books_router, prefix="/client")
 
 app.include_router(articles_router, prefix="/client")
-from routers.client import orders
+app.include_router(articles_router, prefix="/client")
+from routers.client import orders, dashboard as client_dashboard
 app.include_router(orders.router, prefix="/client")
+app.include_router(client_dashboard.router, prefix="/client")
+
+from routers.lawyer import dashboard as lawyer_dashboard
+app.include_router(lawyer_dashboard.router, prefix="/lawyer")
 
 
 @app.websocket("/ws/chat")

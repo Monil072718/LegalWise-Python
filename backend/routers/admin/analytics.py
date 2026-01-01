@@ -1,9 +1,12 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from typing import List, Dict, Any
+
+from routers.common.auth import get_current_admin
 
 router = APIRouter(
     prefix="/analytics",
     tags=["analytics"],
+    dependencies=[Depends(get_current_admin)]
 )
 
 @router.get("/performance")

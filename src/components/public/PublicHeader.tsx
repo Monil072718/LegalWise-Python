@@ -1,13 +1,11 @@
 "use client";
-
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Scale, Menu, X, ChevronRight, User, LayoutDashboard } from 'lucide-react';
+import { Scale, Menu, X, ChevronRight, User, LayoutDashboard, LogOut, ChevronDown } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../../context/CartContext';
-
-
+import ProfileModal from './ProfileModal';
 
 function CartBadge() {
   const { totalItems } = useCart();
@@ -26,6 +24,8 @@ export default function PublicHeader() {
   const [userRole, setUserRole] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   useEffect(() => {
     const checkAuth = () => {
@@ -49,9 +49,7 @@ export default function PublicHeader() {
     };
 
     checkAuth();
-    // Listen for storage events in case login happens in another tab/window
     window.addEventListener('storage', checkAuth);
-    // Custom event for same-tab login updates if needed
     window.addEventListener('auth-change', checkAuth);
     
     return () => {
@@ -96,7 +94,7 @@ export default function PublicHeader() {
     { name: 'Contact', href: '/contact' },
   ];
 
-  const isDarkHeader = ['/find-lawyer', '/contact', '/books'].includes(pathname);
+  const isDarkHeader = ['/find-lawyer', '/contact', '/books'].includes(pathname || '');
   const textColor = !isScrolled && isDarkHeader ? 'text-white' : 'text-gray-700';
   const hoverColor = !isScrolled && isDarkHeader ? 'hover:text-blue-100' : 'hover:text-blue-600';
   const logoColor = !isScrolled && isDarkHeader ? 'text-white' : 'text-gray-900';
@@ -107,16 +105,15 @@ export default function PublicHeader() {
     <motion.header 
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      transition={{ duration: 0.5 }}
-      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled 
-          ? 'bg-white/95 backdrop-blur-xl shadow-lg py-4 border-b border-gray-100' 
-          : 'py-6 bg-transparent'
+          ? 'bg-white/80 backdrop-blur-md shadow-sm py-4' 
+          : 'bg-transparent py-6'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
-          {/* Logo */}
+          {/* Logo - kept same */}
           <Link href="/" className="flex items-center gap-2 group">
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg transition-all duration-300 ${!isScrolled && isDarkHeader ? 'bg-white/20 backdrop-blur' : (isScrolled ? 'bg-blue-600' : 'bg-gradient-to-br from-blue-700 to-indigo-600 shadow-blue-500/30')}`}>
               <Scale className="w-6 h-6" />
@@ -126,7 +123,7 @@ export default function PublicHeader() {
             </span>
           </Link>
           
-          {/* Desktop Nav */}
+          {/* Desktop Nav - kept same */}
           <nav className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => (
               <Link 
@@ -143,8 +140,6 @@ export default function PublicHeader() {
             ))}
           </nav>
           
-          
-
           {/* Auth Buttons */}
           <div className="hidden lg:flex items-center gap-4">
              {/* Cart Button */}
@@ -154,35 +149,68 @@ export default function PublicHeader() {
              </Link>
 
             {isLoggedIn ? (
-                <>
-                    <Link
-                        href={getDashboardLink()}
-                        className={`px-4 py-2 text-sm font-semibold rounded-full border transition-all ${
+                <div className="relative">
+                    <button
+                        onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                        onBlur={() => setTimeout(() => setIsUserMenuOpen(false), 200)}
+                        className={`flex items-center gap-2 px-3 py-2 rounded-full transition-all duration-300 ${
                             !isScrolled && isDarkHeader 
-                                ? 'border-white/30 text-white hover:bg-white/10' 
-                                : 'border-gray-200 text-gray-700 hover:border-blue-600 hover:text-blue-600 bg-white'
+                                ? 'bg-white/10 text-white hover:bg-white/20' 
+                                : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
                         }`}
                     >
-                        Dashboard
-                    </Link>
-                    <Link 
-                        href="/user/profile"
-                        className={`p-2 rounded-full transition-colors ${textColor} ${hoverColor}`}
-                        title="Edit Profile"
-                    >
-                        <User className="w-6 h-6" />
-                    </Link>
-                    <button 
-                        onClick={handleLogout}
-                        className={`group px-5 py-2 rounded-full text-sm font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center gap-2 ${
-                            !isScrolled && isDarkHeader 
-                                ? 'bg-white text-red-600' 
-                                : 'bg-gray-900 text-white hover:bg-red-600'
-                        }`}
-                    >
-                        Logout
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-md">
+                            <User className="w-4 h-4" />
+                        </div>
+                        <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isUserMenuOpen ? 'rotate-180' : ''}`} />
                     </button>
-                </>
+
+                    <AnimatePresence>
+                        {isUserMenuOpen && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                transition={{ duration: 0.2 }}
+                                className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden py-2"
+                            >
+                                <div className="px-4 py-3 border-b border-gray-50 mb-1">
+                                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Signed in as</p>
+                                    <p className="text-sm font-bold text-gray-900 truncate">{userRole === 'admin' ? 'Administrator' : userRole === 'lawyer' ? 'Professional' : 'Client'}</p>
+                                </div>
+
+                                <Link 
+                                    href={getDashboardLink()}
+                                    className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                                >
+                                    <LayoutDashboard className="w-4 h-4" />
+                                    Dashboard
+                                </Link>
+                                
+                                <button
+                                    onClick={() => {
+                                        setIsUserMenuOpen(false);
+                                        setShowProfileModal(true);
+                                    }}
+                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors text-left"
+                                >
+                                    <User className="w-4 h-4" />
+                                    Edit Profile
+                                </button>
+
+                                <div className="h-px bg-gray-50 my-1"></div>
+
+                                <button
+                                    onClick={handleLogout}
+                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors text-left"
+                                >
+                                    <LogOut className="w-4 h-4" />
+                                    Sign Out
+                                </button>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
             ) : (
                 <>
                     <Link 
@@ -203,8 +231,10 @@ export default function PublicHeader() {
                     </Link>
                 </>
             )}
-          </div>
+            
+            {/* ... */}
 
+          </div>
           
           {/* Mobile Menu Button */}
           <button 
@@ -250,13 +280,15 @@ export default function PublicHeader() {
                     >
                         <LayoutDashboard className="w-5 h-5" /> Dashboard
                     </Link>
-                    <Link 
-                        href="/user/profile"
-                        className="p-4 rounded-xl text-base font-medium text-gray-700 hover:bg-gray-50 text-center flex items-center justify-center gap-2"
-                        onClick={() => setMobileMenuOpen(false)}
+                    <button 
+                        onClick={() => {
+                            setMobileMenuOpen(false);
+                            setShowProfileModal(true);
+                        }}
+                        className="p-4 rounded-xl text-base font-medium text-gray-700 hover:bg-gray-50 text-center flex items-center justify-center gap-2 w-full"
                     >
                         <User className="w-5 h-5" /> Edit Profile
-                    </Link>
+                    </button>
                     <button 
                         onClick={handleLogout}
                         className="p-4 rounded-xl text-base font-bold bg-gray-100 text-red-600 text-center shadow-sm hover:bg-red-50"
@@ -284,6 +316,9 @@ export default function PublicHeader() {
         </motion.div>
       )}
     </AnimatePresence>
+
+    {/* Profile Modal */}
+    <ProfileModal isOpen={showProfileModal} onClose={() => setShowProfileModal(false)} />
     </>
   );
 }

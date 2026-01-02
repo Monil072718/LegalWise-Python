@@ -1,17 +1,25 @@
+INFO:     Started server process [28328]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 10048] error while attempting to bind on address ('0.0.0.0', 8000): [winerror 10048] only one usage of each socket address (protocol/network address/port) is normally permitted
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
 MARKER 1: Imports start
 MARKER 2: Stdlib imports done
 MARKER 3: Importing routers.admin
-Traceback (most recent call last):
-  File "D:\Self\legalwise-admin-next\backend\debug_main.py", line 10, in <module>
-    from routers.admin import lawyers, clients, cases, dashboard, books, articles, payments, analytics, categories
-  File "D:\Self\legalwise-admin-next\backend\routers\admin\lawyers.py", line 1, in <module>
-    import models, schemas, database
-  File "D:\Self\legalwise-admin-next\backend\models.py", line 3, in <module>
-    from database import Base
-  File "D:\Self\legalwise-admin-next\backend\database.py", line 22, in <module>
-    print("\u2705 Connected DB:", engine.url)
-    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Program Files\Python314\Lib\encodings\cp1252.py", line 19, in encode
-    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
-           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-UnicodeEncodeError: 'charmap' codec can't encode character '\u2705' in position 0: character maps to <undefined>
+✅ Connected DB: postgresql://postgres:***@localhost:5432/legalwise_db
+MARKER 4: Admin routers imported
+MARKER 5: Importing routers.common
+MARKER 6: Common routers imported
+MARKER 7: Importing routers.client
+MARKER 8: Client routers imported
+MARKER 9: Importing routers.lawyer
+MARKER 10: Lawyer routers imported
+MARKER 11: Models/Database imported
+MARKER 12: DB Tables created
+MARKER 13: Default admin created
+MARKER 14: Common routers included
+MARKER 15: Admin routers included
+MARKER 16: Client routers included
+MARKER 17: Lawyer routers included
+MARKER 18: Running Uvicorn

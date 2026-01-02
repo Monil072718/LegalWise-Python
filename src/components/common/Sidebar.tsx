@@ -24,18 +24,17 @@ interface SidebarProps {
 
 // Main navigation configuration
 const navigationItems = [
-  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/' },
-  { id: 'lawyers', label: 'Lawyer Management', icon: UserCheck, href: '/lawyers' },
-  { id: 'clients', label: 'Client Management', icon: Users, href: '/clients' },
-  { id: 'cases', label: 'Case Management', icon: Scale, href: '/cases' },
-  { id: 'appointments', label: 'Appointments', icon: Calendar, href: '/appointments' },
-  // { id: 'notifications', label: 'Notifications', icon: Bell, href: '/notifications' }, // Moved to Header
-  { id: 'billing', label: 'Billing & Payments', icon: CreditCard, href: '/billing' },
-  { id: 'analytics', label: 'Analytics & Reports', icon: BarChart3, href: '/analytics' },
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/admin/dashboard' },
+  { id: 'lawyers', label: 'Lawyer Management', icon: UserCheck, href: '/admin/lawyers' },
+  { id: 'clients', label: 'Client Management', icon: Users, href: '/admin/clients' },
+  { id: 'cases', label: 'Case Management', icon: Scale, href: '/admin/cases' },
+  { id: 'appointments', label: 'Appointments', icon: Calendar, href: '/admin/appointments' },
+  { id: 'billing', label: 'Billing & Payments', icon: CreditCard, href: '/admin/billing' },
+  { id: 'analytics', label: 'Analytics & Reports', icon: BarChart3, href: '/admin/analytics' },
   { id: 'books', label: 'Book Inventory', icon: BookOpen, href: '/admin/books' },
-  { id: 'articles', label: 'Legal Articles', icon: FileText, href: '/articles' },
-  { id: 'hiring', label: 'Hire Management', icon: Briefcase, href: '/hiring' },
-  { id: 'settings', label: 'Settings', icon: Settings, href: '/settings' }
+  { id: 'articles', label: 'Legal Articles', icon: FileText, href: '/admin/articles' },
+  { id: 'hiring', label: 'Hire Management', icon: Briefcase, href: '/admin/hiring' },
+  { id: 'settings', label: 'Settings', icon: Settings, href: '/admin/settings' }
 ];
 
 export default function Sidebar({ isCollapsed }: SidebarProps) {

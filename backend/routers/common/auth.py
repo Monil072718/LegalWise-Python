@@ -87,6 +87,14 @@ def get_current_lawyer(user = Depends(get_current_user)):
         )
     return user
 
+def get_current_client(user = Depends(get_current_user)):
+    if user.role != "client":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="Not authorized as a client"
+        )
+    return user
+
 def get_current_admin(user = Depends(get_current_user)):
     if user.role != "admin":
         raise HTTPException(

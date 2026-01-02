@@ -68,7 +68,16 @@ export default function UserSidebar({ isCollapsed }: UserSidebarProps) {
         })}
       </nav>
 
-       <div className="p-4 border-t border-gray-200">
+       <div className="p-4 border-t border-gray-200 space-y-2">
+        <Link 
+          href="/"
+          className="flex items-center w-full px-4 py-3 text-gray-600 rounded-xl hover:bg-gray-50 transition-colors"
+        >
+          <div className="w-5 h-5 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          {!isCollapsed && <span className="ml-3 font-medium">Back to Website</span>}
+        </Link>
         <button 
           onClick={handleLogout}
           className="flex items-center w-full px-4 py-3 text-red-600 rounded-xl hover:bg-red-50 transition-colors"

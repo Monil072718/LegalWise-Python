@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Scale, Menu, X, ChevronRight, User } from 'lucide-react';
+import { Scale, Menu, X, ChevronRight, User, LayoutDashboard } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../../context/CartContext';
@@ -155,6 +155,16 @@ export default function PublicHeader() {
 
             {isLoggedIn ? (
                 <>
+                    <Link
+                        href={getDashboardLink()}
+                        className={`px-4 py-2 text-sm font-semibold rounded-full border transition-all ${
+                            !isScrolled && isDarkHeader 
+                                ? 'border-white/30 text-white hover:bg-white/10' 
+                                : 'border-gray-200 text-gray-700 hover:border-blue-600 hover:text-blue-600 bg-white'
+                        }`}
+                    >
+                        Dashboard
+                    </Link>
                     <Link 
                         href="/user/profile"
                         className={`p-2 rounded-full transition-colors ${textColor} ${hoverColor}`}
@@ -233,6 +243,13 @@ export default function PublicHeader() {
             <div className="h-px bg-gray-100 my-2"></div>
             {isLoggedIn ? (
                 <>
+                    <Link 
+                        href={getDashboardLink()}
+                        className="p-4 rounded-xl text-base font-medium text-gray-700 hover:bg-gray-50 text-center flex items-center justify-center gap-2"
+                        onClick={() => setMobileMenuOpen(false)}
+                    >
+                        <LayoutDashboard className="w-5 h-5" /> Dashboard
+                    </Link>
                     <Link 
                         href="/user/profile"
                         className="p-4 rounded-xl text-base font-medium text-gray-700 hover:bg-gray-50 text-center flex items-center justify-center gap-2"

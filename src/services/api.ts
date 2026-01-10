@@ -201,7 +201,9 @@ export const api = {
 
   // Articles
   getArticles: () => api.get<Article[]>('/articles/'),
+  getPublicArticles: () => api.get<Article[]>('/public/articles/'),
   getArticle: (id: string) => api.get<Article>(`/articles/${id}`),
+  getPublicArticle: (id: string) => api.get<Article>(`/public/articles/${id}`),
   createArticle: (data: Partial<Article>) => api.post<Article>('/articles/', data),
   updateArticle: (id: string, data: Partial<Article>) => api.put<Article>(`/articles/${id}`, data),
   deleteArticle: (id: string) => api.delete<void>(`/articles/${id}`),

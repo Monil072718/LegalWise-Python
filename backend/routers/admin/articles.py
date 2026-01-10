@@ -94,7 +94,8 @@ def create_article(article: schemas.ArticleCreate, db: Session = Depends(get_db)
         publishedAt=article.publishedAt or datetime.now().strftime("%Y-%m-%d"),
         status=article.status,
         content=article.content,
-        image=article.image
+        image=article.image,
+        link=article.link
     )
     db.add(db_article)
     db.commit()

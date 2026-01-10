@@ -237,6 +237,7 @@ class ArticleBase(BaseModel):
     status: str
     content: Optional[str] = None
     image: Optional[str] = None
+    link: Optional[str] = None
 
 class ArticleCreate(ArticleBase):
     pass
@@ -251,6 +252,7 @@ class ArticleUpdate(BaseModel):
     status: Optional[str] = None
     content: Optional[str] = None
     image: Optional[str] = None
+    link: Optional[str] = None
 
 class Article(ArticleBase):
     id: str

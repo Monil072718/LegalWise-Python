@@ -112,6 +112,7 @@ export interface Article {
   status: 'published' | 'draft' | 'archived';
   content?: string;
   image?: string;
+  link?: string;
 }
 
 export interface Category {

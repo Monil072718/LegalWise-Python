@@ -18,7 +18,7 @@ export default function PublicArticlesPage() {
 
   const fetchArticles = async () => {
     try {
-      const data = await api.getArticles();
+      const data = await api.getPublicArticles();
       setArticles(data);
     } catch (error) {
       console.error('Failed to fetch articles:', error);
@@ -84,12 +84,23 @@ export default function PublicArticlesPage() {
                                     </div>
                                 </div>
 
-                                <Link 
-                                    href="/user/login"
-                                    className="inline-flex items-center gap-2 text-indigo-600 font-bold hover:gap-3 transition-all"
-                                >
-                                    Read More <ArrowRight className="w-4 h-4" />
-                                </Link>
+                                {article.link ? (
+                                    <a 
+                                        href={article.link}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-2 text-indigo-600 font-bold hover:gap-3 transition-all"
+                                    >
+                                        Read More <ArrowRight className="w-4 h-4" />
+                                    </a>
+                                ) : (
+                                    <Link 
+                                        href={`/articles/${article.id}`} // Or fallback to login if preferred, but detail view is better
+                                        className="inline-flex items-center gap-2 text-indigo-600 font-bold hover:gap-3 transition-all"
+                                    >
+                                        Read More <ArrowRight className="w-4 h-4" />
+                                    </Link>
+                                )}
                             </div>
                         </div>
                     ))}

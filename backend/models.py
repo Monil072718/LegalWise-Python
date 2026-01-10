@@ -126,6 +126,9 @@ class Article(Base):
     likes = Column(Integer, default=0)
     publishedAt = Column(String)
     status = Column(String)
+    content = Column(String, nullable=True)
+    image = Column(String, nullable=True)
+    link = Column(String, nullable=True)
 
 class Category(Base):
     __tablename__ = "categories"

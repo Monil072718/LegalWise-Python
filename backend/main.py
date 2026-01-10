@@ -74,6 +74,10 @@ app.include_router(payments.router)
 app.include_router(analytics.router)
 app.include_router(categories.router)
 
+# Public Routers
+from routers import public_articles
+app.include_router(public_articles.router)
+
 # Client Routers - Explicit imports to avoid confusion
 app.include_router(client_cases.router, prefix="/client")
 app.include_router(client_payments.router, prefix="/client")

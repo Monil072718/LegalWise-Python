@@ -23,6 +23,7 @@ export default function ArticleManagement() {
     status: 'draft',
     content: '',
     image: '',
+    link: '',
     publishedAt: new Date().toISOString().split('T')[0]
   });
 
@@ -41,7 +42,8 @@ export default function ArticleManagement() {
             ...formData,
             title: data.title,
             content: data.description,
-            image: data.image
+            image: data.image,
+            link: importUrl // Auto-fill link with the imported URL
         });
         showToast('Article imported successfully!', 'success');
     } catch (error) {
@@ -75,6 +77,12 @@ export default function ArticleManagement() {
   };
 
   const handleSubmit = async () => {
+    // Validate required fields
+    if (!formData.title || !formData.author || !formData.category) {
+        showToast('Please fill in all required fields (Title, Author, Category)', 'error');
+        return;
+    }
+
     try {
       let imageUrl = formData.image;
 
@@ -301,6 +309,16 @@ export default function ArticleManagement() {
                       <option value="published">Published</option>
                       <option value="archived">Archived</option>
                   </select>
+               </div>
+               <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Source URL (Read More Link)</label>
+                  <input 
+                    type="text" 
+                    value={formData.link || ''} 
+                    onChange={e => setFormData({...formData, link: e.target.value})}
+                    placeholder="https://example.com/article"
+                    className="w-full border rounded-lg p-2"
+                  />
                </div>
                <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Content</label>

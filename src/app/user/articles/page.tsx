@@ -43,7 +43,7 @@ export default function ArticlesPage() {
   const handleLike = async (articleId: string) => {
     try {
       setLiking(articleId);
-      const result = await api.likeArticle(articleId);
+      const result = await api.likeClientArticle(articleId);
       
       // Update the article in the list
       setArticles(prev => prev.map(a => 

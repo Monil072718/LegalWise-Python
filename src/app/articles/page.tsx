@@ -9,6 +9,28 @@ import { FileText, Eye, ThumbsUp, ArrowRight, Clock } from 'lucide-react';
 import Link from 'next/link';
 
 export default function PublicArticlesPage() {
+  const handleReadMore = async (articleId: string, link: string | undefined) => {
+    // Optimistic update
+    setArticles(prev => prev.map(a => 
+      a.id === articleId ? { ...a, views: a.views + 1 } : a
+    ));
+    
+    // Call backend
+    try {
+        await api.incrementArticleView(articleId);
+    } catch (e) {
+        console.error("Failed to increment view", e);
+    }
+
+    // Navigate/Open
+    if (link) {
+      window.open(link, '_blank', 'noopener,noreferrer');
+    } else {
+        // Since we are using Next.js Link for internal navigation usually, 
+        // we might need router.push if we replace the Link component.
+        // But for internal detail view, the view count should update on fetch.
+    }
+  };
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -24,6 +46,26 @@ export default function PublicArticlesPage() {
       console.error('Failed to fetch articles:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleLike = async (e: React.MouseEvent, articleId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Optimistic update
+    setArticles(prev => prev.map(a => 
+      a.id === articleId ? { ...a, likes: a.likes + 1 } : a
+    ));
+
+    try {
+      await api.likeArticle(articleId);
+    } catch (e) {
+      console.error("Failed to like article", e);
+      // Revert if failed
+      setArticles(prev => prev.map(a => 
+        a.id === articleId ? { ...a, likes: a.likes - 1 } : a
+      ));
     }
   };
 
@@ -78,24 +120,26 @@ export default function PublicArticlesPage() {
                                         <Eye className="w-4 h-4" />
                                         <span>{article.views}</span>
                                     </div>
-                                    <div className="flex items-center gap-1.5 hover:text-gray-600 transition-colors">
+                                    <button 
+                                        onClick={(e) => handleLike(e, article.id)}
+                                        className="flex items-center gap-1.5 text-gray-400 hover:text-red-500 transition-colors cursor-pointer" 
+                                        title="Like"
+                                    >
                                         <ThumbsUp className="w-4 h-4" />
                                         <span>{article.likes}</span>
-                                    </div>
+                                    </button>
                                 </div>
 
                                 {article.link ? (
-                                    <a 
-                                        href={article.link}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-flex items-center gap-2 text-indigo-600 font-bold hover:gap-3 transition-all"
+                                    <button 
+                                        onClick={() => handleReadMore(article.id, article.link)}
+                                        className="inline-flex items-center gap-2 text-indigo-600 font-bold hover:gap-3 transition-all bg-transparent border-none cursor-pointer"
                                     >
                                         Read More <ArrowRight className="w-4 h-4" />
-                                    </a>
+                                    </button>
                                 ) : (
                                     <Link 
-                                        href={`/articles/${article.id}`} // Or fallback to login if preferred, but detail view is better
+                                        href={`/articles/${article.id}`} 
                                         className="inline-flex items-center gap-2 text-indigo-600 font-bold hover:gap-3 transition-all"
                                     >
                                         Read More <ArrowRight className="w-4 h-4" />

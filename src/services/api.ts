@@ -204,6 +204,8 @@ export const api = {
   getPublicArticles: () => api.get<Article[]>('/public/articles/'),
   getArticle: (id: string) => api.get<Article>(`/articles/${id}`),
   getPublicArticle: (id: string) => api.get<Article>(`/public/articles/${id}`),
+  incrementArticleView: (id: string) => api.post(`/public/articles/${id}/view`, {}),
+  likeArticle: (id: string) => api.post<{likes: number}>(`/public/articles/${id}/like`, {}),
   createArticle: (data: Partial<Article>) => api.post<Article>('/articles/', data),
   updateArticle: (id: string, data: Partial<Article>) => api.put<Article>(`/articles/${id}`, data),
   deleteArticle: (id: string) => api.delete<void>(`/articles/${id}`),
@@ -240,7 +242,7 @@ export const api = {
     return api.get<Article[]>(`/client/articles/${params}`);
   },
   getClientArticle: (id: string) => api.get<Article>(`/client/articles/${id}`),
-  likeArticle: (articleId: string) => api.post<{message: string; likes: number}>(`/client/articles/${articleId}/like`, {}),
+  likeClientArticle: (articleId: string) => api.post<{message: string; likes: number}>(`/client/articles/${articleId}/like`, {}),
 
   
   // Orders

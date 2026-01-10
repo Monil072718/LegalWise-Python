@@ -5,17 +5,20 @@ import { useRouter } from 'next/navigation';
 import { api } from '../../services/api';
 import { jwtDecode } from 'jwt-decode';
 
+import { Eye, EyeOff } from 'lucide-react';
+
 export default function UniversalLogin() {
   const router = useRouter();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Auto-redirect if already logged in
+    // ... existing effect
     const adminToken = sessionStorage.getItem('adminToken');
     const lawyerToken = sessionStorage.getItem('lawyerToken');
 
@@ -72,7 +75,9 @@ export default function UniversalLogin() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      {/* ... existing header ... */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        {/* ... existing logo/title ... */}
         <div className="mx-auto h-12 w-12 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg mb-4">
              <span className="text-white font-bold text-2xl">L</span>
         </div>
@@ -117,18 +122,25 @@ export default function UniversalLogin() {
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Password
               </label>
-              <div className="mt-1">
+              <div className="mt-1 relative">
                 <input
                   id="password"
                   name="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   autoComplete="current-password"
                   required
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:text-sm transition-all duration-200"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:text-sm transition-all duration-200 pr-10"
                   placeholder="••••••••"
                 />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </button>
               </div>
             </div>
 

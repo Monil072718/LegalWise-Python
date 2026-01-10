@@ -48,35 +48,55 @@ A comprehensive legal management system built with Next.js (Frontend) and FastAP
 
 - **Framework**: FastAPI
 - **Language**: Python 3.x
-- **Database**: SQLite (Development) / PostgreSQL (Production ready)
+- **Database**: PostgreSQL (via Docker)
 - **ORM**: SQLAlchemy
 - **Authentication**: JWT, Bcrypt, Python-Jose
 - **Email**: SMTP (smtplib) with OTP support
 
-## 📂 Project Structure
+## ⚡ Getting Started (Docker - Recommended)
 
-```
-legalwise-admin-next/
-├── backend/                # FastAPI Backend
-│   ├── routers/            # API Endpoints (auth, lawyers, cases, etc.)
-│   ├── utils/              # Utilities (email.py for SMTP)
-│   ├── database.py         # Database connection
-│   ├── models.py           # SQLAlchemy Models (PasswordReset, Lawyer, etc.)
-│   ├── schemas.py          # Pydantic Schemas
-│   └── main.py             # Application Entry Point
-├── src/                    # Next.js Frontend
-│   ├── app/                # App Router Pages
-│   │   ├── admin/          # Admin Dashboard Routes
-│   │   ├── lawyer/         # Lawyer Dashboard Routes
-│   │   ├── (auth)/         # Authentication Routes (login, forgot-password)
-│   │   └── ...
-│   ├── components/         # Reusable Components (Sidebar, Navbar, StatsCard)
-│   ├── services/           # Service Layer (api.ts)
-│   └── types/              # TypeScript Interfaces
-└── ...
-```
+### Prerequisites
 
-## ⚡ Getting Started
+- **Docker Desktop**: Install and ensure it is running.
+
+### Run Application
+
+1.  **Clone the repository**:
+
+    ```bash
+    git clone <repository-url>
+    cd legalwise-admin-next
+    ```
+
+2.  **Start with Docker Compose**:
+
+    ```bash
+    docker-compose up --build -d
+    ```
+
+    This command will:
+
+    - Build the Next.js frontend image.
+    - Build the FastAPI backend image.
+    - Start a PostgreSQL database container.
+    - Launch the entire application stack.
+
+3.  **Access the App**:
+
+    - **Frontend**: `http://localhost:3000`
+    - **Backend API**: `http://localhost:8000`
+    - **API Docs**: `http://localhost:8000/docs`
+
+4.  **Stop Application**:
+    ```bash
+    docker-compose down
+    ```
+
+---
+
+## 🔧 Manual Setup (Alternative)
+
+If you prefer to run locally without Docker:
 
 ### Prerequisites
 
@@ -97,7 +117,6 @@ python -m uvicorn main:app --reload
 ```
 
 The backend API will be available at `http://localhost:8000`.
-API Docs (Swagger UI): `http://localhost:8000/docs`.
 
 ### 2. Frontend Setup
 

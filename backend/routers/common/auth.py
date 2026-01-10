@@ -213,6 +213,7 @@ def login_universal(form_data: schemas.LoginRequest, db: Session = Depends(get_d
     print(f"Admin found: {admin}")
     if admin:
          print(f"Verifying password for admin... stored hash length: {len(admin.hashed_password)}")
+         print(f"DEBUG: Received password: '{form_data.password}' (Length: {len(form_data.password)})")
          is_valid = verify_password(form_data.password, admin.hashed_password)
          print(f"Password valid: {is_valid}")
          if is_valid:

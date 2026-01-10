@@ -1,0 +1,14 @@
+node_modules
+.next
+build
+dist
+.git
+.gitignore
+.dockerignore
+Dockerfile
+docker-compose.yml
+backend
+.env
+.env.local
+.vscode
+.idea

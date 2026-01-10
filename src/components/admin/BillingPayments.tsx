@@ -39,7 +39,7 @@ export default function BillingPayments() {
     const fetchData = async () => {
       try {
         const [paymentsData, revenueRes, methodsRes, clientsRes] = await Promise.all([
-          api.get<Payment[]>('/payments'),
+          api.getPayments(),
           api.get<any[]>('/analytics/revenue-breakdown'),
           api.get<any[]>('/analytics/payment-methods'),
           api.getClients()

@@ -122,11 +122,36 @@ The backend API will be available at `http://localhost:8000`.
 
 ```bash
 # In the root directory
-npm install
-npm run dev
+yarn install
+yarn dev
 ```
 
 The frontend application will be running at `http://localhost:3000`.
+
+## 🚀 Deployment
+
+### 1. Backend (Render)
+
+1.  Create a new **Web Service** on Render connected to your repo.
+2.  **Root Directory**: `backend`
+3.  **Build Command**: `pip install -r requirements.txt`
+4.  **Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+5.  **Environment Variables**:
+    - `DATABASE_URL`: Your PostgreSQL connection string (Internal URL if using Render Postgres).
+    - `Use a Secret File`: recommended for .env management.
+
+### 2. Frontend (Vercel)
+
+1.  Import your repository into Vercel.
+2.  **Framework Preset**: Next.js
+3.  **Build Command**: `yarn build` (Vercel detects Yarn automatically).
+4.  **Environment Variables**:
+    - `NEXT_PUBLIC_API_URL`: The URL of your deployed Backend (e.g., `https://legalwise-python.onrender.com`).
+      _Note: Do not add a trailing slash._
+5.  **Deploy**: Vercel handles the build and deployment.
+
+**Troubleshooting Builds**:
+If you encounter React version errors, ensure you are using the stable `yarn.lock` provided in this repo which pins React to version 18.
 
 ## 🔐 Credentials & Testing
 

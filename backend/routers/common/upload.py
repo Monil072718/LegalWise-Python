@@ -25,6 +25,7 @@ async def upload_image(file: UploadFile = File(...)):
             
         # Return the URL
         # Assuming localhost:8000 for now, but in prod this should be dynamic
-        return {"url": f"http://localhost:8000/uploads/{new_filename}"}
+        base_url = os.getenv("BASE_URL", "http://localhost:8000")
+        return {"url": f"{base_url}/uploads/{new_filename}"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to upload image: {str(e)}")

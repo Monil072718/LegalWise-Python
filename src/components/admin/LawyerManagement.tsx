@@ -697,15 +697,16 @@ export default function LawyerManagement() {
                          </div>
                       </div>
                       
-                      <div className="flex flex-col justify-end pb-1">
-                          <label className="flex items-center space-x-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
+                      <div>
+                          <label className="block text-sm font-semibold text-gray-700 mb-1.5">Verification</label>
+                          <label className="flex items-center space-x-3 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl cursor-pointer hover:bg-white hover:border-blue-300 transition-all">
                             <input 
                                 type="checkbox"
                                 checked={formData.verified}
                                 onChange={(e) => setFormData({...formData, verified: e.target.checked})}
                                 className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                             />
-                            <span className="text-sm font-medium text-gray-700">Verified Account</span>
+                            <span className="text-sm text-gray-700">Mark as Verified</span>
                           </label>
                       </div>
                    </div>

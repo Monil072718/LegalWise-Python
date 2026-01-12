@@ -75,8 +75,9 @@ app.include_router(analytics.router)
 app.include_router(categories.router)
 
 # Public Routers
-from routers import public_articles
+from routers import public_articles, public_lawyers
 app.include_router(public_articles.router)
+app.include_router(public_lawyers.router)
 
 # Client Routers - Explicit imports to avoid confusion
 app.include_router(client_cases.router, prefix="/client")

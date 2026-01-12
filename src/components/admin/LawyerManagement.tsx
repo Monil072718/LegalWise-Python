@@ -525,207 +525,257 @@ export default function LawyerManagement() {
         </div>
       </div>
 
-      {/* Add Lawyer Modal */}
+      {/* Add/Edit Lawyer Modal - Premium UI */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">{isEditing ? 'Edit Lawyer' : 'Add New Lawyer'}</h3>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+            
+            {/* Header */}
+            <div className="px-8 py-6 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-gray-50 to-white">
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900">{isEditing ? 'Edit Profile' : 'New Lawyer'}</h3>
+                <p className="text-sm text-gray-500 mt-1">
+                  {isEditing ? 'Update the professional details below.' : 'Register a new legal expert to the platform.'}
+                </p>
+              </div>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+                className="p-2 hover:bg-gray-200 rounded-full transition-colors duration-200"
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5 text-gray-500" />
               </button>
             </div>
-            <div className="p-6 space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
-                  <input
-                    type="text"
-                    value={formData.name}
-                    onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter full name"
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
-                  <input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({...formData, email: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="lawyer@email.com"
-                    required
-                  />
-                  </div>
-              </div>
+
+            {/* Scrollable Content */}
+            <div className="p-8 overflow-y-auto custom-scrollbar space-y-8 flex-1">
               
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Profile Image</label>
-                <div className="flex items-center space-x-4">
-                    {formData.image && (
-                        <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-100">
-                            <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
-                        </div>
+              {/* Profile Image Section */}
+              <div className="flex flex-col items-center justify-center space-y-4">
+                <div className="relative group">
+                  <div className="w-28 h-28 rounded-full overflow-hidden bg-gray-100 border-4 border-white shadow-xl flex items-center justify-center">
+                    {formData.image ? (
+                      <img src={formData.image} alt="Profile" className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-2xl font-bold text-gray-300">
+                        {formData.name ? formData.name.charAt(0).toUpperCase() : '?'}
+                      </span>
                     )}
-                    <div className="flex-1">
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImageUpload}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                        />
-                        {uploading && <p className="text-xs text-blue-600 mt-1">Uploading...</p>}
-                    </div>
+                  </div>
+                  <label className="absolute bottom-1 right-1 bg-blue-600 hover:bg-blue-700 text-white p-2.5 rounded-full cursor-pointer shadow-lg transition-all transform hover:scale-105">
+                    <Upload className="w-4 h-4" />
+                    <input 
+                      type="file" 
+                      className="hidden" 
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                    />
+                  </label>
                 </div>
+                {uploading && <span className="text-xs text-blue-600 animate-pulse font-medium">Uploading...</span>}
+                <p className="text-xs text-gray-400">Allowed *.jpeg, *.jpg, *.png</p>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Password {isEditing && '(Leave blank to keep current)'}</label>
-                <input
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) => setFormData({...formData, password: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder={isEditing ? "Enter new password to change" : "Set initial password"}
-                  required={!isEditing}
-                  minLength={8}
-                />
-                <p className="text-xs text-gray-500 mt-1">Must be at least 8 characters long</p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
-                <input
-                  type="password"
-                  value={formData.confirmPassword}
-                  onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Re-enter password"
-                  required={!isEditing && !!formData.password}
-                />
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                  <input
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="+1 (555) 123-4567"
-                  />
-                </div>
+              {/* Form Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Years of Experience *</label>
-                  <input
-                    type="number"
-                    value={formData.experience}
-                    onChange={(e) => setFormData({...formData, experience: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="5"
-                    min="0"
-                    required
-                  />
+                {/* Column 1: Personal Info */}
+                <div className="space-y-5">
+                  <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-2">Personal Details</h4>
+                  
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">Full Name <span className="text-red-500">*</span></label>
+                    <input
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) => setFormData({...formData, name: e.target.value})}
+                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all outline-none"
+                      placeholder="e.g. Jonathan Specter"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">Email Address <span className="text-red-500">*</span></label>
+                    <input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({...formData, email: e.target.value})}
+                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all outline-none"
+                      placeholder="lawyer@example.com"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">Phone Number</label>
+                    <input
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all outline-none"
+                      placeholder="+1 (555) 000-0000"
+                    />
+                  </div>
+
+                  <div>
+                     <label className="block text-sm font-semibold text-gray-700 mb-1.5">Office Address</label>
+                     <input
+                      type="text"
+                      value={formData.address}
+                      onChange={(e) => setFormData({...formData, address: e.target.value})}
+                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all outline-none"
+                      placeholder="123 Legal Ave, Suite 400"
+                    />
+                  </div>
                 </div>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Account Status</label>
-                  <CustomSelect
-                    value={formData.status}
-                    onChange={(val) => setFormData({...formData, status: val})}
-                    options={[
-                      { label: 'Active', value: 'active' },
-                      { label: 'Pending', value: 'pending' },
-                      { label: 'Inactive', value: 'inactive' }
-                    ]}
-                    variant="default"
-                  />
-                </div>
-                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Availability</label>
-                  <CustomSelect
-                    value={formData.availability}
-                    onChange={(val) => setFormData({...formData, availability: val})}
-                    options={[
-                      { label: 'Online', value: 'online' },
-                      { label: 'Offline', value: 'offline' },
-                      { label: 'Busy', value: 'busy' }
-                    ]}
-                    variant="default"
-                  />
-                </div>
-                <div className="flex items-center pt-8">
-                   <input 
-                      type="checkbox" 
-                      id="lawyer-verified"
-                      checked={formData.verified}
-                      onChange={(e) => setFormData({...formData, verified: e.target.checked})}
-                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                   />
-                   <label htmlFor="lawyer-verified" className="ml-2 block text-sm text-gray-900">
-                     Mark as Verified
-                   </label>
+
+                {/* Column 2: Professional Info */}
+                <div className="space-y-5">
+                   <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-2">Professional Info</h4>
+
+                   <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">Specialization <span className="text-red-500">*</span></label>
+                    <input
+                      type="text"
+                      value={formData.specialization}
+                      onChange={(e) => setFormData({...formData, specialization: e.target.value})}
+                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all outline-none"
+                      placeholder="Criminal, Family, Corporate"
+                      required
+                    />
+                    <p className="text-xs text-gray-400 mt-1">Separate multiple areas with commas</p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-1.5">Experience (Yrs) <span className="text-red-500">*</span></label>
+                        <input
+                        type="number"
+                        value={formData.experience}
+                        onChange={(e) => setFormData({...formData, experience: e.target.value})}
+                        className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all outline-none"
+                        placeholder="0"
+                        min="0"
+                        required
+                        />
+                    </div>
+                    <div>
+                         <label className="block text-sm font-semibold text-gray-700 mb-1.5">Availability</label>
+                         <div className="relative">
+                            <select
+                                value={formData.availability}
+                                onChange={(e) => setFormData({...formData, availability: e.target.value})}
+                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all outline-none appearance-none"
+                            >
+                                <option value="online">Online</option>
+                                <option value="offline">Offline</option>
+                                <option value="busy">Busy</option>
+                            </select>
+                            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-500">
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                         </div>
+                    </div>
+                  </div>
+
+                   <div className="grid grid-cols-2 gap-4">
+                      <div>
+                         <label className="block text-sm font-semibold text-gray-700 mb-1.5">Status</label>
+                         <div className="relative">
+                            <select
+                                value={formData.status}
+                                onChange={(e) => setFormData({...formData, status: e.target.value})}
+                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all outline-none appearance-none"
+                            >
+                                <option value="active">Active</option>
+                                <option value="pending">Pending</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-500">
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                         </div>
+                      </div>
+                      
+                      <div className="flex flex-col justify-end pb-1">
+                          <label className="flex items-center space-x-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
+                            <input 
+                                type="checkbox"
+                                checked={formData.verified}
+                                onChange={(e) => setFormData({...formData, verified: e.target.checked})}
+                                className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                            />
+                            <span className="text-sm font-medium text-gray-700">Verified Account</span>
+                          </label>
+                      </div>
+                   </div>
                 </div>
               </div>
 
+              {/* Biography Section */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Specialization *</label>
-                <input
-                  type="text"
-                  value={formData.specialization}
-                  onChange={(e) => setFormData({...formData, specialization: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Criminal Law, Family Law"
-                  required
-                />
-                <p className="text-xs text-gray-500 mt-1">Separate multiple specializations with commas</p>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Address</label>
-                <input
-                  type="text"
-                  value={formData.address}
-                  onChange={(e) => setFormData({...formData, address: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="123 Main St, City, State 12345"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
-                <textarea
-                  rows={4}
+                 <label className="block text-sm font-semibold text-gray-700 mb-1.5">Biography</label>
+                 <textarea
+                  rows={3}
                   value={formData.bio}
                   onChange={(e) => setFormData({...formData, bio: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Brief professional biography..."
+                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all outline-none resize-none"
+                  placeholder="Share a brief professional background..."
                 />
               </div>
-              
+
+              {/* Security Section */}
+              <div className="bg-blue-50/50 p-6 rounded-2xl border border-blue-100">
+                   <h4 className="text-sm font-bold text-gray-800 flex items-center mb-4">
+                       <span className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center mr-3 text-blue-600">
+                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                       </span>
+                       Security Credentials
+                   </h4>
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                                {isEditing ? 'New Password (Optional)' : 'Password *'}
+                            </label>
+                            <input
+                            type="password"
+                            value={formData.password}
+                            onChange={(e) => setFormData({...formData, password: e.target.value})}
+                            className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all outline-none"
+                            placeholder={isEditing ? "Leave blank to keep current" : "Min. 8 characters"}
+                            required={!isEditing}
+                            minLength={8}
+                            />
+                        </div>
+                        <div>
+                             <label className="block text-sm font-semibold text-gray-700 mb-1.5">Confirm Password</label>
+                             <input
+                            type="password"
+                            value={formData.confirmPassword}
+                            onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
+                            className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all outline-none"
+                            placeholder="Re-enter password"
+                            required={!isEditing && !!formData.password}
+                            />
+                        </div>
+                   </div>
+              </div>
+
             </div>
-            <div className="p-6 border-t border-gray-200 flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3">
+
+            {/* Footer */}
+            <div className="px-8 py-5 border-t border-gray-100 bg-gray-50 flex items-center justify-end space-x-3">
               <button
                 onClick={() => setShowAddModal(false)}
-                className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                className="px-6 py-2.5 rounded-xl font-medium text-gray-600 hover:bg-gray-200 hover:text-gray-900 transition-all duration-200"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSaveLawyer}
-                className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                className="px-8 py-2.5 rounded-xl font-medium bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-600/20 hover:shadow-blue-600/30 transition-all duration-200 transform hover:-translate-y-0.5"
               >
-                {isEditing ? 'Update Lawyer' : 'Create Lawyer'}
+                {isEditing ? 'Save Changes' : 'Create Account'}
               </button>
             </div>
           </div>

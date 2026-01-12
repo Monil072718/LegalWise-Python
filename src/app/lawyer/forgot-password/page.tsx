@@ -19,8 +19,8 @@ export default function LawyerForgotPassword() {
       const response = await api.forgotPassword(email);
       setStatus('success');
       setMessage('Password reset instructions have been sent to your email.');
-      if (response.token) {
-           setToken(response.token);
+      if ((response as any).token) {
+           setToken((response as any).token);
       }
     } catch (err: any) {
       console.error(err);

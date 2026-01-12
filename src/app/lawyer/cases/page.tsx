@@ -102,7 +102,7 @@ export default function LawyerCases() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {cases.filter(caseItem => {
              const matchesSearch = caseItem.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                                   caseItem.client.toLowerCase().includes(searchTerm.toLowerCase());
+                                   caseItem.clientId.toLowerCase().includes(searchTerm.toLowerCase());
              const matchesStatus = statusFilter === 'All' || caseItem.status === statusFilter;
              return matchesSearch && matchesStatus;
         }).map((caseItem) => (
@@ -124,7 +124,7 @@ export default function LawyerCases() {
               <div className="space-y-3 mb-4">
                 <div className="flex items-center text-sm text-gray-600">
                   <Users className="w-4 h-4 mr-2 text-gray-400" />
-                  {caseItem.client}
+                  {caseItem.clientId}
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
                   <FileText className="w-4 h-4 mr-2 text-gray-400" />
@@ -141,7 +141,7 @@ export default function LawyerCases() {
               <div className="pt-4 border-t border-gray-100 flex justify-between items-center text-xs text-gray-500">
                 <span className="flex items-center">
                   <Clock className="w-3 h-3 mr-1" />
-                  Updated {caseItem.updated}
+                  Updated {caseItem.createdAt}
                 </span>
                 <span>ID: {caseItem.id}</span>
               </div>

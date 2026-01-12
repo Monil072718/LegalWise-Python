@@ -36,7 +36,7 @@ export default function LawyerClients() {
     }
   };
 
-  const handleStatusUpdate = async (id: string, newStatus: string) => {
+  const handleStatusUpdate = async (id: string, newStatus: 'active' | 'pending' | 'inactive') => {
     setUpdatingId(id);
     try {
       await api.updateClient(id, { status: newStatus });
@@ -149,9 +149,9 @@ export default function LawyerClients() {
                   <td className="px-6 py-4">
                     <div className="relative group">
                         <button disabled={updatingId === client.id} className={`inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded-full cursor-pointer hover:opacity-80 transition-opacity ${
-                        client.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                        client.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                         }`}>
-                        {client.status}
+                        {client.status.charAt(0).toUpperCase() + client.status.slice(1)}
                         {updatingId === client.id ? (
                              <span className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin ml-1"/>
                         ) : (
@@ -160,13 +160,13 @@ export default function LawyerClients() {
                         </button>
                         
                         <div className="hidden group-hover:block absolute top-full left-0 mt-1 w-32 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-20">
-                            {['Active', 'Pending', 'Inactive'].map((s) => (
+                            {(['active', 'pending', 'inactive'] as const).map((s) => (
                                 <button
                                     key={s}
                                     onClick={() => handleStatusUpdate(client.id, s)}
                                     className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600"
                                 >
-                                    {s}
+                                    {s.charAt(0).toUpperCase() + s.slice(1)}
                                 </button>
                             ))}
                         </div>

@@ -4,17 +4,19 @@ import { motion } from 'framer-motion';
 import { ReactNode } from 'react';
 
 interface ScrollAnimationProps {
-  children: ReactNode;
+  children?: ReactNode;
   className?: string;
   delay?: number;
   direction?: 'up' | 'down' | 'left' | 'right' | 'none';
+  style?: React.CSSProperties;
 }
 
 export default function ScrollAnimation({ 
   children, 
   className = "", 
   delay = 0,
-  direction = 'up'
+  direction = 'up',
+  style
 }: ScrollAnimationProps) {
   
   const getVariants = () => {
@@ -60,6 +62,7 @@ export default function ScrollAnimation({
       transition={{ duration: 0.6, delay: delay, ease: "easeOut" }}
       variants={getVariants()}
       className={className}
+      style={style}
     >
       {children}
     </motion.div>

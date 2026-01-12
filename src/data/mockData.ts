@@ -132,6 +132,8 @@ export const mockCases: Case[] = [
 export const mockAppointments: Appointment[] = [
   {
     id: '1',
+    clientId: '1',
+    lawyerId: '1',
     clientName: 'John Smith',
     lawyerName: 'Sarah Johnson',
     date: '2024-12-18',
@@ -142,6 +144,8 @@ export const mockAppointments: Appointment[] = [
   },
   {
     id: '2',
+    clientId: '2',
+    lawyerId: '2',
     clientName: 'Lisa Wang',
     lawyerName: 'Michael Chen',
     date: '2024-12-19',
@@ -151,6 +155,8 @@ export const mockAppointments: Appointment[] = [
   },
   {
     id: '3',
+    clientId: '3',
+    lawyerId: '3',
     clientName: 'David Brown',
     lawyerName: 'Emily Rodriguez',
     date: '2024-12-17',
@@ -201,6 +207,7 @@ export const mockBooks: Book[] = [
     price: 29.99,
     downloads: 245,
     rating: 4.7,
+    quantity: 100,
     publishedAt: '2024-01-10'
   },
   {
@@ -211,6 +218,7 @@ export const mockBooks: Book[] = [
     price: 39.99,
     downloads: 189,
     rating: 4.5,
+    quantity: 50,
     publishedAt: '2024-02-20'
   },
   {
@@ -221,6 +229,7 @@ export const mockBooks: Book[] = [
     price: 24.99,
     downloads: 312,
     rating: 4.8,
+    quantity: 75,
     publishedAt: '2024-03-05'
   }
 ];

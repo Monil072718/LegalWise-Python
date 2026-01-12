@@ -1,5 +1,7 @@
 "use client";
 
+import { getImageUrl } from '../../utils/image';
+
 import { useState, useEffect } from 'react';
 import { Search, Plus, Eye, Edit, Trash2, CheckCircle, XCircle, Star, Clock, X, Upload } from 'lucide-react';
 import { Lawyer } from '../../types';
@@ -439,15 +441,15 @@ export default function LawyerManagement() {
                 <tr key={lawyer.id} className="hover:bg-gray-50 transition-colors duration-200">
                   <td className="px-6 py-4">
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center overflow-hidden">
-                        {lawyer.image ? (
-                            <img src={lawyer.image} alt={lawyer.name} className="w-full h-full object-cover" />
-                        ) : (
-                            <span className="text-white font-medium">
-                            {lawyer.name.split(' ').map(n => n[0]).join('')}
-                            </span>
-                        )}
-                      </div>
+                          <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
+                            {lawyer.image ? (
+                              <img src={getImageUrl(lawyer.image)} alt={lawyer.name} className="w-full h-full object-cover" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center bg-blue-600 text-white font-bold">
+                                {lawyer.name.charAt(0)}
+                              </div>
+                            )}
+                          </div>
                       <div>
                         <div className="font-medium text-gray-900">{lawyer.name}</div>
                         <div className="text-sm text-gray-500">{lawyer.email}</div>

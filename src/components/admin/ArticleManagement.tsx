@@ -1,5 +1,7 @@
 "use client";
 
+import { getImageUrl } from '../../utils/image';
+
 import { useState, useEffect } from 'react';
 import { Search, Plus, Edit, Trash2, X, Upload, FileText } from 'lucide-react';
 import { Article } from '../../types';
@@ -207,7 +209,7 @@ export default function ArticleManagement() {
           <div key={article.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
             <div className="h-48 bg-gray-100 relative">
               {article.image ? (
-                <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
+                <img src={getImageUrl(article.image)} alt={article.title} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-400">
                   <FileText className="w-12 h-12" />
@@ -334,7 +336,7 @@ export default function ArticleManagement() {
                  <label className="block text-sm font-medium text-gray-700 mb-1">Featured Image</label>
                  <div className="flex items-center space-x-4">
                     <input type="file" onChange={handleImageUpload} className="text-sm" />
-                    {formData.image && <img src={formData.image} alt="Preview" className="h-10 w-10 object-cover rounded" />}
+                    {formData.image && <img src={getImageUrl(formData.image)} alt="Preview" className="h-10 w-10 object-cover rounded" />}
                  </div>
                </div>
             </div>

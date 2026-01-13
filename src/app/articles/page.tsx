@@ -1,5 +1,7 @@
 "use client";
 
+import { getImageUrl } from '../../utils/image';
+
 import { useState, useEffect } from 'react';
 import PublicHeader from '../../components/public/PublicHeader';
 import PublicFooter from '../../components/public/PublicFooter';
@@ -95,11 +97,29 @@ export default function PublicArticlesPage() {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {articles.map((article) => (
-                        <div key={article.id} className="group bg-white rounded-2xl p-8 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 flex flex-col h-full">
-                            <div className="flex items-center justify-between mb-6">
-                                <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full uppercase tracking-wide">
-                                    {article.category}
-                                </span>
+                        <div key={article.id} className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 flex flex-col h-full">
+                            {/* Article Image */}
+                            <div className="h-48 w-full bg-gray-100 relative overflow-hidden">
+                                {article.image ? (
+                                    <img 
+                                        src={getImageUrl(article.image)} 
+                                        alt={article.title} 
+                                        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center bg-gray-50 text-gray-300">
+                                        <FileText className="w-12 h-12" />
+                                    </div>
+                                )}
+                                <div className="absolute top-4 left-4 z-10">
+                                     <span className="inline-block px-3 py-1 rounded-full bg-white/90 backdrop-blur-sm text-indigo-600 text-xs font-bold uppercase tracking-wide shadow-sm">
+                                        {article.category}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div className="p-8 flex flex-col flex-1">
+                                <div className="flex items-center justify-between mb-4">
                                 <div className="flex items-center gap-1 text-gray-400 text-xs">
                                      <Clock className="w-3 h-3" />
                                      <span>{new Date(article.publishedAt).toLocaleDateString()}</span>
@@ -145,6 +165,8 @@ export default function PublicArticlesPage() {
                                         Read More <ArrowRight className="w-4 h-4" />
                                     </Link>
                                 )}
+
+                            </div>
                             </div>
                         </div>
                     ))}

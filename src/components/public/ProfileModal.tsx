@@ -140,16 +140,17 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[110]"
+                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[110]"
                     />
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl h-[85vh] md:h-auto md:max-h-[85vh] bg-white rounded-3xl shadow-2xl z-[120] flex flex-col overflow-hidden"
-                    >
-                        {/* Fixed Header */}
-                        <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100 bg-white/50 backdrop-blur-sm z-10">
+                    <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 pointer-events-none">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl flex flex-col overflow-hidden max-h-[85vh] pointer-events-auto"
+                        >
+                            {/* Fixed Header */}
+                            <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100 bg-white/50 backdrop-blur-sm z-10 shrink-0">
                             <div>
                                 <h2 className="text-2xl font-bold text-gray-900">My Profile</h2>
                                 <p className="text-sm text-gray-500 mt-1">Manage your personal information</p>
@@ -333,6 +334,7 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                             )}
                         </div>
                     </motion.div>
+                    </div>
                 </>
             )}
         </AnimatePresence>

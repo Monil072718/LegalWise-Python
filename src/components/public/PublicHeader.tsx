@@ -22,6 +22,7 @@ export default function PublicHeader() {
   const pathname = usePathname();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -32,6 +33,10 @@ export default function PublicHeader() {
       const adminToken = sessionStorage.getItem('adminToken') || localStorage.getItem('adminToken');
       const lawyerToken = sessionStorage.getItem('lawyerToken') || localStorage.getItem('lawyerToken');
       const userToken = sessionStorage.getItem('userToken') || localStorage.getItem('userToken');
+      const storedName = sessionStorage.getItem('userName') || localStorage.getItem('userName');
+      
+      if (storedName) setUserName(storedName);
+
 
       if (adminToken) {
         setIsLoggedIn(true);
@@ -61,8 +66,10 @@ export default function PublicHeader() {
   const handleLogout = () => {
     sessionStorage.clear();
     localStorage.clear();
+    localStorage.clear();
     setIsLoggedIn(false);
     setUserRole(null);
+    setUserName(null);
     window.location.href = '/';
   };
 
@@ -159,6 +166,10 @@ export default function PublicHeader() {
                                 : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
                         }`}
                     >
+                        <div className="flex flex-col items-end mr-2 hidden sm:flex">
+                           <span className="text-xs font-medium opacity-80">Hello,</span>
+                           <span className="text-sm font-bold leading-none">{userName || 'User'}</span>
+                        </div>
                         <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-md">
                             <User className="w-4 h-4" />
                         </div>
@@ -176,7 +187,7 @@ export default function PublicHeader() {
                             >
                                 <div className="px-4 py-3 border-b border-gray-50 mb-1">
                                     <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Signed in as</p>
-                                    <p className="text-sm font-bold text-gray-900 truncate">{userRole === 'admin' ? 'Administrator' : userRole === 'lawyer' ? 'Professional' : 'Client'}</p>
+                                    <p className="text-sm font-bold text-gray-900 truncate">{userName || (userRole === 'admin' ? 'Administrator' : userRole === 'lawyer' ? 'Professional' : 'Client')}</p>
                                 </div>
 
                                 <Link 

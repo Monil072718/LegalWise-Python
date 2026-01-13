@@ -46,9 +46,10 @@ export default function UniversalLogin() {
       
       sessionStorage.setItem('showWelcome', 'true');
 
-      // Store User ID if available
-      if (response.user && response.user.id) {
-          sessionStorage.setItem('userId', response.user.id);
+      // Store User ID and Name if available
+      if (response.user) {
+          if (response.user.id) sessionStorage.setItem('userId', response.user.id);
+          if (response.user.name) sessionStorage.setItem('userName', response.user.name);
       }
 
       if (role === 'admin') {

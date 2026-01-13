@@ -48,9 +48,10 @@ export default function ArticleManagement() {
             link: importUrl // Auto-fill link with the imported URL
         });
         showToast('Article imported successfully!', 'success');
-    } catch (error) {
+    } catch (error: any) {
         console.error('Import failed:', error);
-        showToast('Failed to import article', 'error');
+        const errorMessage = error?.message || 'Failed to import article';
+        showToast(errorMessage, 'error');
     } finally {
         setIsImporting(false);
     }

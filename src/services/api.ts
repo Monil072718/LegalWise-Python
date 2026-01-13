@@ -284,6 +284,11 @@ export const api = {
         } catch (error) {
            throw error;
         }
+    },
+
+    // AI Chat
+    chatWithAI: async (messages: {role: string, content: string}[]) => {
+        return api.post<{response: string}>('/ai/chat', { messages });
     }
 };
 

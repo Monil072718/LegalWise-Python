@@ -4,6 +4,7 @@ import { useState } from 'react';
 import PublicHeader from '../../components/public/PublicHeader';
 import PublicFooter from '../../components/public/PublicFooter';
 import { Send, Bot, User, Sparkles } from 'lucide-react';
+import { api } from '../../services/api';
 
 export default function AIChatPage() {
   const [messages, setMessages] = useState<{role: 'user' | 'bot', content: string}[]>([
@@ -21,51 +22,24 @@ export default function AIChatPage() {
     setInput('');
     setLoading(true);
 
-    // Simulated AI Logic with Legal Domain Restriction
-    setTimeout(() => {
-        const lowerInput = userMessage.toLowerCase();
+    // Call AI Backend
+    try {
+        const fullHistory = [...messages, {role: 'user' as const, content: userMessage}];
+        const response = await api.chatWithAI(fullHistory);
         
-        // Knowledge Base for specific topics
-        const knowledgeBase: Record<string, string> = {
-            "divorce": "Divorce proceedings generally involve filing a petition, disclosing financial assets, and determining child custody arrangements if applicable. Laws vary significantly by state.",
-            "custody": "Child custody is usually determined based on the 'best interests of the child' standard. This considers factors like the child's age, emotional ties, and the parents' ability to provide care.",
-            "contract": "A valid contract typically requires three elements: an offer, acceptance, and consideration (exchange of value). If one party fails to fulfill terms, it may be considered a breach.",
-            "arrest": "If arrested, you have the right to remain silent and the right to an attorney (Miranda Rights). It is generally advised to exercise these rights immediately.",
-            "ticket": "Traffic violations can often be contested in court or resolved by paying a fine. Some jurisdictions offer traffic school to prevent points on your license.",
-            "will": "A will is a legal document setting forth your wishes regarding the distribution of your property and the care of any minor children. It usually requires witnesses to be valid.",
-            "copyright": "Copyright protection exists from the moment an original work of authorship is fixed in a tangible medium. Registration provides additional benefits for enforcement."
-        };
-
-        const legalKeywords = [
-            "law", "legal", "court", "judge", "attorney", "lawyer", 
-            "crime", "civil", "rights", "sue", 
-            "property", "tenant", "landlord", 
-            "eviction", "police", "justice", "statute", 
-            "regulation", "compliance", "fraud", "negligence", "injury", 
-            "damages", "trust", "estate", "patent", 
-            "trademark", "help", "advice", "case"
-        ];
-
-        // Check for specific topic match first
-        const topicMatch = Object.keys(knowledgeBase).find(key => lowerInput.includes(key));
-        const isLegalRelated = topicMatch || legalKeywords.some(keyword => lowerInput.includes(keyword));
-
-        let botResponse = "";
-
-        if (topicMatch) {
-            botResponse = knowledgeBase[topicMatch] + " Would you like to know more about this topic?";
-        } else if (isLegalRelated) {
-             botResponse = "I understand you're inquiring about a legal matter regarding '" + userMessage + "'. Legal definitions and procedures can be complex. Could you broaden your question so I can explain the general concepts?";
-        } else {
-             botResponse = "I apologize, but I am programmed to assist only with legal and law-related inquiries. Please ask a question related to law, rights, or legal procedures.";
-        }
-
         setMessages(prev => [...prev, {
             role: 'bot', 
-            content: botResponse
+            content: response.response
         }]);
+    } catch (error) {
+        console.error("AI Error:", error);
+        setMessages(prev => [...prev, {
+            role: 'bot', 
+            content: "I apologize, but I'm having trouble connecting to my knowledge base right now. Please try again later."
+        }]);
+    } finally {
         setLoading(false);
-    }, 1500);
+    }
   };
 
   return (

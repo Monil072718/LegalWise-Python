@@ -5,7 +5,13 @@ from sqlalchemy.orm import Session
 import os
 
 from routers.admin import lawyers, clients, cases, dashboard, books, articles, payments, analytics, categories
-from routers.common import auth, appointments, upload, chat
+from routers.common import auth, appointments, upload, chat, ai
+
+# ... (omitted)
+
+app.include_router(chat.router)
+app.include_router(ai.router)
+app.include_router(appointments.router)
 from routers.client import cases as client_cases, payments as client_payments, books as client_books, articles as client_articles
 from routers.client import orders, dashboard as client_dashboard
 from routers.lawyer import dashboard as lawyer_dashboard

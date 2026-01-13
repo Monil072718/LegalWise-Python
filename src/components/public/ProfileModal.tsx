@@ -31,14 +31,33 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
 
         const fetchProfile = async () => {
             const userId = sessionStorage.getItem('userId');
+            
+            // Determine Role
+            let currentRole = 'client';
+            if (sessionStorage.getItem('lawyerToken')) currentRole = 'lawyer';
+            if (sessionStorage.getItem('adminToken')) currentRole = 'admin';
+            
             if (!userId) {
-                // Should not happen if button is only shown when logged in
+                console.error("No User ID found");
+                setLoading(false);
                 return;
             }
 
             try {
                 setLoading(true);
-                const data = await api.getClient(userId);
+                let data: any = {};
+                
+                if (currentRole === 'lawyer') {
+                     data = await api.getLawyer(userId);
+                } else if (currentRole === 'client') {
+                     data = await api.getClient(userId);
+                } else {
+                    // Admin or unknown
+                    showToast('Profile editing not available for Admin', 'info');
+                    onClose();
+                    return;
+                }
+
                 setFormData({
                     id: data.id,
                     name: data.name || '',
@@ -47,7 +66,7 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                     address: data.address || '',
                     company: data.company || '',
                     avatar: data.avatar || '',
-                    role: data.role || 'client'
+                    role: currentRole
                 });
             } catch (error) {
                 console.error("Failed to fetch profile", error);
@@ -58,7 +77,7 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
         };
 
         fetchProfile();
-    }, [isOpen, showToast]);
+    }, [isOpen, showToast, onClose]);
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -89,9 +108,21 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                 avatar: formData.avatar
             };
             
-            await api.updateClient(formData.id, updatePayload);
+            if (formData.role === 'lawyer') {
+                await api.updateLawyer(formData.id, updatePayload);
+            } else {
+                await api.updateClient(formData.id, updatePayload);
+            }
+            
+            // Update session Name if changed
+            if (formData.name) {
+                sessionStorage.setItem('userName', formData.name);
+                // Trigger event to update header
+                window.dispatchEvent(new Event('storage'));
+            }
+
             showToast('Profile updated successfully', 'success');
-            // Optional: Close modal on success or keep it open
+            onClose();
         } catch (error) {
             console.error("Update failed", error);
             showToast('Failed to update profile', 'error');

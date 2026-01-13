@@ -146,41 +146,68 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-xl z-[120]"
+                        className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl h-[85vh] md:h-auto md:max-h-[85vh] bg-white rounded-3xl shadow-2xl z-[120] flex flex-col overflow-hidden"
                     >
-                        <div className="p-6 md:p-8">
-                            <div className="flex items-center justify-between mb-8">
-                                <div>
-                                    <h2 className="text-2xl font-bold text-gray-900">My Profile</h2>
-                                    <p className="text-sm text-gray-500 mt-1">Manage your personal information</p>
-                                </div>
-                                <button
-                                    onClick={onClose}
-                                    className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
-                                >
-                                    <X className="w-6 h-6" />
-                                </button>
+                        {/* Fixed Header */}
+                        <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100 bg-white/50 backdrop-blur-sm z-10">
+                            <div>
+                                <h2 className="text-2xl font-bold text-gray-900">My Profile</h2>
+                                <p className="text-sm text-gray-500 mt-1">Manage your personal information</p>
                             </div>
+                            <button
+                                onClick={onClose}
+                                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                            >
+                                <X className="w-6 h-6" />
+                            </button>
+                        </div>
+
+                        {/* Scrollable Content */}
+                        <div className="flex-1 overflow-y-auto px-8 py-6 space-y-8 custom-scrollbar">
+                           <style jsx global>{`
+                                .custom-scrollbar::-webkit-scrollbar {
+                                    width: 8px;
+                                }
+                                .custom-scrollbar::-webkit-scrollbar-track {
+                                    background: transparent;
+                                }
+                                .custom-scrollbar::-webkit-scrollbar-thumb {
+                                    background-color: #cbd5e1;
+                                    border-radius: 20px;
+                                    border: 3px solid transparent;
+                                    background-clip: content-box;
+                                }
+                                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                                    background-color: #94a3b8;
+                                }
+                            `}</style>
 
                             {loading ? (
-                                <div className="flex items-center justify-center py-12">
-                                    <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                                <div className="flex items-center justify-center py-20">
+                                    <div className="flex flex-col items-center gap-4">
+                                        <Loader2 className="w-10 h-10 animate-spin text-blue-600" />
+                                        <p className="text-gray-400 font-medium animate-pulse">Loading profile...</p>
+                                    </div>
                                 </div>
                             ) : (
                                 <form onSubmit={handleSubmit} className="space-y-8">
                                     {/* Avatar Section */}
-                                    <div className="flex flex-col sm:flex-row items-center gap-6 pb-8 border-b border-gray-100">
+                                    <div className="flex flex-col sm:flex-row items-center gap-6 pb-2">
                                         <div className="relative group">
-                                            <div className="w-24 h-24 rounded-full bg-gray-100 overflow-hidden ring-4 ring-white shadow-lg">
+                                            <div className="w-28 h-28 rounded-full bg-gray-50 ring-4 ring-white shadow-xl overflow-hidden flex items-center justify-center">
                                                 {formData.avatar ? (
                                                     <img src={formData.avatar} alt="Profile" className="w-full h-full object-cover" />
                                                 ) : (
-                                                    <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                                        <User className="w-10 h-10" />
-                                                    </div>
+                                                    <User className="w-10 h-10 text-gray-300" />
                                                 )}
+                                                
+                                                {/* Overlay on hover */}
+                                                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                    <Camera className="w-8 h-8 text-white drop-shadow-md" />
+                                                </div>
                                             </div>
-                                            <label className="absolute bottom-0 right-0 p-2 bg-blue-600 text-white rounded-full cursor-pointer hover:bg-blue-700 transition-colors shadow-md">
+                                            
+                                            <label className="absolute bottom-0 right-0 p-2.5 bg-blue-600 text-white rounded-full cursor-pointer hover:bg-blue-700 hover:scale-110 transition-all shadow-lg shadow-blue-500/30">
                                                 <Camera className="w-4 h-4" />
                                                 <input 
                                                     type="file" 
@@ -190,89 +217,106 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                                                 />
                                             </label>
                                         </div>
-                                        <div className="text-center sm:text-left">
-                                            <h3 className="text-lg font-bold text-gray-900">Profile Photo</h3>
-                                            <p className="text-sm text-gray-500 max-w-xs">
-                                                Upload a professional photo to help lawyers recognize you. JPG, PNG or GIF.
+                                        <div className="text-center sm:text-left space-y-2">
+                                            <div>
+                                                <h3 className="text-lg font-bold text-gray-900">Profile Photo</h3>
+                                                <div className="flex items-center justify-center sm:justify-start gap-2">
+                                                    <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider ${
+                                                        formData.role === 'lawyer' ? 'bg-indigo-100 text-indigo-700' : 
+                                                        formData.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-green-100 text-green-700'
+                                                    }`}>
+                                                        {formData.role}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <p className="text-sm text-gray-500 max-w-xs leading-relaxed">
+                                                Upload a professional photo to build trust.
+                                                <br /><span className="text-xs text-gray-400">Supported: JPG, PNG • Max 5MB</span>
                                             </p>
                                         </div>
                                     </div>
 
-                                    {/* Form Fields */}
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {/* Form Fields - Grid */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
                                         <div className="space-y-2">
-                                            <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                                                <User className="w-4 h-4 text-gray-400" /> Full Name
+                                            <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                                                <User className="w-4 h-4 text-blue-500" /> Full Name
                                             </label>
                                             <input 
                                                 type="text" 
                                                 required
                                                 value={formData.name}
                                                 onChange={e => setFormData({...formData, name: e.target.value})}
-                                                className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                                placeholder="John Doe"
+                                                className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
+                                                placeholder="e.g. John Doe"
                                             />
                                         </div>
 
                                         <div className="space-y-2">
-                                            <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                                                <Mail className="w-4 h-4 text-gray-400" /> Email Address
+                                            <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                                                <Mail className="w-4 h-4 text-blue-500" /> Email Address
                                             </label>
                                             <input 
                                                 type="email" 
                                                 disabled
                                                 value={formData.email}
-                                                className="w-full px-4 py-2 border border-gray-200 rounded-xl bg-gray-50 text-gray-500 cursor-not-allowed"
-                                                title="Email cannot be changed"
+                                                className="w-full px-4 py-3 bg-gray-100/50 border-0 rounded-xl text-gray-500 cursor-not-allowed font-medium"
                                             />
-                                            <p className="text-xs text-gray-400">Contact support to change email</p>
                                         </div>
 
                                         <div className="space-y-2">
-                                            <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                                                <Phone className="w-4 h-4 text-gray-400" /> Phone Number
+                                            <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                                                <Phone className="w-4 h-4 text-blue-500" /> Phone Number
                                             </label>
                                             <input 
                                                 type="tel" 
                                                 value={formData.phone}
                                                 onChange={e => setFormData({...formData, phone: e.target.value})}
-                                                className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                                className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
                                                 placeholder="+1 (555) 000-0000"
                                             />
                                         </div>
 
                                         <div className="space-y-2">
-                                            <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                                                <Building className="w-4 h-4 text-gray-400" /> Company / Organization
+                                            <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                                                <Building className="w-4 h-4 text-blue-500" /> Organization
                                             </label>
                                             <input 
                                                 type="text" 
                                                 value={formData.company}
                                                 onChange={e => setFormData({...formData, company: e.target.value})}
-                                                className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                                placeholder="Optional"
+                                                className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
+                                                placeholder="Company Name (Optional)"
                                             />
                                         </div>
 
                                         <div className="space-y-2 md:col-span-2">
-                                            <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                                                <MapPin className="w-4 h-4 text-gray-400" /> Address
+                                            <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                                                <MapPin className="w-4 h-4 text-blue-500" /> Address
                                             </label>
                                             <textarea 
                                                 value={formData.address}
                                                 onChange={e => setFormData({...formData, address: e.target.value})}
-                                                className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                                placeholder="123 Legal Street, Suite 400"
+                                                className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium resize-none"
+                                                placeholder="Full street address..."
                                                 rows={3}
                                             />
                                         </div>
                                     </div>
-
-                                    <div className="pt-6 border-t border-gray-100 flex justify-end">
+                                    
+                                    {/* Action Buttons - Sticky Bottom (conceptually, though keeping in flow for now due to form submit) */}
+                                    <div className="pt-4 flex justify-end gap-3">
+                                        <button
+                                            type="button"
+                                            onClick={onClose}
+                                            className="px-6 py-3 text-gray-600 font-semibold hover:bg-gray-100 rounded-xl transition-colors"
+                                        >
+                                            Cancel
+                                        </button>
                                         <button
                                             type="submit"
                                             disabled={saving}
-                                            className="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold flex items-center gap-2 hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-600/20"
+                                            className="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-bold flex items-center gap-2 hover:shadow-lg hover:shadow-blue-500/30 transform active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
                                             {saving ? (
                                                 <>

@@ -149,161 +149,136 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
                             className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl flex flex-col overflow-hidden max-h-[85vh] pointer-events-auto"
                         >
-                            {/* Fixed Header */}
+                                {/* Header */}
                             <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100 bg-white/50 backdrop-blur-sm z-10 shrink-0">
-                            <div>
-                                <h2 className="text-2xl font-bold text-gray-900">My Profile</h2>
-                                <p className="text-sm text-gray-500 mt-1">Manage your personal information</p>
-                            </div>
-                            <button
-                                onClick={onClose}
-                                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
-                            >
-                                <X className="w-6 h-6" />
-                            </button>
-                        </div>
-
-                        {/* Scrollable Content */}
-                        <div className="flex-1 overflow-y-auto px-8 py-6 space-y-8 custom-scrollbar">
-                           <style jsx global>{`
-                                .custom-scrollbar::-webkit-scrollbar {
-                                    width: 8px;
-                                }
-                                .custom-scrollbar::-webkit-scrollbar-track {
-                                    background: transparent;
-                                }
-                                .custom-scrollbar::-webkit-scrollbar-thumb {
-                                    background-color: #cbd5e1;
-                                    border-radius: 20px;
-                                    border: 3px solid transparent;
-                                    background-clip: content-box;
-                                }
-                                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                                    background-color: #94a3b8;
-                                }
-                            `}</style>
-
-                            {loading ? (
-                                <div className="flex items-center justify-center py-20">
-                                    <div className="flex flex-col items-center gap-4">
-                                        <Loader2 className="w-10 h-10 animate-spin text-blue-600" />
-                                        <p className="text-gray-400 font-medium animate-pulse">Loading profile...</p>
-                                    </div>
+                                <div>
+                                    <h2 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Edit Profile</h2>
+                                    <p className="text-sm text-gray-500 font-medium">Update your public information</p>
                                 </div>
-                            ) : (
-                                <form onSubmit={handleSubmit} className="space-y-8">
-                                    {/* Avatar Section */}
-                                    <div className="flex flex-col sm:flex-row items-center gap-6 pb-2">
-                                        <div className="relative group">
-                                            <div className="w-28 h-28 rounded-full bg-gray-50 ring-4 ring-white shadow-xl overflow-hidden flex items-center justify-center">
-                                                {formData.avatar ? (
-                                                    <img src={formData.avatar} alt="Profile" className="w-full h-full object-cover" />
-                                                ) : (
-                                                    <User className="w-10 h-10 text-gray-300" />
-                                                )}
+                                <button
+                                    onClick={onClose}
+                                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all duration-300"
+                                >
+                                    <X className="w-6 h-6" />
+                                </button>
+                            </div>
+
+                            {/* Scrollable Content */}
+                            <div className="flex-1 overflow-y-auto custom-scrollbar relative">
+                               {/* Decorative Banner */}
+                               <div className="h-32 bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 w-full relative overflow-hidden">
+                                   <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+                                   <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
+                                   <div className="absolute top-10 left-10 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
+                               </div>
+
+                               <div className="px-8 pb-8">
+                                   <style jsx global>{`
+                                        .custom-scrollbar::-webkit-scrollbar {
+                                            width: 6px;
+                                        }
+                                        .custom-scrollbar::-webkit-scrollbar-track {
+                                            background: transparent;
+                                        }
+                                        .custom-scrollbar::-webkit-scrollbar-thumb {
+                                            background-color: #cbd5e1;
+                                            border-radius: 20px;
+                                        }
+                                        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                                            background-color: #94a3b8;
+                                        }
+                                    `}</style>
+        
+                                    {loading ? (
+                                        <div className="flex items-center justify-center py-20">
+                                            <Loader2 className="w-10 h-10 animate-spin text-blue-600" />
+                                        </div>
+                                    ) : (
+                                        <form onSubmit={handleSubmit} className="space-y-8 -mt-12 relative z-10">
+                                            {/* Avatar Section */}
+                                            <div className="flex flex-col sm:flex-row items-end sm:items-end gap-6">
+                                                <div className="relative group">
+                                                    <div className="w-32 h-32 rounded-full bg-white p-1 shadow-2xl ring-1 ring-gray-100">
+                                                        <div className="w-full h-full rounded-full overflow-hidden bg-gray-50 relative">
+                                                            {formData.avatar ? (
+                                                                <img src={formData.avatar} alt="Profile" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                                                            ) : (
+                                                                <div className="w-full h-full flex items-center justify-center text-gray-300 bg-gray-50">
+                                                                    <User className="w-12 h-12" />
+                                                                </div>
+                                                            )}
+                                                            <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+                                                                <Camera className="w-8 h-8 text-white drop-shadow-lg" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <label className="absolute bottom-1 right-1 p-3 bg-blue-600 text-white rounded-full cursor-pointer hover:bg-blue-500 hover:scale-110 transition-all shadow-lg shadow-blue-500/30 border-2 border-white">
+                                                        <Camera className="w-4 h-4" />
+                                                        <input 
+                                                            type="file" 
+                                                            accept="image/*" 
+                                                            className="hidden" 
+                                                            onChange={handleImageUpload}
+                                                        />
+                                                    </label>
+                                                </div>
                                                 
-                                                {/* Overlay on hover */}
-                                                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                    <Camera className="w-8 h-8 text-white drop-shadow-md" />
+                                                <div className="pb-2 text-center sm:text-left">
+                                                    <div className="flex items-center gap-3 mb-1">
+                                                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm border ${
+                                                            formData.role === 'lawyer' ? 'bg-indigo-50 text-indigo-700 border-indigo-100' : 
+                                                            formData.role === 'admin' ? 'bg-purple-50 text-purple-700 border-purple-100' : 'bg-emerald-50 text-emerald-700 border-emerald-100'
+                                                        }`}>
+                                                            {formData.role} Account
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-gray-500 text-sm font-medium">
+                                                        Click the camera icon to update your photo.
+                                                    </p>
                                                 </div>
                                             </div>
-                                            
-                                            <label className="absolute bottom-0 right-0 p-2.5 bg-blue-600 text-white rounded-full cursor-pointer hover:bg-blue-700 hover:scale-110 transition-all shadow-lg shadow-blue-500/30">
-                                                <Camera className="w-4 h-4" />
-                                                <input 
-                                                    type="file" 
-                                                    accept="image/*" 
-                                                    className="hidden" 
-                                                    onChange={handleImageUpload}
-                                                />
-                                            </label>
-                                        </div>
-                                        <div className="text-center sm:text-left space-y-2">
-                                            <div>
-                                                <h3 className="text-lg font-bold text-gray-900">Profile Photo</h3>
-                                                <div className="flex items-center justify-center sm:justify-start gap-2">
-                                                    <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider ${
-                                                        formData.role === 'lawyer' ? 'bg-indigo-100 text-indigo-700' : 
-                                                        formData.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-green-100 text-green-700'
-                                                    }`}>
-                                                        {formData.role}
-                                                    </span>
+        
+                                            {/* Form Fields */}
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
+                                                {[
+                                                    { label: 'Full Name', icon: User, value: formData.name, key: 'name', type: 'text', required: true, placeholder: 'e.g. John Doe' },
+                                                    { label: 'Email Address', icon: Mail, value: formData.email, key: 'email', type: 'email', disabled: true, placeholder: '' },
+                                                    { label: 'Phone Number', icon: Phone, value: formData.phone, key: 'phone', type: 'tel', placeholder: '+1 (555) 000-0000' },
+                                                    { label: 'Organization', icon: Building, value: formData.company, key: 'company', type: 'text', placeholder: 'Company Name' },
+                                                ].map((field) => (
+                                                    <div key={field.key} className="space-y-2 group">
+                                                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2 group-focus-within:text-blue-600 transition-colors">
+                                                            <field.icon className="w-4 h-4" /> {field.label}
+                                                        </label>
+                                                        <input 
+                                                            type={field.type}
+                                                            required={field.required}
+                                                            disabled={field.disabled}
+                                                            value={field.value as string}
+                                                            onChange={e => field.disabled ? null : setFormData({...formData, [field.key]: e.target.value})}
+                                                            className={`w-full px-4 py-3.5 rounded-xl border transition-all duration-300 outline-none font-medium ${
+                                                                field.disabled 
+                                                                    ? 'bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed' 
+                                                                    : 'bg-white border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 hover:border-blue-300'
+                                                            }`}
+                                                            placeholder={field.placeholder}
+                                                        />
+                                                    </div>
+                                                ))}
+        
+                                                <div className="space-y-2 md:col-span-2 group">
+                                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2 group-focus-within:text-blue-600 transition-colors">
+                                                        <MapPin className="w-4 h-4" /> Address
+                                                    </label>
+                                                    <textarea 
+                                                        value={formData.address}
+                                                        onChange={e => setFormData({...formData, address: e.target.value})}
+                                                        className="w-full px-4 py-3.5 rounded-xl border border-gray-200 text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 hover:border-blue-300 transition-all duration-300 outline-none font-medium resize-none min-h-[100px]"
+                                                        placeholder="Enter your full street address..."
+                                                    />
                                                 </div>
                                             </div>
-                                            <p className="text-sm text-gray-500 max-w-xs leading-relaxed">
-                                                Upload a professional photo to build trust.
-                                                <br /><span className="text-xs text-gray-400">Supported: JPG, PNG • Max 5MB</span>
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    {/* Form Fields - Grid */}
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                                                <User className="w-4 h-4 text-blue-500" /> Full Name
-                                            </label>
-                                            <input 
-                                                type="text" 
-                                                required
-                                                value={formData.name}
-                                                onChange={e => setFormData({...formData, name: e.target.value})}
-                                                className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
-                                                placeholder="e.g. John Doe"
-                                            />
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                                                <Mail className="w-4 h-4 text-blue-500" /> Email Address
-                                            </label>
-                                            <input 
-                                                type="email" 
-                                                disabled
-                                                value={formData.email}
-                                                className="w-full px-4 py-3 bg-gray-100/50 border-0 rounded-xl text-gray-500 cursor-not-allowed font-medium"
-                                            />
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                                                <Phone className="w-4 h-4 text-blue-500" /> Phone Number
-                                            </label>
-                                            <input 
-                                                type="tel" 
-                                                value={formData.phone}
-                                                onChange={e => setFormData({...formData, phone: e.target.value})}
-                                                className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
-                                                placeholder="+1 (555) 000-0000"
-                                            />
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                                                <Building className="w-4 h-4 text-blue-500" /> Organization
-                                            </label>
-                                            <input 
-                                                type="text" 
-                                                value={formData.company}
-                                                onChange={e => setFormData({...formData, company: e.target.value})}
-                                                className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
-                                                placeholder="Company Name (Optional)"
-                                            />
-                                        </div>
-
-                                        <div className="space-y-2 md:col-span-2">
-                                            <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                                                <MapPin className="w-4 h-4 text-blue-500" /> Address
-                                            </label>
-                                            <textarea 
-                                                value={formData.address}
-                                                onChange={e => setFormData({...formData, address: e.target.value})}
-                                                className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium resize-none"
-                                                placeholder="Full street address..."
-                                                rows={3}
-                                            />
-                                        </div>
-                                    </div>
                                     
                                     {/* Action Buttons - Sticky Bottom (conceptually, though keeping in flow for now due to form submit) */}
                                     <div className="pt-4 flex justify-end gap-3">
@@ -332,6 +307,7 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                                     </div>
                                 </form>
                             )}
+                        </div>
                         </div>
                     </motion.div>
                     </div>

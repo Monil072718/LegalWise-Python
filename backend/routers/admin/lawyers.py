@@ -6,26 +6,31 @@ from routers.common.auth import get_current_admin
 
 router = APIRouter(
     prefix="/lawyers",
-    tags=["lawyers"],
-    dependencies=[Depends(get_current_admin)]
+    tags=["lawyers"]
+    # Removed global dependency on get_current_admin to allow self-access
 )
 
 import uuid
+from routers.common.auth import get_current_user
 
 @router.get("/", response_model=List[schemas.Lawyer])
-def read_lawyers(skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db)):
+def read_lawyers(skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db), current_user = Depends(get_current_admin)):
     lawyers = db.query(models.Lawyer).offset(skip).limit(limit).all()
     return lawyers
 
 @router.get("/{lawyer_id}", response_model=schemas.Lawyer)
-def read_lawyer(lawyer_id: str, db: Session = Depends(database.get_db)):
+def read_lawyer(lawyer_id: str, db: Session = Depends(database.get_db), current_user = Depends(get_current_user)):
+    # Permission check: Admin or Self
+    if current_user.role != "admin" and current_user.id != lawyer_id:
+        raise HTTPException(status_code=403, detail="Not authorized to view this profile")
+
     db_lawyer = db.query(models.Lawyer).filter(models.Lawyer.id == lawyer_id).first()
     if db_lawyer is None:
         raise HTTPException(status_code=404, detail="Lawyer not found")
     return db_lawyer
 
 @router.post("/", response_model=schemas.Lawyer)
-def create_lawyer(lawyer: schemas.LawyerCreate, db: Session = Depends(database.get_db)):
+def create_lawyer(lawyer: schemas.LawyerCreate, db: Session = Depends(database.get_db), current_user = Depends(get_current_admin)):
     # Check if lawyer with same email already exists
     existing_lawyer = db.query(models.Lawyer).filter(models.Lawyer.email == lawyer.email).first()
     if existing_lawyer:
@@ -57,7 +62,11 @@ def create_lawyer(lawyer: schemas.LawyerCreate, db: Session = Depends(database.g
         raise HTTPException(status_code=500, detail=f"Failed to create lawyer: {str(e)}")
 
 @router.put("/{lawyer_id}", response_model=schemas.Lawyer)
-def update_lawyer(lawyer_id: str, lawyer: schemas.LawyerUpdate, db: Session = Depends(database.get_db)):
+def update_lawyer(lawyer_id: str, lawyer: schemas.LawyerUpdate, db: Session = Depends(database.get_db), current_user = Depends(get_current_user)):
+    # Permission check: Admin or Self
+    if current_user.role != "admin" and current_user.id != lawyer_id:
+        raise HTTPException(status_code=403, detail="Not authorized to update this profile")
+
     db_lawyer = db.query(models.Lawyer).filter(models.Lawyer.id == lawyer_id).first()
     if db_lawyer is None:
         raise HTTPException(status_code=404, detail="Lawyer not found")

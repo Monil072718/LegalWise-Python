@@ -11,6 +11,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { api } from '../../../services/api';
+import { Appointment } from '../../../types';
 
 export default function LawyerDashboard() {
   const [stats, setStats] = useState({
@@ -19,28 +20,48 @@ export default function LawyerDashboard() {
     upcomingAppointments: 0,
     unreadMessages: 0
   });
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Use API for stats
+  // Use API for stats and appointments
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchData = async () => {
         try {
-            const data = await api.getLawyerStats();
-            setStats(data);
+            const [statsData, appointmentsData] = await Promise.all([
+                api.getLawyerStats(),
+                api.getAppointments()
+            ]);
+            setStats(statsData);
+            setAppointments(appointmentsData);
         } catch (error) {
-            console.error("Failed to fetch dashboard stats", error);
+            console.error("Failed to fetch dashboard data", error);
         } finally {
             setLoading(false);
         }
     };
     
-    fetchStats();
+    fetchData();
   }, []);
 
-  const upcomingAppointments = [
-    { id: 1, client: 'Alice Johnson', type: 'Consultation', time: '10:00 AM', date: 'Today' },
-    { id: 2, client: 'Robert Smith', type: 'Case Hearing', time: '2:00 PM', date: 'Tomorrow' },
-  ];
+  const todayStr = new Date().toISOString().split('T')[0];
+
+  const upcomingAppointments = appointments
+    .filter(appt => appt.status === 'approved' && appt.date >= todayStr)
+    .sort((a, b) => new Date(a.date + 'T' + a.time).getTime() - new Date(b.date + 'T' + b.time).getTime())
+    .slice(0, 5); // Limit to 5
+
+  const pendingRequests = appointments
+    .filter(appt => appt.status === 'pending')
+    .sort((a, b) => new Date(a.date + 'T' + a.time).getTime() - new Date(b.date + 'T' + b.time).getTime())
+    .slice(0, 5);
+
+  if (loading) {
+      return (
+        <div className="flex items-center justify-center h-full min-h-[400px]">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+      );
+  }
 
   return (
     <div className="p-6 space-y-6">
@@ -133,38 +154,70 @@ export default function LawyerDashboard() {
           </div>
           <div className="p-6">
             <div className="space-y-4">
-              {upcomingAppointments.map((appt) => (
-                <div key={appt.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold">
-                      {appt.client.charAt(0)}
+              {upcomingAppointments.length > 0 ? (
+                upcomingAppointments.map((appt) => (
+                    <div key={appt.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div className="flex items-center space-x-4">
+                        <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold">
+                        {appt.clientName ? appt.clientName.charAt(0) : '?'}
+                        </div>
+                        <div>
+                        <p className="font-medium text-gray-900">{appt.clientName || 'Unknown Client'}</p>
+                        <p className="text-sm text-gray-500 capitalize">{appt.type}</p>
+                        </div>
                     </div>
-                    <div>
-                      <p className="font-medium text-gray-900">{appt.client}</p>
-                      <p className="text-sm text-gray-500">{appt.type}</p>
+                    <div className="text-right">
+                        <div className="flex items-center text-sm text-gray-900 font-medium">
+                        <Clock className="w-4 h-4 mr-1 text-gray-400" />
+                        {appt.time}
+                        </div>
+                        <p className="text-xs text-gray-500">{appt.date}</p>
                     </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="flex items-center text-sm text-gray-900 font-medium">
-                      <Clock className="w-4 h-4 mr-1 text-gray-400" />
-                      {appt.time}
                     </div>
-                    <p className="text-xs text-gray-500">{appt.date}</p>
-                  </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                  <p className="text-center text-gray-500 py-4">No upcoming appointments.</p>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Recent Requests or Activity */}
+        {/* Pending Requests */}
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
            <div className="p-6 border-b border-gray-200 flex justify-between items-center">
             <h2 className="text-lg font-bold text-gray-900">Pending Requests</h2>
             <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">View all</button>
           </div>
-          <div className="p-6 text-center text-gray-500 py-12">
-            No pending requests at the moment.
+          <div className="p-6">
+             <div className="space-y-4">
+                 {pendingRequests.length > 0 ? (
+                     pendingRequests.map((appt) => (
+                        <div key={appt.id} className="flex items-center justify-between p-4 bg-yellow-50 rounded-lg border border-yellow-100">
+                        <div className="flex items-center space-x-4">
+                            <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-600 font-bold">
+                            {appt.clientName ? appt.clientName.charAt(0) : '?'}
+                            </div>
+                            <div>
+                            <p className="font-medium text-gray-900">{appt.clientName || 'Unknown Client'}</p>
+                            <p className="text-sm text-gray-500 capitalize">{appt.type}</p>
+                            </div>
+                        </div>
+                        <div className="text-right">
+                             <div className="flex items-center text-sm text-gray-900 font-medium">
+                                <Clock className="w-4 h-4 mr-1 text-gray-400" />
+                                {appt.time}
+                            </div>
+                             <p className="text-xs text-gray-500">{appt.date}</p>
+                            <span className="text-xs font-semibold text-yellow-600 bg-yellow-100 px-2 py-0.5 rounded-full mt-1 inline-block">Pending</span>
+                        </div>
+                        </div>
+                     ))
+                 ) : (
+                    <div className="text-center text-gray-500 py-12">
+                        No pending requests at the moment.
+                    </div>
+                 )}
+             </div>
           </div>
         </div>
       </div>

@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from 'react';
 import { Star, Quote } from 'lucide-react';
 import ScrollAnimation from '../ui/ScrollAnimation';

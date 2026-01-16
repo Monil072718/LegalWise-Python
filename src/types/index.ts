@@ -37,6 +37,8 @@ export interface Client extends User {
   address?: string;
   company?: string;
   notes?: string;
+  subscription_plan?: string;
+  is_premium?: boolean;
 }
 
 export interface Case {

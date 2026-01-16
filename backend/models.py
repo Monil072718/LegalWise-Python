@@ -21,6 +21,8 @@ class Client(Base):
     company = Column(String, nullable=True)
     notes = Column(String, nullable=True)
     hashed_password = Column(String)
+    subscription_plan = Column(String, default="free") 
+    is_premium = Column(Boolean, default=False)
 
 class Admin(Base):
     __tablename__ = "admins"

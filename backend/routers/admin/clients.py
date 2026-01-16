@@ -4,13 +4,12 @@ from typing import List
 import models, schemas, database
 from routers.common.auth import get_password_hash, get_current_admin, get_current_user
 from datetime import datetime
+import uuid
 
 router = APIRouter(
     prefix="/clients",
     tags=["clients"]
 )
-
-import uuid
 
 @router.get("/", response_model=List[schemas.Client])
 def read_clients(skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db), current_user = Depends(get_current_user)):
@@ -92,6 +91,8 @@ def register_client(client: schemas.ClientRegistration, db: Session = Depends(da
         hashed_password=hashed_password,
         role="client",
         status="active",
+        subscription_plan="free",
+        is_premium=False,
         createdAt=datetime.now().strftime("%Y-%m-%d"),
         id=str(uuid.uuid4())
     )

@@ -1,6 +1,6 @@
 "use client";
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Scale, Menu, X, ChevronRight, User, LayoutDashboard, LogOut, ChevronDown } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -17,19 +17,24 @@ function CartBadge() {
   );
 }
 
+import { jwtDecode } from 'jwt-decode';
+import { api } from '../../services/api';
+
 export default function PublicHeader() {
 
   const pathname = usePathname();
+  const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
+  const [hasPlan, setHasPlan] = useState(false); // To track subscription status
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   useEffect(() => {
-    const checkAuth = () => {
+    const checkAuth = async () => {
       const adminToken = sessionStorage.getItem('adminToken') || localStorage.getItem('adminToken');
       const lawyerToken = sessionStorage.getItem('lawyerToken') || localStorage.getItem('lawyerToken');
       const userToken = sessionStorage.getItem('userToken') || localStorage.getItem('userToken');
@@ -41,15 +46,33 @@ export default function PublicHeader() {
       if (adminToken) {
         setIsLoggedIn(true);
         setUserRole('admin');
+        setHasPlan(true); // Admins always have access
       } else if (lawyerToken) {
         setIsLoggedIn(true);
         setUserRole('lawyer');
+        setHasPlan(true); // Lawyers always have access
       } else if (userToken) {
         setIsLoggedIn(true);
         setUserRole('user');
+        
+        // Fetch profile to check plan
+        try {
+            const decoded: any = jwtDecode(userToken);
+            if (decoded.id) {
+                const profile = await api.getClient(decoded.id);
+                // Check if user has a valid paid plan
+                const isPaidPlan = (profile.subscription_plan && profile.subscription_plan !== 'free') || profile.is_premium;
+                setHasPlan(!!isPaidPlan);
+            }
+        } catch (error) {
+            console.error("Failed to check subscription status", error);
+            setHasPlan(false);
+        }
+
       } else {
         setIsLoggedIn(false);
         setUserRole(null);
+        setHasPlan(false);
       }
     };
 
@@ -70,7 +93,7 @@ export default function PublicHeader() {
     setIsLoggedIn(false);
     setUserRole(null);
     setUserName(null);
-    window.location.href = '/';
+    router.push('/');
   };
 
   const getDashboardLink = () => {
@@ -190,13 +213,15 @@ export default function PublicHeader() {
                                     <p className="text-sm font-bold text-gray-900 truncate">{userName || (userRole === 'admin' ? 'Administrator' : userRole === 'lawyer' ? 'Professional' : 'Client')}</p>
                                 </div>
 
-                                <Link 
-                                    href={getDashboardLink()}
-                                    className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
-                                >
-                                    <LayoutDashboard className="w-4 h-4" />
-                                    Dashboard
-                                </Link>
+                                {hasPlan && (
+                                    <Link 
+                                        href={getDashboardLink()}
+                                        className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                                    >
+                                        <LayoutDashboard className="w-4 h-4" />
+                                        Dashboard
+                                    </Link>
+                                )}
                                 
                                 <button
                                     onClick={() => {
@@ -284,13 +309,15 @@ export default function PublicHeader() {
             <div className="h-px bg-gray-100 my-2"></div>
             {isLoggedIn ? (
                 <>
-                    <Link 
-                        href={getDashboardLink()}
-                        className="p-4 rounded-xl text-base font-medium text-gray-700 hover:bg-gray-50 text-center flex items-center justify-center gap-2"
-                        onClick={() => setMobileMenuOpen(false)}
-                    >
-                        <LayoutDashboard className="w-5 h-5" /> Dashboard
-                    </Link>
+                    {hasPlan && (
+                        <Link 
+                            href={getDashboardLink()}
+                            className="p-4 rounded-xl text-base font-medium text-gray-700 hover:bg-gray-50 text-center flex items-center justify-center gap-2"
+                            onClick={() => setMobileMenuOpen(false)}
+                        >
+                            <LayoutDashboard className="w-5 h-5" /> Dashboard
+                        </Link>
+                    )}
                     <button 
                         onClick={() => {
                             setMobileMenuOpen(false);

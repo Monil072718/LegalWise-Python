@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import { Check, Star } from 'lucide-react';
 import ScrollAnimation from '../ui/ScrollAnimation';
 
@@ -61,12 +62,17 @@ const plans = [
 
 export default function SubscriptionSection() {
   const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const userToken = sessionStorage.getItem('userToken') || localStorage.getItem('userToken');
+    setIsLoggedIn(!!userToken);
+  }, []);
+
+  const visiblePlans = isLoggedIn ? plans.filter(p => p.name !== 'Free') : plans;
 
   const handlePlanClick = (planName: string) => {
-    // Check if user is logged in
-    const userToken = typeof window !== 'undefined' ? sessionStorage.getItem('userToken') : null;
-
-    if (userToken) {
+    if (isLoggedIn) {
         // Find plan details
         const selectedPlan = plans.find(p => p.name === planName);
         if (selectedPlan) {
@@ -96,17 +102,17 @@ export default function SubscriptionSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         <ScrollAnimation direction="up" className="text-center max-w-3xl mx-auto mb-20">
-          <h2 className="text-sm font-bold text-blue-600 uppercase tracking-widest mb-3">Pricing Plans</h2>
+          <h2 className="text-sm font-bold text-blue-600 uppercase tracking-widest mb-3">{isLoggedIn ? 'Upgrade Your Plan' : 'Pricing Plans'}</h2>
           <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 tracking-tight">
-            Simple, Transparent Pricing
+            {isLoggedIn ? 'Choose a Premium Plan' : 'Simple, Transparent Pricing'}
           </h2>
           <p className="text-xl text-gray-500 leading-relaxed">
-            Choose the plan that fits your legal needs. No hidden fees. Cancel anytime.
+            {isLoggedIn ? 'Unlock full access to LegalWise features.' : 'Choose the plan that fits your legal needs. No hidden fees. Cancel anytime.'}
           </p>
         </ScrollAnimation>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 items-center">
-          {plans.map((plan, idx) => (
+        <div className={`grid grid-cols-1 ${isLoggedIn ? 'md:grid-cols-2 max-w-4xl mx-auto' : 'md:grid-cols-3'} gap-8 lg:gap-12 items-center`}>
+          {visiblePlans.map((plan, idx) => (
             <ScrollAnimation 
                 key={idx} 
                 delay={idx * 0.1}

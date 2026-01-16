@@ -64,7 +64,26 @@ export default function UniversalLogin() {
         router.push('/lawyer/dashboard');
       } else if (role === 'client') {
         sessionStorage.setItem('userToken', token);
-        router.push('/user/dashboard');
+        
+        // Fetch profile to check plan and redirect appropriately
+        try {
+            if (response.user && response.user.id) {
+                const profile = await api.getClient(response.user.id);
+                const isPaidPlan = (profile.subscription_plan && profile.subscription_plan !== 'free') || profile.is_premium;
+                
+                if (isPaidPlan) {
+                     router.push('/user/dashboard');
+                } else {
+                     // Free users go to homepage or profile to avoid dashboard restriction loop
+                     router.push('/'); 
+                }
+            } else {
+                 router.push('/user/dashboard');
+            }
+        } catch (e) {
+            console.error("Failed to fetch profile during login redirect", e);
+            router.push('/user/dashboard');
+        }
       } else {
         setError('Unknown user role: ' + role);
       }

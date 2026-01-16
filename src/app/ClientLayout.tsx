@@ -65,8 +65,10 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                      const profile = await api.getClient(decoded.id);
                      
                      // Enforce Subscription
-                     // Allow access to checkout page to upgrade
-                     if (pathname !== '/user/checkout' && (!profile.subscription_plan || profile.subscription_plan === 'free') && !profile.is_premium) {
+                     // Restrict access to dashboard for free users
+                     const isRestrictedRoute = pathname === '/user/dashboard' || pathname.startsWith('/user/dashboard/');
+                     
+                     if (isRestrictedRoute && (!profile.subscription_plan || profile.subscription_plan === 'free') && !profile.is_premium) {
                         router.push('/pricing');
                         return;
                      }

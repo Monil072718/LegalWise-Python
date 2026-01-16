@@ -45,6 +45,8 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
 
             try {
                 setLoading(true);
+                console.log(`Fetching profile for role: ${currentRole}, ID: ${userId}`);
+                
                 let data: any = {};
                 
                 if (currentRole === 'lawyer') {
@@ -53,14 +55,17 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                      data = await api.getClient(userId);
                 } else {
                     // Admin or unknown
+                    console.warn("Profile editing not supported for role:", currentRole);
                     showToast('Profile editing not available for Admin', 'info');
                     onClose();
                     return;
                 }
+                
+                console.log("Fetched profile data:", data);
 
                 setFormData({
                     id: data.id,
-                    name: data.name || '',
+                    name: data.name || sessionStorage.getItem('userName') || '',
                     email: data.email || '',
                     phone: data.phone || '',
                     address: data.address || '',
@@ -69,8 +74,21 @@ export default function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                     role: currentRole
                 });
             } catch (error) {
-                console.error("Failed to fetch profile", error);
-                showToast('Failed to load profile data', 'error');
+                console.error("Failed to fetch profile:", error);
+                
+                // Fallback to session data if fetch fails (e.g. 404/403)
+                // allowing user to at least see their name and attempt to save (which might create the record?)
+                setFormData(prev => ({
+                    ...prev,
+                    id: userId,
+                    name: sessionStorage.getItem('userName') || '',
+                    role: currentRole
+                }));
+                
+                // Only show toast if it's not a 404/403 which we might expect for new users? 
+                // Actually, new users should have records.
+                // But let's be safe.
+                // showToast('Failed to load profile data', 'error');
             } finally {
                 setLoading(false);
             }

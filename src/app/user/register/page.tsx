@@ -7,6 +7,7 @@ import { useToast } from '../../../context/ToastContext';
 import { api } from '../../../services/api';
 import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 
+
 export default function UserRegister() {
   const router = useRouter();
   const { showToast } = useToast();
@@ -160,6 +161,7 @@ export default function UserRegister() {
             </p>
           </div>
       </div>
+
     </div>
   );
 }

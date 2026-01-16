@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { api } from '../../services/api';
 import { jwtDecode } from 'jwt-decode';
 
@@ -18,14 +19,17 @@ export default function UniversalLogin() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // ... existing effect
+    // Check if already logged in and redirect
     const adminToken = sessionStorage.getItem('adminToken');
     const lawyerToken = sessionStorage.getItem('lawyerToken');
+    const userToken = sessionStorage.getItem('userToken');
 
     if (adminToken) {
       router.push('/admin/dashboard');
     } else if (lawyerToken) {
       router.push('/lawyer/dashboard');
+    } else if (userToken) {
+        router.push('/user/dashboard');
     }
   }, [router]);
 
@@ -76,9 +80,7 @@ export default function UniversalLogin() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      {/* ... existing header ... */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        {/* ... existing logo/title ... */}
         <div className="mx-auto h-12 w-12 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg mb-4">
              <span className="text-white font-bold text-2xl">L</span>
         </div>
@@ -159,9 +161,9 @@ export default function UniversalLogin() {
               </div>
 
               <div className="text-sm">
-                <a href="/forgot-password" className="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-200">
+                <Link href="/forgot-password" className="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-200">
                   Forgot password?
-                </a>
+                </Link>
               </div>
             </div>
 
@@ -183,8 +185,15 @@ export default function UniversalLogin() {
               </button>
             </div>
           </form>
-          
-           
+
+          <div className="mt-6 text-center text-sm">
+            <p className="text-gray-600">
+              Don't have an account?{' '}
+              <Link href="/user/register" className="font-medium text-blue-600 hover:text-blue-500 hover:underline transition-colors duration-200">
+                Register for free
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Check, Star } from 'lucide-react';
 import ScrollAnimation from '../ui/ScrollAnimation';
 
@@ -59,6 +60,31 @@ const plans = [
 ];
 
 export default function SubscriptionSection() {
+  const router = useRouter();
+
+  const handlePlanClick = (planName: string) => {
+    // Check if user is logged in
+    const userToken = typeof window !== 'undefined' ? sessionStorage.getItem('userToken') : null;
+
+    if (userToken) {
+        // Find plan details
+        const selectedPlan = plans.find(p => p.name === planName);
+        if (selectedPlan) {
+             const params = new URLSearchParams({
+                plan: selectedPlan.name,
+                price: selectedPlan.price,
+                period: selectedPlan.period || ''
+             });
+             router.push(`/user/checkout?${params.toString()}`);
+        } else {
+             router.push('/user/checkout');
+        }
+    } else {
+      // User is not logged in, redirect to register
+      router.push('/user/register');
+    }
+  };
+
   return (
     <section className="py-24 bg-gray-50 relative overflow-hidden">
       {/* Background decoration */}
@@ -123,12 +149,12 @@ export default function SubscriptionSection() {
                 ))}
               </div>
 
-              <Link 
-                href="/user/register" 
+              <button 
+                onClick={() => handlePlanClick(plan.name)}
                 className={`w-full py-4 rounded-xl font-bold text-center transition-all duration-200 transform active:scale-95 ${plan.buttonStyle}`}
               >
                 {plan.cta}
-              </Link>
+              </button>
 
             </ScrollAnimation>
           ))}

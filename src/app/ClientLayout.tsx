@@ -65,7 +65,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                      const profile = await api.getClient(decoded.id);
                      
                      // Enforce Subscription
-                     if ((!profile.subscription_plan || profile.subscription_plan === 'free') && !profile.is_premium) {
+                     // Allow access to checkout page to upgrade
+                     if (pathname !== '/user/checkout' && (!profile.subscription_plan || profile.subscription_plan === 'free') && !profile.is_premium) {
                         router.push('/pricing');
                         return;
                      }
@@ -174,13 +175,16 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const publicRoutes = ['/', '/find-lawyer', '/contact', '/books', '/articles', '/ai-chat', '/lawyers', '/user/cart', '/user/orders', '/pricing'];
   const isPublicRoute = publicRoutes.some(route => pathname === route || pathname.startsWith(route + '/'));
 
+  // Check for checkout page
+  const isCheckoutPage = pathname === '/user/checkout';
+
   if (isPublicRoute) {
       return <>{children}</>;
   }
 
   return (
     <div className="flex h-screen bg-gray-50 relative">
-      {!isAuthPage && (isLawyerRoute ? (
+      {!isAuthPage && !isCheckoutPage && (isLawyerRoute ? (
         <LawyerSidebar isCollapsed={sidebarCollapsed} />
       ) : isUserRoute ? (
         <UserSidebar isCollapsed={sidebarCollapsed} />

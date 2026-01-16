@@ -115,8 +115,8 @@ export default function LawyerClients() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+        <div className="overflow-x-auto lg:overflow-visible">
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>

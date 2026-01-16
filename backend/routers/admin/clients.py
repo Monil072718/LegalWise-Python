@@ -13,14 +13,18 @@ router = APIRouter(
 import uuid
 
 @router.get("/", response_model=List[schemas.Client])
-def read_clients(skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db), current_user = Depends(get_current_admin)):
+def read_clients(skip: int = 0, limit: int = 100, db: Session = Depends(database.get_db), current_user = Depends(get_current_user)):
+    # Permission check: Admin or Lawyer
+    if current_user.role not in ["admin", "lawyer"]:
+        raise HTTPException(status_code=403, detail="Not authorized to view clients")
+
     clients = db.query(models.Client).offset(skip).limit(limit).all()
     return clients
 
 @router.get("/{client_id}", response_model=schemas.Client)
 def read_client(client_id: str, db: Session = Depends(database.get_db), current_user = Depends(get_current_user)):
-    # Permission check
-    if current_user.role != "admin" and current_user.id != client_id:
+    # Permission check: Admin, Lawyer, or Self
+    if current_user.role not in ["admin", "lawyer"] and current_user.id != client_id:
         raise HTTPException(status_code=403, detail="Not authorized to view this profile")
 
     db_client = db.query(models.Client).filter(models.Client.id == client_id).first()

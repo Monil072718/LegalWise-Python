@@ -5,16 +5,7 @@ from sqlalchemy.orm import Session
 import os
 
 from routers.admin import lawyers, clients, cases, dashboard, books, articles, payments, analytics, categories
-from routers.common import auth, appointments, upload, chat, ai
-
-# ... (omitted)
-
-app.include_router(chat.router)
-app.include_router(ai.router)
-app.include_router(appointments.router)
-from routers.client import cases as client_cases, payments as client_payments, books as client_books, articles as client_articles
-from routers.client import orders, dashboard as client_dashboard
-from routers.lawyer import dashboard as lawyer_dashboard
+from routers.common import auth, appointments, upload, chat, ai, reviews
 
 from websocket_manager import manager
 import models
@@ -68,6 +59,7 @@ app.include_router(auth.router)
 app.include_router(upload.router)
 app.include_router(chat.router)
 app.include_router(appointments.router)
+app.include_router(reviews.router)
 
 # Admin Routers
 app.include_router(lawyers.router)
@@ -86,6 +78,8 @@ app.include_router(public_articles.router)
 app.include_router(public_lawyers.router)
 
 # Client Routers - Explicit imports to avoid confusion
+from routers.client import cases as client_cases, payments as client_payments, books as client_books, articles as client_articles
+from routers.client import orders, dashboard as client_dashboard
 app.include_router(client_cases.router, prefix="/client")
 app.include_router(client_payments.router, prefix="/client")
 app.include_router(client_books.router, prefix="/client")
@@ -94,6 +88,7 @@ app.include_router(orders.router, prefix="/client")
 app.include_router(client_dashboard.router, prefix="/client")
 
 # Lawyer Routers
+from routers.lawyer import dashboard as lawyer_dashboard
 app.include_router(lawyer_dashboard.router, prefix="/lawyer")
 
 @app.websocket("/ws/chat")

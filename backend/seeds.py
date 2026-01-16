@@ -53,6 +53,52 @@ def seed_data():
             verified=False,
             createdAt='2024-12-01',
             documents=[]
+        ),
+        # New Lawyers from User Screenshot
+        models.Lawyer(
+            id='kunal_patel',
+            name='Adv. Kunal Patel',
+            email='kunal.patel@advocates.in',
+            role='lawyer',
+            status='active',
+            specialization=['Real Estate Law', 'Property Disputes'],
+            experience=5,
+            rating=0,
+            casesHandled=0,
+            availability='offline',
+            verified=True,
+            createdAt='2024-01-01',
+            documents=[]
+        ),
+        models.Lawyer(
+            id='rohan_mehta',
+            name='Adv. Rohan Mehta',
+            email='rohan.mehta@lawmail.com',
+            role='lawyer',
+            status='active',
+            specialization=['Criminal Law', 'Civil Law'],
+            experience=8,
+            rating=0,
+            casesHandled=0,
+            availability='online',
+            verified=True,
+            createdAt='2024-01-02',
+            documents=[]
+        ),
+         models.Lawyer(
+            id='neha_sharma',
+            name='Adv. Neha Sharma',
+            email='neha.sharma@legalpro.in',
+            role='lawyer',
+            status='active',
+            specialization=['Family Law', 'Divorce', 'Child Custody'],
+            experience=4,
+            rating=0,
+            casesHandled=0,
+            availability='online',
+            verified=True,
+            createdAt='2024-01-03',
+            documents=[]
         )
     ]
     
@@ -134,6 +180,19 @@ def seed_data():
             priority='low',
             createdAt='2024-10-05',
             documents=[]
+        ),
+        # Case for Kunal
+         models.Case(
+            id='4',
+            title='Property Title Dispute',
+            clientId='1',
+            lawyerId='kunal_patel',
+            status='in-progress',
+            stage='Mediation',
+            priority='high',
+            createdAt='2025-01-10',
+            nextHearing='2025-01-25',
+            documents=[]
         )
     ]
 
@@ -143,6 +202,8 @@ def seed_data():
             id='1',
             clientName='John Smith',
             lawyerName='Sarah Johnson',
+            lawyerId='1',  # Added ID for linking
+            clientId='1',
             date='2024-12-18',
             time='14:00',
             type='consultation',
@@ -153,6 +214,8 @@ def seed_data():
             id='2',
             clientName='Lisa Wang',
             lawyerName='Michael Chen',
+            lawyerId='2',
+            clientId='2',
             date='2024-12-19',
             time='10:30',
             type='hearing',
@@ -162,28 +225,98 @@ def seed_data():
             id='3',
             clientName='David Brown',
             lawyerName='Emily Rodriguez',
+            lawyerId='3',
+            clientId='3',
             date='2024-12-17',
             time='16:00',
             type='meeting',
             status='completed'
+        ),
+        # Appointments for Kunal Patel
+        models.Appointment(
+            id='4',
+            clientName='John Smith',
+            lawyerName='Adv. Kunal Patel',
+            lawyerId='kunal_patel',
+            clientId='1',
+            date='2025-01-25',
+            time='11:00',
+            type='consultation',
+            status='approved',
+            notes='Property dispute discussion'
+        ),
+         models.Appointment(
+            id='5',
+            clientName='Lisa Wang',
+            lawyerName='Adv. Kunal Patel',
+            lawyerId='kunal_patel',
+            clientId='2',
+            date='2025-01-26',
+            time='14:00',
+            type='consultation',
+            status='pending',
+            notes='New inquiry for real estate'
         )
     ]
     
+    # Mock Reviews
+    reviews = [
+        models.Review(
+            id='1',
+            name="Sarah Jenkins",
+            role="Business Owner",
+            content="LegalWise made finding a corporate lawyer incredibly easy. The detailed profiles and client reviews helped me choose the perfect match for my startup.",
+            rating=5,
+            image="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80",
+            createdAt='2023-12-10'
+        ),
+        models.Review(
+            id='2',
+            name="Michael Chen",
+            role="Real Estate Investor",
+            content="I needed urgent advice on a property dispute. The 'Find Lawyer' feature connected me with a local expert within minutes. Highly recommended!",
+            rating=5,
+            image="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80",
+            createdAt='2024-01-05'
+        ),
+        models.Review(
+            id='3',
+            name="Emily Rodriguez",
+            role="Freelancer",
+            content="The legal articles and books section provided me with so much clarity before I even spoke to a lawyer. It's a comprehensive platform for anyone.",
+            rating=4,
+            image="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=150&q=80",
+            createdAt='2024-01-20'
+        )
+    ]
+
     # Clear existing data?
     # db.query(models.Lawyer).delete()
     # db.query(models.Client).delete()
     # db.query(models.Case).delete()
     # db.query(models.Appointment).delete()
 
+    from routers.common.auth import get_password_hash
+    
     # Add new data
     for lawyer in lawyers:
+        # Default password for seeds
+        if not hasattr(lawyer, 'hashed_password') or not lawyer.hashed_password:
+             lawyer.hashed_password = get_password_hash("12345678")
         db.merge(lawyer) # merge allows upsert if id exists
+        
     for client in clients:
+        if not hasattr(client, 'hashed_password') or not client.hashed_password:
+             client.hashed_password = get_password_hash("12345678")
         db.merge(client)
+        
     for case in cases:
         db.merge(case)
     for appointment in appointments:
         db.merge(appointment)
+        
+    for review in reviews:
+        db.merge(review)
         
     db.commit()
     print("Database seeded successfully!")

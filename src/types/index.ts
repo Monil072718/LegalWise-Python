@@ -148,3 +148,13 @@ export interface ChatMessage {
   timestamp: string;
   read: boolean;
 }
+
+export interface Review {
+  id: string;
+  name: string;
+  role: string;
+  content: string;
+  rating: number;
+  image: string;
+  createdAt?: string;
+}

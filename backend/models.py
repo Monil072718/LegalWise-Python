@@ -192,3 +192,14 @@ class Order(Base):
     createdAt = Column(String)
 
 
+
+class Review(Base):
+    __tablename__ = "reviews"
+
+    id = Column(String, primary_key=True, index=True)
+    name = Column(String)
+    role = Column(String)
+    content = Column(String)
+    rating = Column(Integer)
+    image = Column(String, nullable=True)
+    createdAt = Column(String, nullable=True)

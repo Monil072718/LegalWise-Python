@@ -1,4 +1,4 @@
-import { Lawyer, Client, Case, Appointment, Book, Article, Payment, Category } from '../types';
+import { Lawyer, Client, Case, Appointment, Book, Article, Payment, Category, Review } from '../types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -177,8 +177,6 @@ export const api = {
       }).then(handleResponse);
   },
   
-
-
   deleteCaseDocument: (caseId: string, docId: string) => api.delete<void>(`/cases/${caseId}/documents/${docId}`),
   getCaseDocumentUrl: (caseId: string, filename: string) => `${API_BASE_URL}/cases/${caseId}/documents/${filename}`,
 
@@ -210,6 +208,9 @@ export const api = {
   updateArticle: (id: string, data: Partial<Article>) => api.put<Article>(`/articles/${id}`, data),
   deleteArticle: (id: string) => api.delete<void>(`/articles/${id}`),
   scrapeArticle: (url: string) => api.post<{title: string, description: string, image: string}>('/articles/scrape', { url }),
+
+  // Reviews
+  getReviews: () => api.get<Review[]>('/reviews/'),
 
   // Categories
   getCategories: () => api.get<Category[]>('/categories/'),
@@ -291,4 +292,3 @@ export const api = {
         return api.post<{response: string}>('/ai/chat', { messages });
     }
 };
-

@@ -97,8 +97,8 @@ class ClientBase(BaseModel):
     address: Optional[str] = None
     company: Optional[str] = None
     notes: Optional[str] = None
-
-    notes: Optional[str] = None
+    subscription_plan: Optional[str] = "free"
+    is_premium: Optional[bool] = False
 
 class ClientCreate(ClientBase):
     password: str
@@ -127,6 +127,8 @@ class ClientUpdate(BaseModel):
     address: Optional[str] = None
     company: Optional[str] = None
     notes: Optional[str] = None
+    subscription_plan: Optional[str] = None
+    is_premium: Optional[bool] = None
 
 class Client(ClientBase):
     id: str

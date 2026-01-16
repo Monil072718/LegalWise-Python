@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Search, Plus, Eye, Edit, Trash2, User, BookOpen, FileText, DollarSign, X, Phone, MapPin } from 'lucide-react';
+import { Search, Plus, Eye, Edit, Trash2, User, BookOpen, FileText, DollarSign, X, Phone, MapPin, Check } from 'lucide-react';
 import { Client } from '../../types';
 import { api } from '../../services/api';
 import { useToast } from '../../context/ToastContext';
@@ -286,7 +286,13 @@ export default function ClientManagement() {
             <h3 className="text-lg font-semibold text-gray-900">Clients ({filteredClients.length})</h3>
           </div>
           <div className="divide-y divide-gray-200">
-            {filteredClients.map((client: Client) => (
+            {filteredClients.map((client: Client) => {
+              const hasPlan = (client.subscription_plan && client.subscription_plan !== 'free') || client.is_premium;
+                const planName = client.subscription_plan && client.subscription_plan !== 'free' 
+                    ? client.subscription_plan.charAt(0).toUpperCase() + client.subscription_plan.slice(1) 
+                    : (client.is_premium ? 'Premium' : 'Free');
+
+              return (
               <div key={client.id} className="p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
@@ -298,6 +304,15 @@ export default function ClientManagement() {
                     <div>
                       <div className="font-medium text-gray-900">{client.name}</div>
                       <div className="text-sm text-gray-500">{client.email}</div>
+                      <div className="mt-1">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            hasPlan ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'
+                        }`}>
+                            {hasPlan && <Check className="w-3 h-3 mr-1" />}
+                            {planName}
+                        </span>
+                        {hasPlan && <span className="text-xs text-green-600 flex items-center mt-1"><Check className="w-3 h-3 mr-1"/>Dashboard Access</span>}
+                      </div>
                     </div>
                   </div>
                   <div className="flex space-x-1">
@@ -353,7 +368,8 @@ export default function ClientManagement() {
                   </span>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
@@ -363,6 +379,7 @@ export default function ClientManagement() {
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 <th className="text-left px-6 py-4 text-sm font-medium text-gray-900">Client</th>
+                <th className="text-left px-6 py-4 text-sm font-medium text-gray-900">Plan</th>
                 <th className="text-left px-6 py-4 text-sm font-medium text-gray-900">Consultations</th>
                 <th className="text-left px-6 py-4 text-sm font-medium text-gray-900">Books Downloaded</th>
                 <th className="text-left px-6 py-4 text-sm font-medium text-gray-900">Articles Read</th>
@@ -372,7 +389,13 @@ export default function ClientManagement() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {filteredClients.map((client: Client) => (
+              {filteredClients.map((client: Client) => {
+                const hasPlan = (client.subscription_plan && client.subscription_plan !== 'free') || client.is_premium;
+                const planName = client.subscription_plan && client.subscription_plan !== 'free' 
+                    ? client.subscription_plan.charAt(0).toUpperCase() + client.subscription_plan.slice(1) 
+                    : (client.is_premium ? 'Premium' : 'Free');
+                
+                return (
                 <tr key={client.id} className="hover:bg-gray-50 transition-colors duration-200">
                   <td className="px-6 py-4">
                     <div className="flex items-center space-x-3">
@@ -386,6 +409,15 @@ export default function ClientManagement() {
                         <div className="text-sm text-gray-500">{client.email}</div>
                       </div>
                     </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        hasPlan ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'
+                    }`}>
+                        {hasPlan && <Check className="w-3 h-3 mr-1" />}
+                        {planName}
+                    </span>
+                    {hasPlan && <div className="text-xs text-green-600 mt-1 flex items-center"><Check className="w-3 h-3 mr-1"/>Dashboard Access</div>}
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center space-x-2">
@@ -436,7 +468,8 @@ export default function ClientManagement() {
                     </div>
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -599,33 +632,6 @@ export default function ClientManagement() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-3">Recent Activity</h4>
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                      <FileText className="w-5 h-5 text-blue-600" />
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">Consultation Booked</div>
-                        <div className="text-xs text-gray-500">2 days ago</div>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                      <BookOpen className="w-5 h-5 text-green-600" />
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">Downloaded Legal Guide</div>
-                        <div className="text-xs text-gray-500">1 week ago</div>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                      <DollarSign className="w-5 h-5 text-purple-600" />
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">Payment Completed</div>
-                        <div className="text-xs text-gray-500">2 weeks ago</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div>
                   <h4 className="font-medium text-gray-900 mb-3">Contact Information</h4>
                   <div className="space-y-3">
                     <div className="flex items-center space-x-3">
@@ -638,14 +644,14 @@ export default function ClientManagement() {
                     <div className="flex items-center space-x-3">
                       <Phone className="w-5 h-5 text-gray-400" />
                       <div>
-                        <div className="text-sm font-medium text-gray-900">+1 (555) 123-4567</div>
+                        <div className="text-sm font-medium text-gray-900">{selectedClient.phone || 'N/A'}</div>
                         <div className="text-xs text-gray-500">Phone Number</div>
                       </div>
                     </div>
                     <div className="flex items-center space-x-3">
                       <MapPin className="w-5 h-5 text-gray-400" />
                       <div>
-                        <div className="text-sm font-medium text-gray-900">123 Main St, City, State</div>
+                        <div className="text-sm font-medium text-gray-900">{selectedClient.address || 'N/A'}</div>
                         <div className="text-xs text-gray-500">Address</div>
                       </div>
                     </div>

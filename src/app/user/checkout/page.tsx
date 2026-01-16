@@ -1,6 +1,7 @@
 "use client";
 
 import { useSearchParams, useRouter } from 'next/navigation';
+import { jwtDecode } from 'jwt-decode';
 import { useState, useEffect } from 'react';
 import { CreditCard, Shield, Check } from 'lucide-react';
 import { useToast } from '../../../context/ToastContext';
@@ -27,12 +28,38 @@ export default function CheckoutPage() {
     e.preventDefault();
     setLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
-        setLoading(false);
+    try {
+        const userToken = sessionStorage.getItem('userToken') || localStorage.getItem('userToken');
+        if (!userToken) {
+            showToast('You must be logged in to purchase a plan.', 'error');
+            router.push('/login');
+            return;
+        }
+
+        const decoded: any = jwtDecode(userToken);
+        const userId = decoded.id;
+
+        // Update client subscription
+        await api.updateClient(userId, {
+            subscription_plan: planName.toLowerCase(),
+            is_premium: true
+        });
+
+        debugger; // Allow verify if needed
+
         showToast(`Successfully subscribed to ${planName} plan!`, 'success');
-        router.push('/user/dashboard');
-    }, 2000);
+        
+        // Force a small delay to allow toast to show and potential backend sync
+        setTimeout(() => {
+             router.push('/user/dashboard');
+        }, 1500);
+
+    } catch (error) {
+        console.error('Purchase failed:', error);
+        showToast('Purchase failed. Please try again.', 'error');
+    } finally {
+        setLoading(false);
+    }
   };
 
   return (

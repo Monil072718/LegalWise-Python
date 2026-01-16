@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 from database import get_db
 import models
 from pydantic import BaseModel
@@ -16,7 +16,7 @@ class ReviewSchema(BaseModel):
     role: str
     content: str
     rating: int
-    image: str | None = None
+    image: Optional[str] = None
 
     class Config:
         orm_mode = True
